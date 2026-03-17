@@ -265,10 +265,10 @@ input,select,textarea,button{font-family:inherit}
 .ni-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:7px}
 
 /* ADMIN */
-.asec{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.asec{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:14px;overflow:visible}
 .asec-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd)}
 .asec-h h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:600}
-.arow{display:flex;align-items:flex-start;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap}
+.arow{display:flex;align-items:flex-start;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap;position:relative;overflow:visible}
 .arow:last-child{border-bottom:none}
 .arow:hover{background:var(--s2)}
 .ainfo{flex:1;min-width:0}
@@ -542,6 +542,7 @@ input,select,textarea,button{font-family:inherit}
       <div style="padding:10px 18px;border-top:1px solid var(--bd);display:flex;gap:8px">
         <button class="abtn ab-ok" onclick="showAddMemberForm()">+ Add member manually</button>
         <button class="abtn ab-info" onclick="diagUsers()">Debug</button>
+        <button class="abtn ab-warn" onclick="cleanDuplicates()" style="background:rgba(232,147,74,.15);border-color:rgba(232,147,74,.4);color:#E8934A">Clean duplicates</button>
         <div id="diag-out" style="font-size:11px;color:var(--mu);margin-top:4px;width:100%;white-space:pre-wrap;font-family:monospace;max-height:100px;overflow-y:auto"></div>
       </div>
       <div id="add-member-form" style="display:none;padding:14px 18px;border-top:1px solid var(--bd)">
@@ -834,7 +835,7 @@ const SK='tt-v7',SESSION_KEY='tt-session-v7';
 
 
 const LOGO_COLORS=['#E8C547','#5B9BD5','#5BBD8A','#E8934A','#D4537E','#AFA9EC','#F0997B','#ffffff'];
-let DB={users:[],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[]};
+let DB={users:[{"id": "u-1000", "name": "Divya R", "email": "mcpc@candbindia.com", "ph": "-2061945005", "orgRole": "MCPC", "sysRole": "member", "color": "#5B9BD5", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1001", "name": "Jeeva", "email": "jeeva@propotentia.com", "ph": "-2061945005", "orgRole": "Manager", "sysRole": "member", "color": "#E8934A", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1002", "name": "Jeeva G", "email": "jeeva.g@propotentia.com", "ph": "-2061945005", "orgRole": "Manager", "sysRole": "member", "color": "#5BBD8A", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1003", "name": "Sutheesh", "email": "sutheesh@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#D4537E", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1004", "name": "Lokesh", "email": "lokesh@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#AFA9EC", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1005", "name": "Adhithyan", "email": "adhithyan@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#FAC775", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1006", "name": "Dineshkumar", "email": "dinesh@candbindia.com", "ph": "-2061945005", "orgRole": "Sr. Analyst", "sysRole": "member", "color": "#F0997B", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1007", "name": "Kevin", "email": "kevin@candbindia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#5B9BD5", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1008", "name": "Varun", "email": "varun@candbindia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#E8C547", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1009", "name": "Anandraj", "email": "anandaraj@candbindia.com", "ph": "-2061945005", "orgRole": "Sr. Analyst", "sysRole": "member", "color": "#5BBD8A", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[]};
 let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTkId=null,tkFilter='all';
 
 function saveDB(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){console.warn('Storage warning:',e.message);}cloudSync();}
@@ -1539,8 +1540,8 @@ function renderAdmin(){
     <div class="av av-xs" style="${avs(u.color)}">${u.photo?`<img src="${u.photo}" alt=""/>`:ini(u.name)}</div>
     <div class="ainfo"><div class="aname">${u.name}</div><div class="aemail">${u.email} &nbsp;<span class="rtag" style="background:${rcolor(u)}20;color:${rcolor(u)};font-size:9px">${rlbl(u)}</span></div></div>
     <div class="aacts">
-      <select class="role-sel" onchange="setOrgRole('${u.id}',this.value)">
-        ${(DB.designations.length?DB.designations.map(d=>d.name):ROLES_FALLBACK).map(r=>`<option value="${r}"${u.orgRole===r?' selected':''}>${r}</option>`).join('')}
+      <select class="role-sel" onchange="setOrgRole('${u.id}',this.value);this.blur()">
+        ${(DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK).map(function(r){return '<option value="'+r+'"'+(u.orgRole===r?' selected':'')+'>'+r+'</option>';}).join('')}
       </select>
       ${u.sysRole!=='admin'?`<button class="abtn ab-ac" onclick="setSysRole('${u.id}','admin')">Admin</button>`:''}
       ${u.sysRole==='admin'?`<button class="abtn ab-info" onclick="setSysRole('${u.id}','member')">Demote</button>`:''}
@@ -1576,8 +1577,77 @@ function approveUser(id){
   saveDB();renderAdmin();renderNotifBadge();
 }
 function rejectUser(id){if(!confirm('Reject?'))return;const u=DB.users.find(x=>x.id===id);if(u)u.status='rejected';saveDB();renderAdmin();}
-function removeUser(id){if(!confirm('Remove user?'))return;DB.users=DB.users.filter(u=>u.id!==id);saveDB();renderAdmin();}
-function setOrgRole(id,r){const u=DB.users.find(x=>x.id===id);if(u){u.orgRole=r;saveDB();}}
+
+function cleanDuplicates(){
+  // Remove users with same email, keep the one with status='active' or more data
+  var seen={};
+  var cleaned=[];
+  DB.users.forEach(function(u){
+    var key=u.email.toLowerCase();
+    if(!seen[key]){
+      seen[key]=u;
+      cleaned.push(u);
+    } else {
+      // Keep active over pending, keep one with orgRole set
+      var existing=seen[key];
+      if(u.status==='active'&&existing.status!=='active'){
+        // Replace with active one
+        var idx=cleaned.indexOf(existing);
+        cleaned[idx]=u;
+        seen[key]=u;
+      } else if(u.orgRole&&!existing.orgRole){
+        var idx=cleaned.indexOf(existing);
+        cleaned[idx]=u;
+        seen[key]=u;
+      }
+    }
+  });
+  if(cleaned.length < DB.users.length){
+    var removed = DB.users.length - cleaned.length;
+    DB.users=cleaned;
+    saveDB();
+    alert('Cleaned up '+removed+' duplicate account(s).');
+    renderAdmin();
+  } else {
+    alert('No duplicates found.');
+  }
+}
+
+function removeUser(id){
+  if(!confirm('Remove this user? This cannot be undone.'))return;
+  // Remove locally
+  DB.users=DB.users.filter(function(u){return u.id!==id;});
+  if(DB.blocks&&DB.blocks[id])delete DB.blocks[id];
+  if(DB.tracker&&DB.tracker[id])delete DB.tracker[id];
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  // Remove from server permanently
+  if(SERVER_URL){
+    fetch(SERVER_URL+'/remove/user',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({userId:id})
+    }).then(function(r){return r.json();})
+    .then(function(j){
+      renderAdmin();
+      if(j.ok) alert('User permanently removed!');
+      else alert('Removed locally. Server: '+j.reason);
+    }).catch(function(){
+      renderAdmin();
+      alert('Removed locally. Server offline.');
+    });
+  } else {
+    renderAdmin();
+    alert('User removed!');
+  }
+}
+
+function setOrgRole(id,r){
+  var u=DB.users.find(function(x){return x.id===id;});
+  if(!u)return;
+  u.orgRole=r;
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+}
+
 function setSysRole(id,r){
   const u=DB.users.find(x=>x.id===id);if(!u)return;u.sysRole=r;if(r==='admin'||r==='manager'){u.canSee=true;u.canCmt=true;}
   DB.notifications.unshift({id:genId('n'),type:'role',from:CU.name,fromColor:CU.color,to:id,newRole:r,time:tnow(),date:td(),read:false});
@@ -2269,7 +2339,22 @@ function pullOtherUsersData(){
     // Merge other users tracker
     if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){if(uid!==CU.id){DB.tracker[uid]=d.tracker[uid];changed=true;}});}
     // Merge new users
-    if(d.users&&Array.isArray(d.users)){if(!DB.users)DB.users=[];d.users.forEach(function(su){var ex=DB.users.find(function(u){return u.id===su.id;});if(!ex){DB.users.push(su);changed=true;}else if(su.id!==CU.id){['status','orgRole','sysRole','canSee','canCmt','canReview','canTicket','canMasterCreate','subordinates'].forEach(function(k){if(su[k]!==undefined)ex[k]=su[k];});changed=true;}});}
+    if(d.users&&Array.isArray(d.users)){
+      if(!DB.users)DB.users=[];
+      var removedIds=d.removedUsers||[];
+      // First remove any locally present users that server has marked removed
+      if(removedIds.length>0){
+        var before=DB.users.length;
+        DB.users=DB.users.filter(function(u){return !removedIds.includes(u.id);});
+        if(DB.users.length<before)changed=true;
+      }
+      d.users.forEach(function(su){
+        if(removedIds.includes(su.id))return; // Skip removed users
+        var ex=DB.users.find(function(u){return u.id===su.id;});
+        if(!ex){DB.users.push(su);changed=true;}
+        else if(su.id!==CU.id){['status','orgRole','sysRole','canSee','canCmt','canReview','canTicket','canMasterCreate','subordinates'].forEach(function(k){if(su[k]!==undefined)ex[k]=su[k];});changed=true;}
+      });
+    }
     // Notifications and tickets
     if(d.notifications){DB.notifications=d.notifications;changed=true;}
     if(d.tickets){DB.tickets=d.tickets;changed=true;}
