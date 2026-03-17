@@ -1902,11 +1902,38 @@ function cloudLoad(cb){
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 loadDB();
 applyBranding();
-// Auto-sync with server on load
-cloudLoad(function(){
+// Load from server on startup
+if(typeof SERVER_URL !== 'undefined' && SERVER_URL){
+  fetch(SERVER_URL+'/data')
+  .then(function(r){return r.json();})
+  .then(function(j){
+    if(j.ok && j.data && j.data.users && j.data.users.length > 0){
+      var d = j.data;
+      // Merge ALL users from server
+      if(!DB.users) DB.users = [];
+      d.users.forEach(function(su){
+        var exists = DB.users.find(function(u){return u.id===su.id;});
+        if(!exists) DB.users.push(su);
+        else Object.assign(exists, su);
+      });
+      // Load all data
+      ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
+        if(d[k]!==undefined) DB[k]=d[k];
+      });
+      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+      applyBranding();
+    }
+    const _sid=loadSession();
+    if(_sid){const _su=DB.users.find(x=>x.id===_sid&&x.status==='active');if(_su)bootApp(_su);}
+  })
+  .catch(function(){
+    const _sid=loadSession();
+    if(_sid){const _su=DB.users.find(x=>x.id===_sid&&x.status==='active');if(_su)bootApp(_su);}
+  });
+} else {
   const _sid=loadSession();
   if(_sid){const _su=DB.users.find(x=>x.id===_sid&&x.status==='active');if(_su)bootApp(_su);}
-});
+}
 </script>
 <script>
 // ══ CHAT ══
