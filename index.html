@@ -356,6 +356,15 @@ input,select,textarea,button{font-family:inherit}
   .tgrid{grid-template-columns:1fr}.pgrid{grid-template-columns:1fr}
   .aacts{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:4px}.tk-stats{grid-template-columns:repeat(2,1fr)}
 }
+
+.trow-na{opacity:.65}
+.trow-no{opacity:.5;text-decoration:line-through}
+.task-status-btns{display:flex;gap:3px;margin-left:4px;flex-shrink:0;align-items:center}
+.tsb{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;line-height:1.4}
+.tsb-na{background:rgba(232,147,74,.15);color:#E8934A;border-color:rgba(232,147,74,.3)}
+.tsb-no{background:rgba(232,80,80,.15);color:#E85555;border-color:rgba(232,80,80,.3)}
+.tsb.tsb-active{filter:brightness(1.4);font-weight:700}
+.tsb:hover{filter:brightness(1.2)}
 </style>
 </head>
 <body>
@@ -928,17 +937,21 @@ function getTD(uid,date){
 }
 function getStats(uid,date){
   const blocks=getBlocks(uid),data=getTD(uid,date);
-  let total=0,done=0,bs={};
+  let total=0,done=0,na=0,no=0,bs={};
   blocks.forEach(b=>{
-    let bt=0,bd=0;
+    let bt=0,bd=0,bna=0,bno=0;
     b.tasks.forEach(t=>{
       if(t.todayOnly&&t.addedDate&&t.addedDate!==date)return;
+      var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
+      var chk=!!data.checked[t.id]||ts==='done';
+      if(ts==='na'){na++;bna++;return;} // NA: excluded from total
       bt++;total++;
-      if(data.checked[t.id]){done++;bd++;}
+      if(chk){done++;bd++;}
+      else if(ts==='no'){no++;bno++;}
     });
-    bs[b.id]={done:bd,total:bt,name:b.name,color:b.color};
+    bs[b.id]={done:bd,total:bt,na:bna,no:bno,name:b.name,color:b.color};
   });
-  return{total,done,blocks:bs};
+  return{total,done,na,no,blocks:bs};
 }
 
 // ══════════════════════ BRANDING ══════════════════════
@@ -1055,14 +1068,20 @@ function renderHeatmap(){var today=td(),h='',i,d,s,p,isT,isSel;for(i=13;i>=0;i--
 function renderMyTracker(){
   const today=td(),isToday=myD===today;
   const data=getTD(CU.id,myD),stats=getStats(CU.id,myD);
-  const pct=stats.total?Math.round(stats.done/stats.total*100):0;
+  const pct=stats.pct!==undefined?stats.pct:(stats.total?Math.round(stats.done/stats.total*100):0);
+  const naCount=stats.na||0;const noCount=stats.no||0;
   document.getElementById('my-dlbl').textContent=isToday?'Today — '+fs(today):fs(myD);
   document.getElementById('my-next').classList.toggle('off',isToday);
   document.getElementById('my-today').classList.toggle('hidden',isToday);
   document.getElementById('ro-bar').classList.toggle('on',!isToday);
   renderHeatmap();
   document.getElementById('my-done').textContent=stats.done;document.getElementById('my-tot').textContent=stats.total;
-  document.getElementById('my-pct').textContent=pct+'%';document.getElementById('my-left').textContent=stats.total-stats.done;
+  document.getElementById('my-pct').textContent=pct+'%';
+  var extraStats='';
+  if(naCount>0)extraStats+='<span style="font-size:11px;color:#E8934A;margin-left:8px">'+naCount+' NA</span>';
+  if(noCount>0)extraStats+='<span style="font-size:11px;color:#E85555;margin-left:8px">'+noCount+' NO</span>';
+  var extraEl=document.getElementById('my-extra-stats');
+  if(extraEl)extraEl.innerHTML=extraStats;document.getElementById('my-left').textContent=stats.total-stats.done;
   document.getElementById('my-pf').style.width=pct+'%';
   const blocks=getBlocks(CU.id);
   document.getElementById('my-blocks').innerHTML=blocks.map((b,bi)=>{
@@ -1070,16 +1089,8 @@ function renderMyTracker(){
     const rows=b.tasks.map((t,ti)=>{
       const chk=!!data.checked[t.id];const cmts=(data.comments[t.id]||[]).length;
       const ctx=JSON.stringify({uid:CU.id,bid:b.id,tid:t.id,date:myD});
-      return `<div class="trow${chk?' done':''}"><span class="tnum">${ti+1}</span>
-        <div class="cb${chk?' chk':''}${isToday?'':' ro'}" onclick="${isToday?`chkTask('${b.id}','${t.id}')`:''}" ></div>
-        <span class="ttxt"${isToday?` onclick="chkTask('${b.id}','${t.id}')"`:''} >${t.name}</span>
-        ${t.timeSlot?`<span class="ttime-badge">${t.timeSlot}</span>`:''}
-        ${cmts?`<span class="ncnt" onclick='openCmt(${ctx})'>${cmts}</span>`:''}
-        ${isToday?`<button class="note-btn" onclick='openCmt(${ctx})'>Note</button>`:''}
-        ${isToday?`<div class="task-acts"><button class="ta-btn" onclick="openET(${bi},${ti})">Edit</button><button class="ta-btn del" onclick="delTask(${bi},${ti})">&#215;</button></div>`:''}
-      </div>
-      ${getTAttHTML(bi,ti,t.id,isToday)}`;
-    }).join('');
+      return buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx);
+    }).filter(Boolean).join('');
     const addRow=isToday?`<div class="add-task-row"><input class="ati" id="ati-${b.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask(${bi})"/><input class="ati-sm" id="atit-${b.id}" placeholder="Time slot"/><label style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--mu);cursor:pointer;white-space:nowrap"><input type="checkbox" id="ati-tod-${b.id}" style="accent-color:var(--ac)"/>Today only</label><button class="atb" onclick="addTask(${bi})">+ Add</button></div>`:'';
     const dbtn=isToday?`<button class="ta-btn del" onclick="delBlock(${bi})" style="opacity:.6;font-size:10px;padding:2px 7px;margin-left:4px">Del</button>`:'';
     return `<div class="bcard"><div class="bhdr" onclick="togBlock('tl-${b.id}','ch-${b.id}')">
@@ -1107,7 +1118,7 @@ function renderMyTracker(){
 }
 function togBlock(l,c){document.getElementById(l)?.classList.toggle('col');document.getElementById(c)?.classList.toggle('op');}
 function chkTask(bid,tid){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};var cur=data.taskStatus[tid]||'';if(cur==='done'){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
-function setTaskStatus(bid,tid,status){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};data.taskStatus[tid]=status;data.checked[tid]=(status==='done');saveDB();renderMyTracker();}
+function setTaskStatus(bid,tid,status){const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};data.taskStatus[tid]=status;data.checked[tid]=(status==='done');saveDB();renderMyTracker();}
 function addBlock(){
   const name=document.getElementById('nb-name').value.trim();if(!name)return;
   const time=document.getElementById('nb-time').value.trim();
@@ -1152,14 +1163,14 @@ function renderTeam(){
   if(!canSee){document.getElementById('tgrid').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔒</div>No team view access.<br>Ask admin.</div>';document.getElementById('dp').classList.remove('on');return;}
   var active=CU.sysRole==='admin'||CU.canSee?DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001';}):DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&(CU.subordinates||[]).includes(u.id);});
   document.getElementById('tgrid').innerHTML=active.map(m=>{
-    const s=getStats(m.id,teamD),pct=s.total?Math.round(s.done/s.total*100):0;
+    const s=getStats(m.id,teamD),pct=s.pct!==undefined?s.pct:(s.total?Math.round(s.done/s.total*100):0);
     const pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';
     const bars=Object.values(s.blocks).slice(0,3).map(bs=>{const bp=bs.total?Math.round(bs.done/bs.total*100):0;return`<div class="mr"><div class="mr-dot" style="background:${bs.color}"></div><span class="mr-lbl">${bs.name||''}</span><div class="mr-wrap"><div class="mr-bar" style="width:${bp}%;background:${bs.color}"></div></div><span class="mr-cnt">${bs.done}/${bs.total}</span></div>`;}).join('');
     const rc=rcolor(m);
     return `<div class="mcard${openM===m.id?' sel':''}" onclick="openDP('${m.id}')">
       <div class="mcard-top"><div class="av av-xs" style="${avs(m.color)}">${m.photo?`<img src="${m.photo}" alt=""/>`:ini(m.name)}</div>
       <div class="mcard-info"><div class="mcard-name">${m.name}</div><div class="mcard-role"><span class="rtag" style="background:${rc}20;color:${rc}">${rlbl(m)}</span></div></div>
-      <div class="mcard-pct" style="color:${pc}">${pct}%</div></div>
+      <div class="mcard-pct" style="color:${pc}">${pct}%${stats.na>0?` <span style="font-size:10px;color:#E8934A">${stats.na}NA</span>`:""}${stats.no>0?` <span style="font-size:10px;color:#E85555">${stats.no}NO</span>`:""}</div></div>
       ${bars?`<div class="mcard-body">${bars}</div>`:''}
     </div>`;
   }).join('')||'<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div>No members yet</div>';
@@ -1193,7 +1204,7 @@ function shiftSum(n){const nd=sd(sumD,n);if(nd>td())return;sumD=nd;renderSummary
 function renderSummary(){
   const isT=sumD===td();document.getElementById('sum-dlbl').textContent=isT?'Today':fs(sumD);document.getElementById('sum-next').classList.toggle('off',isT);
   document.getElementById('sum-body').innerHTML=DB.users.filter(u=>u.status==='active'&&u.id!=='admin-001').map(m=>{
-    const s=getStats(m.id,sumD),pct=s.total?Math.round(s.done/s.total*100):0;
+    const s=getStats(m.id,sumD),pct=s.total?s.pct!==undefined?s.pct:Math.round(s.done/s.total*100):0;
     const pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';const rc=rcolor(m);
     const st=pct===100?'<span class="sp sp-done">Done</span>':pct>=50?'<span class="sp sp-track">On track</span>':'<span class="sp sp-behind">Behind</span>';
     return `<tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av av-xs" style="${avs(m.color)}">${m.photo?`<img src="${m.photo}" alt=""/>`:ini(m.name)}</div><div><div style="font-weight:500">${m.name}</div><div style="font-size:10px;color:var(--mu)">${m.email}</div></div></div></td>
