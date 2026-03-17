@@ -268,7 +268,7 @@ input,select,textarea,button{font-family:inherit}
 .asec{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:14px;overflow:visible}
 .asec-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd)}
 .asec-h h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:600}
-.arow{display:flex;align-items:flex-start;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap;position:relative;overflow:visible}
+.arow{display:flex;align-items:flex-start;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap;overflow:visible}
 .arow:last-child{border-bottom:none}
 .arow:hover{background:var(--s2)}
 .ainfo{flex:1;min-width:0}
@@ -542,7 +542,6 @@ input,select,textarea,button{font-family:inherit}
       <div style="padding:10px 18px;border-top:1px solid var(--bd);display:flex;gap:8px">
         <button class="abtn ab-ok" onclick="showAddMemberForm()">+ Add member manually</button>
         <button class="abtn ab-info" onclick="diagUsers()">Debug</button>
-        <button class="abtn ab-warn" onclick="cleanDuplicates()" style="background:rgba(232,147,74,.15);border-color:rgba(232,147,74,.4);color:#E8934A">Clean duplicates</button>
         <div id="diag-out" style="font-size:11px;color:var(--mu);margin-top:4px;width:100%;white-space:pre-wrap;font-family:monospace;max-height:100px;overflow-y:auto"></div>
       </div>
       <div id="add-member-form" style="display:none;padding:14px 18px;border-top:1px solid var(--bd)">
@@ -555,6 +554,30 @@ input,select,textarea,button{font-family:inherit}
         <div style="display:flex;gap:6px"><button class="abtn ab-ok" onclick="addMemberManually()">Add member</button><button class="btn-sec" onclick="document.getElementById('add-member-form').style.display='none'">Cancel</button></div>
         <div id="am-msg" style="font-size:12px;margin-top:6px"></div>
       </div>
+    </div>
+    <div class="asec">
+      <div class="asec-h"><h3>All registered accounts</h3><span style="font-size:11px;color:var(--mu)">Every user &amp; their status</span></div>
+      <div id="all-users-list"></div>
+      <div style="padding:10px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;flex-wrap:wrap">
+        <button class="abtn ab-ok" onclick="showAddMemberForm()">+ Add member manually</button>
+        <button class="abtn ab-info" onclick="diagUsers()">Debug</button>
+        <button class="abtn" onclick="cleanDuplicates()" style="background:rgba(232,147,74,.1);border-color:rgba(232,147,74,.3);color:#E8934A">Clean duplicates</button>
+        <div id="diag-out" style="font-size:11px;color:var(--mu);margin-top:4px;width:100%;white-space:pre-wrap;font-family:monospace;max-height:100px;overflow-y:auto"></div>
+      </div>
+      <div id="add-member-form" style="display:none;padding:14px 18px;border-top:1px solid var(--bd)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div><div class="fl" style="margin-bottom:4px">Full name</div><input class="fi fi-sm" id="am-name" placeholder="Full name" style="margin-bottom:0"/></div>
+          <div><div class="fl" style="margin-bottom:4px">Email</div><input class="fi fi-sm" id="am-email" placeholder="email@company.com" style="margin-bottom:0"/></div>
+          <div><div class="fl" style="margin-bottom:4px">Password</div><input class="fi fi-sm" type="password" id="am-pass" placeholder="Set password" style="margin-bottom:0"/></div>
+          <div><div class="fl" style="margin-bottom:4px">Designation</div><select class="fi fi-sm" id="am-desig" style="margin-bottom:0"></select></div>
+        </div>
+        <div style="display:flex;gap:6px"><button class="abtn ab-ok" onclick="addMemberManually()">Add member</button><button class="btn-sec" onclick="document.getElementById('add-member-form').style.display='none'">Cancel</button></div>
+        <div id="am-msg" style="font-size:12px;margin-top:6px"></div>
+      </div>
+    </div>
+    <div class="asec">
+      <div class="asec-h"><h3>Team hierarchy</h3></div>
+      <div id="hierarchy-display" style="padding:10px 18px"></div>
     </div>
 <div class="asec">
       <div class="asec-h"><h3>Pending approvals <span id="pend-cnt" style="font-size:11px;color:var(--mu);font-weight:400"></span></h3></div>
@@ -628,6 +651,29 @@ input,select,textarea,button{font-family:inherit}
     </div>
 
     <!-- BACKUP & RESTORE -->
+    <div class="set-sec">
+      <h3>Team Sync</h3>
+      <div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div id="sync-dot" style="width:8px;height:8px;border-radius:50%;background:var(--warn);flex-shrink:0"></div>
+            <span style="font-size:13px;font-weight:600">Sync status</span>
+            <span id="sync-status-txt" style="font-size:11px;color:var(--mu)">Not connected</span>
+          </div>
+          <button class="abtn ab-ok" onclick="setupTeamSync()">Setup / Join</button>
+        </div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Last sync: <span id="sync-last">Never</span></div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:10px">Server: <span id="sync-bin-display" style="font-family:monospace;color:var(--ac);font-size:10px;word-break:break-all">Not set</span></div>
+        <div id="team-sync-reveal" style="display:none;background:rgba(91,189,138,.1);border:1px solid rgba(91,189,138,.3);border-radius:8px;padding:10px;margin-bottom:10px">
+          <div style="font-size:11px;color:var(--ok);font-weight:600;margin-bottom:4px">Share URL with team:</div>
+          <div id="team-sync-id-display" style="font-family:monospace;font-size:11px;color:var(--ok);word-break:break-all"></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="abtn ab-info" onclick="forceSyncNow()">Sync now</button>
+          <button class="abtn" onclick="showSyncStatus()" style="background:none;border:1px solid var(--b2);color:var(--mu)">Check status</button>
+        </div>
+      </div>
+    </div>
     <div class="set-sec">
       <h3>Backup &amp; Restore</h3>
       <p style="font-size:13px;color:var(--mu);margin-bottom:16px;line-height:1.7">Export all your data as a backup file and restore on any device.</p>
@@ -763,19 +809,19 @@ input,select,textarea,button{font-family:inherit}
 <div class="overlay" id="sync-setup-modal">
   <div class="modal" style="max-width:480px">
     <h3>Team Sync Setup</h3>
-    <div class="m-lbl" style="margin-bottom:16px">Connect your team so everyone shares data in real-time</div>
+    <div class="m-lbl" style="margin-bottom:16px">Connect your team so everyone shares data</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
       <div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:16px;text-align:center">
         <div style="font-size:28px;margin-bottom:8px">👑</div>
         <div style="font-size:13px;font-weight:600;margin-bottom:6px">I am Admin</div>
         <input class="fi fi-sm" id="sync-server-url" value="https://habitly-server.onrender.com" style="text-align:center;margin-bottom:8px"/>
-        <button class="btn-pri" style="padding:10px;font-size:13px" onclick="adminCreateSync()">Connect server</button>
+        <button class="btn-pri" style="padding:10px;font-size:13px;width:100%" onclick="adminCreateSync()">Connect server</button>
       </div>
       <div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:16px;text-align:center">
         <div style="font-size:28px;margin-bottom:8px">👤</div>
         <div style="font-size:13px;font-weight:600;margin-bottom:6px">I am Team Member</div>
         <input class="fi fi-sm" id="sync-join-id" value="https://habitly-server.onrender.com" style="text-align:center;margin-bottom:8px"/>
-        <button class="btn-pri" style="padding:10px;font-size:13px" onclick="joinSyncBin()">Join team</button>
+        <button class="btn-pri" style="padding:10px;font-size:13px;width:100%" onclick="joinSyncBin()">Join team</button>
       </div>
     </div>
     <div class="m-acts"><button class="btn-sec" onclick="document.getElementById('sync-setup-modal').classList.remove('on')">Close</button></div>
@@ -835,13 +881,13 @@ const SK='tt-v7',SESSION_KEY='tt-session-v7';
 
 
 const LOGO_COLORS=['#E8C547','#5B9BD5','#5BBD8A','#E8934A','#D4537E','#AFA9EC','#F0997B','#ffffff'];
-let DB={users:[{"id": "u-1000", "name": "Divya R", "email": "mcpc@candbindia.com", "ph": "-2061945005", "orgRole": "MCPC", "sysRole": "member", "color": "#5B9BD5", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1001", "name": "Jeeva", "email": "jeeva@propotentia.com", "ph": "-2061945005", "orgRole": "Manager", "sysRole": "member", "color": "#E8934A", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1002", "name": "Jeeva G", "email": "jeeva.g@propotentia.com", "ph": "-2061945005", "orgRole": "Manager", "sysRole": "member", "color": "#5BBD8A", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1003", "name": "Sutheesh", "email": "sutheesh@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#D4537E", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1004", "name": "Lokesh", "email": "lokesh@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#AFA9EC", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1005", "name": "Adhithyan", "email": "adhithyan@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#FAC775", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1006", "name": "Dineshkumar", "email": "dinesh@candbindia.com", "ph": "-2061945005", "orgRole": "Sr. Analyst", "sysRole": "member", "color": "#F0997B", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1007", "name": "Kevin", "email": "kevin@candbindia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#5B9BD5", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1008", "name": "Varun", "email": "varun@candbindia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#E8C547", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1009", "name": "Anandraj", "email": "anandaraj@candbindia.com", "ph": "-2061945005", "orgRole": "Sr. Analyst", "sysRole": "member", "color": "#5BBD8A", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[]};
+let DB={users:[{"id": "u-1000", "name": "Divya R", "email": "mcpc@candbindia.com", "ph": "-2061945005", "orgRole": "MCPC", "sysRole": "member", "color": "#5B9BD5", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1001", "name": "Jeeva", "email": "jeeva@propotentia.com", "ph": "-2061945005", "orgRole": "Manager", "sysRole": "member", "color": "#E8934A", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1002", "name": "Jeeva G", "email": "jeeva.g@propotentia.com", "ph": "-2061945005", "orgRole": "Manager", "sysRole": "member", "color": "#5BBD8A", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1003", "name": "Sutheesh", "email": "sutheesh@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#D4537E", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1004", "name": "Lokesh", "email": "lokesh@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#AFA9EC", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1005", "name": "Adhithyan", "email": "adhithyan@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#FAC775", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1006", "name": "Dineshkumar", "email": "dinesh@candbindia.com", "ph": "-2061945005", "orgRole": "Sr. Analyst", "sysRole": "member", "color": "#F0997B", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1007", "name": "Kevin", "email": "kevin@candbindia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#5B9BD5", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1008", "name": "Varun", "email": "varun@candbindia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#E8C547", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1009", "name": "Anandraj", "email": "anandaraj@candbindia.com", "ph": "-2061945005", "orgRole": "Sr. Analyst", "sysRole": "member", "color": "#5BBD8A", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1010", "name": "Sivaraman", "email": "sivaraman@propotentia.com", "ph": "-2061945005", "orgRole": "Team Leader", "sysRole": "member", "color": "#AFA9EC", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[],deletedUsers:[]};
 let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTkId=null,tkFilter='all';
 
 function saveDB(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){console.warn('Storage warning:',e.message);}cloudSync();}
 function loadDB(){
   try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt'].forEach(k=>{if(d[k]!==undefined)DB[k]=d[k];});}}catch(e){}
-  if(!DB.designations)DB.designations=[];if(!DB.deletedUsers)DB.deletedUsers=[];if(!DB.chat)DB.chat={rooms:{}};if(!DB.taskAtt)DB.taskAtt={};DB.users.forEach(function(u){if(u.canTicket===undefined)u.canTicket=(u.sysRole==='admin');if(u.canReview===undefined)u.canReview=(u.sysRole==='admin'||!!u.canSee);if(!u.subordinates)u.subordinates=[];if(u.canMasterCreate===undefined)u.canMasterCreate=(u.sysRole==='admin');});
+  if(!DB.designations)DB.designations=[];if(!DB.chat)DB.chat={rooms:{}};if(!DB.taskAtt)DB.taskAtt={};DB.users.forEach(function(u){if(u.canTicket===undefined)u.canTicket=(u.sysRole==='admin');if(u.canReview===undefined)u.canReview=(u.sysRole==='admin'||!!u.canSee);if(!u.subordinates)u.subordinates=[];if(u.canMasterCreate===undefined)u.canMasterCreate=(u.sysRole==='admin');});
   if(!DB.settings)DB.settings={companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'};
   if(!DB.settings.logoFont)DB.settings.logoFont='Syne';
   if(!DB.settings.logoSize)DB.settings.logoSize=16;
@@ -883,7 +929,15 @@ function getTD(uid,date){
 function getStats(uid,date){
   const blocks=getBlocks(uid),data=getTD(uid,date);
   let total=0,done=0,bs={};
-  blocks.forEach(b=>{let bt=b.tasks.length,bd=0;b.tasks.forEach(t=>{total++;if(data.checked[t.id]){done++;bd++;}});bs[b.id]={done:bd,total:bt,name:b.name,color:b.color};});
+  blocks.forEach(b=>{
+    let bt=0,bd=0;
+    b.tasks.forEach(t=>{
+      if(t.todayOnly&&t.addedDate&&t.addedDate!==date)return;
+      bt++;total++;
+      if(data.checked[t.id]){done++;bd++;}
+    });
+    bs[b.id]={done:bd,total:bt,name:b.name,color:b.color};
+  });
   return{total,done,blocks:bs};
 }
 
@@ -970,11 +1024,9 @@ function bootApp(u){
   document.getElementById('summary-tab').classList.toggle('hidden',!canTeam);
   if(!DB.chat)DB.chat={rooms:{}};
   if(!DB.taskAtt)DB.taskAtt={};
-  // Poll other users every 60 seconds - NEVER touches current user's data
   if(window._pollInterval)clearInterval(window._pollInterval);
   window._pollInterval=setInterval(pullOtherUsersData,60000);
-  // Initial push of own data
-  if(SERVER_URL) setTimeout(pushMyData,2000);
+  setTimeout(pushMyData,2000);
   initChat();
   switchTab('my');renderNotifBadge();updateCTBadge();
 }
@@ -1028,7 +1080,7 @@ function renderMyTracker(){
       </div>
       ${getTAttHTML(bi,ti,t.id,isToday)}`;
     }).join('');
-    const addRow=isToday?`<div class="add-task-row"><input class="ati" id="ati-${b.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask(${bi})"/><input class="ati-sm" id="atit-${b.id}" placeholder="Time slot"/><button class="atb" onclick="addTask(${bi})">+ Add</button></div>`:'';
+    const addRow=isToday?`<div class="add-task-row"><input class="ati" id="ati-${b.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask(${bi})"/><input class="ati-sm" id="atit-${b.id}" placeholder="Time slot"/><label style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--mu);cursor:pointer;white-space:nowrap"><input type="checkbox" id="ati-tod-${b.id}" style="accent-color:var(--ac)"/>Today only</label><button class="atb" onclick="addTask(${bi})">+ Add</button></div>`:'';
     const dbtn=isToday?`<button class="ta-btn del" onclick="delBlock(${bi})" style="opacity:.6;font-size:10px;padding:2px 7px;margin-left:4px">Del</button>`:'';
     return `<div class="bcard"><div class="bhdr" onclick="togBlock('tl-${b.id}','ch-${b.id}')">
       <span class="btag" style="background:${b.color}20;color:${b.color}">${b.name}</span>
@@ -1054,7 +1106,8 @@ function renderMyTracker(){
   </div>`:'';
 }
 function togBlock(l,c){document.getElementById(l)?.classList.toggle('col');document.getElementById(c)?.classList.toggle('op');}
-function chkTask(bid,tid){if(myD!==td())return;const data=getTD(CU.id,myD);data.checked[tid]=!data.checked[tid];saveDB();renderMyTracker();}
+function chkTask(bid,tid){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};var cur=data.taskStatus[tid]||'';if(cur==='done'){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
+function setTaskStatus(bid,tid,status){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};data.taskStatus[tid]=status;data.checked[tid]=(status==='done');saveDB();renderMyTracker();}
 function addBlock(){
   const name=document.getElementById('nb-name').value.trim();if(!name)return;
   const time=document.getElementById('nb-time').value.trim();
@@ -1067,7 +1120,10 @@ function addTask(bi){
   const blocks=getBlocks(CU.id),b=blocks[bi];
   const name=document.getElementById('ati-'+b.id)?.value.trim();if(!name)return;
   const time=document.getElementById('atit-'+b.id)?.value.trim();
-  const t={id:genId('t'),name,timeSlot:time||''};b.tasks.push(t);
+  const todEl=document.getElementById('ati-tod-'+b.id);
+  const todayOnly=todEl?todEl.checked:false;
+  const t={id:genId('t'),name,timeSlot:time||'',todayOnly:todayOnly,addedDate:todayOnly?td():null};
+  b.tasks.push(t);
   logEdit('ADD',b.name,t.id,t.name,'');saveDB();renderMyTracker();
 }
 function delTask(bi,ti){
@@ -1528,9 +1584,7 @@ function renderAdmin(){
     <div class="av av-xs" style="${avs(u.color)}">${ini(u.name)}</div>
     <div class="ainfo"><div class="aname">${u.name}</div><div class="aemail">${u.email}</div></div>
     <div class="aacts">
-      <select class="role-sel" id="rs-${u.id}">
-        ${DB.designations.length?DB.designations.map(d=>`<option value="${d.name}">${d.name}</option>`).join(''):ROLES_FALLBACK.map(r=>`<option value="${r}">${r}</option>`).join('')}
-      </select>
+      <button class="abtn" onclick="changeDesig('${u.id}','${u.orgRole||''}')" style="background:var(--s2);border:1px solid var(--b2);color:var(--tx);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;min-width:130px;text-align:left">${u.orgRole||'Set designation'} ▾</button>
       <button class="abtn ab-ok" onclick="openApproveModal('${u.id}')">Approve &amp; set access</button>
       <button class="abtn ab-err" onclick="rejectUser('${u.id}')">Reject</button>
     </div></div>`).join(''):'<div style="padding:16px 18px;font-size:13px;color:var(--mu)">No pending requests</div>';
@@ -1540,8 +1594,8 @@ function renderAdmin(){
     <div class="av av-xs" style="${avs(u.color)}">${u.photo?`<img src="${u.photo}" alt=""/>`:ini(u.name)}</div>
     <div class="ainfo"><div class="aname">${u.name}</div><div class="aemail">${u.email} &nbsp;<span class="rtag" style="background:${rcolor(u)}20;color:${rcolor(u)};font-size:9px">${rlbl(u)}</span></div></div>
     <div class="aacts">
-      <select class="role-sel" onchange="setOrgRole('${u.id}',this.value);this.blur()">
-        ${(DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK).map(function(r){return '<option value="'+r+'"'+(u.orgRole===r?' selected':'')+'>'+r+'</option>';}).join('')}
+      <select class="role-sel" onchange="setOrgRole('${u.id}',this.value)">
+        ${(DB.designations.length?DB.designations.map(d=>d.name):ROLES_FALLBACK).map(r=>`<option value="${r}"${u.orgRole===r?' selected':''}>${r}</option>`).join('')}
       </select>
       ${u.sysRole!=='admin'?`<button class="abtn ab-ac" onclick="setSysRole('${u.id}','admin')">Admin</button>`:''}
       ${u.sysRole==='admin'?`<button class="abtn ab-info" onclick="setSysRole('${u.id}','member')">Demote</button>`:''}
@@ -1577,64 +1631,8 @@ function approveUser(id){
   saveDB();renderAdmin();renderNotifBadge();
 }
 function rejectUser(id){if(!confirm('Reject?'))return;const u=DB.users.find(x=>x.id===id);if(u)u.status='rejected';saveDB();renderAdmin();}
-
-function cleanDuplicates(){
-  // Remove users with same email, keep the one with status='active' or more data
-  var seen={};
-  var cleaned=[];
-  DB.users.forEach(function(u){
-    var key=u.email.toLowerCase();
-    if(!seen[key]){
-      seen[key]=u;
-      cleaned.push(u);
-    } else {
-      // Keep active over pending, keep one with orgRole set
-      var existing=seen[key];
-      if(u.status==='active'&&existing.status!=='active'){
-        // Replace with active one
-        var idx=cleaned.indexOf(existing);
-        cleaned[idx]=u;
-        seen[key]=u;
-      } else if(u.orgRole&&!existing.orgRole){
-        var idx=cleaned.indexOf(existing);
-        cleaned[idx]=u;
-        seen[key]=u;
-      }
-    }
-  });
-  if(cleaned.length < DB.users.length){
-    var removed = DB.users.length - cleaned.length;
-    DB.users=cleaned;
-    saveDB();
-    alert('Cleaned up '+removed+' duplicate account(s).');
-    renderAdmin();
-  } else {
-    alert('No duplicates found.');
-  }
-}
-
-function removeUser(id){
-  if(!confirm('Remove this user? They will lose all access.'))return;
-  DB.users=DB.users.filter(function(u){return u.id!==id;});
-  if(!DB.deletedUsers)DB.deletedUsers=[];
-  if(!DB.deletedUsers.includes(id))DB.deletedUsers.push(id);
-  if(DB.blocks&&DB.blocks[id])delete DB.blocks[id];
-  if(DB.tracker&&DB.tracker[id])delete DB.tracker[id];
-  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-  var url=SERVER_URL||localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
-  var payload={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
-  fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-  .then(function(){renderAdmin();alert('User removed!');})
-  .catch(function(){renderAdmin();alert('Removed locally.');});
-}
-
-function setOrgRole(id,r){
-  var u=DB.users.find(function(x){return x.id===id;});
-  if(!u)return;
-  u.orgRole=r;
-  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-}
-
+function removeUser(id){if(!confirm('Remove user?'))return;DB.users=DB.users.filter(u=>u.id!==id);saveDB();renderAdmin();}
+function setOrgRole(id,r){const u=DB.users.find(x=>x.id===id);if(u){u.orgRole=r;saveDB();}}
 function setSysRole(id,r){
   const u=DB.users.find(x=>x.id===id);if(!u)return;u.sysRole=r;if(r==='admin'||r==='manager'){u.canSee=true;u.canCmt=true;}
   DB.notifications.unshift({id:genId('n'),type:'role',from:CU.name,fromColor:CU.color,to:id,newRole:r,time:tnow(),date:td(),read:false});
@@ -1959,41 +1957,11 @@ function cloudLoad(cb){
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 loadDB();
 applyBranding();
-// Load from server on startup
-if(typeof SERVER_URL !== 'undefined' && SERVER_URL){
-  fetch(SERVER_URL+'/data')
-  .then(function(r){return r.json();})
-  .then(function(j){
-    if(j.ok && j.data && j.data.users && j.data.users.length > 0){
-      var d = j.data;
-      // Merge ALL users from server
-      if(!DB.users) DB.users = [];
-      if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
-      d.users.forEach(function(su){
-        if(!DB.deletedUsers)DB.deletedUsers=[];
-        if(DB.deletedUsers.includes(su.id))return;//skip deleted
-        var exists = DB.users.find(function(u){return u.id===su.id;});
-        if(!exists) DB.users.push(su);
-        else Object.assign(exists, su);
-      });
-      // Load all data
-      ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
-        if(d[k]!==undefined) DB[k]=d[k];
-      });
-      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-      applyBranding();
-    }
-    const _sid=loadSession();
-    if(_sid){const _su=DB.users.find(x=>x.id===_sid&&x.status==='active');if(_su)bootApp(_su);}
-  })
-  .catch(function(){
-    const _sid=loadSession();
-    if(_sid){const _su=DB.users.find(x=>x.id===_sid&&x.status==='active');if(_su)bootApp(_su);}
-  });
-} else {
+// Auto-sync with server on load
+cloudLoad(function(){
   const _sid=loadSession();
   if(_sid){const _su=DB.users.find(x=>x.id===_sid&&x.status==='active');if(_su)bootApp(_su);}
-}
+});
 </script>
 <script>
 // ══ CHAT ══
@@ -2287,119 +2255,225 @@ function exportAllXLSX(){
 
 
 <script>
-// Override renderAdmin to pull from server first
-var _origRA = typeof renderAdmin !== 'undefined' ? renderAdmin : null;
-if(_origRA){
-  renderAdmin = function(){
-    _origRA();
-    renderAllAccountsPanel();
-    renderHierarchyPanel();
-    // Also pull latest from server when admin tab opens
-    if(SERVER_URL) pullOtherUsersData();
-  };
+// ══ ALL NEW FUNCTIONS ══════════════════════════════════════════
+
+// TASK ROW BUILDER - avoids inline quote nesting issues
+function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
+  if(t.todayOnly&&t.addedDate&&t.addedDate!==myD)return '';
+  var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
+  var isDone=(ts==='done'||chk),isNA=(ts==='na'),isNO=(ts==='no');
+  var cls='trow'+(isDone?' done':isNA?' trow-na':isNO?' trow-no':'');
+  var h='<div class="'+cls+'"><span class="tnum">'+(ti+1)+'</span>';
+  if(isToday){
+    h+='<div class="cb'+(isDone?' chk':'')+' tcb" data-bid="'+b.id+'" data-tid="'+t.id+'"></div>';
+    h+='<span class="ttxt tcb" data-bid="'+b.id+'" data-tid="'+t.id+'">'+t.name+'</span>';
+  } else {
+    h+='<div class="cb'+(isDone?' chk':'')+' ro"></div>';
+    h+='<span class="ttxt'+(isDone?' done':isNO?' trow-no':'')+'">'+t.name+'</span>';
+    if(isNA)h+='<span class="ttime-badge" style="background:rgba(232,147,74,.2);color:#E8934A">NA</span>';
+    if(isNO)h+='<span class="ttime-badge" style="background:rgba(232,80,80,.2);color:#E85555">NO</span>';
+    if(isDone)h+='<span class="ttime-badge" style="background:rgba(91,189,138,.2);color:#5BBD8A">DONE</span>';
+  }
+  if(t.timeSlot)h+='<span class="ttime-badge">'+t.timeSlot+'</span>';
+  if(isToday){
+    h+='<div class="task-status-btns">';
+    h+='<button class="tsb tsb-na'+(isNA?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNA?'':'na')+'">NA</button>';
+    h+='<button class="tsb tsb-no'+(isNO?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNO?'':'no')+'">NO</button>';
+    h+='</div>';
+  }
+  if(cmts)h+='<span class="ncnt tcmt" data-ctx=\''+ctx+'\'>'+cmts+'</span>';
+  if(isToday)h+='<button class="note-btn tcmt" data-ctx=\''+ctx+'\'>Note</button>';
+  if(isToday)h+='<div class="task-acts"><button class="ta-btn tedit" data-bi="'+bi+'" data-ti="'+ti+'">Edit</button><button class="ta-btn del tdel" data-bi="'+bi+'" data-ti="'+ti+'">&#215;</button></div>';
+  h+='</div>'+getTAttHTML(bi,ti,t.id,isToday);
+  return h;
 }
 
-// ══ SAFE CLOUD SYNC ════════════════════════════════════════════════
-// Each user only pushes their OWN data
-// Polling only reads OTHER users data - never touches current user
+// Event delegation for task buttons
+document.addEventListener('click',function(e){
+  var el=e.target;
+  if(el.classList.contains('tcb')){chkTask(el.dataset.bid,el.dataset.tid);}
+  if(el.classList.contains('tsbtn')){setTaskStatus(el.dataset.bid,el.dataset.tid,el.dataset.st||'');}
+  if(el.classList.contains('tcmt')){try{openCmt(el.dataset.ctx);}catch(x){}}
+  if(el.classList.contains('tedit')){openET(parseInt(el.dataset.bi),parseInt(el.dataset.ti));}
+  if(el.classList.contains('tdel')){delTask(parseInt(el.dataset.bi),parseInt(el.dataset.ti));}
+});
 
+// FORGOT PASSWORD
+function showForgotPw(){
+  var m=document.createElement('div');
+  m.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  m.innerHTML='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:24px;width:320px;max-width:90vw"><h3 style="margin-bottom:8px;font-size:16px">Reset Password</h3><p style="font-size:12px;color:var(--mu);margin-bottom:16px;line-height:1.6">Enter your email and set a new password.</p><input class="fi" id="fp-email" placeholder="Your email" style="margin-bottom:10px"/><input class="fi" type="password" id="fp-newpw" placeholder="New password (min 6 chars)" style="margin-bottom:14px"/><div style="display:flex;gap:8px"><button class="btn-pri" onclick="doResetPw()" style="flex:1">Reset</button><button class="btn-sec" onclick="this.closest(\'[style*=fixed]\').remove()" style="flex:1">Cancel</button></div><div id="fp-msg" style="font-size:12px;margin-top:8px;min-height:16px"></div></div>';
+  document.body.appendChild(m);
+  m.onclick=function(e){if(e.target===m)m.remove();};
+}
+function doResetPw(){
+  var email=document.getElementById('fp-email').value.trim().toLowerCase();
+  var npw=document.getElementById('fp-newpw').value;
+  var msg=document.getElementById('fp-msg');
+  if(!email||!npw){msg.textContent='Fill all fields.';msg.style.color='var(--err)';return;}
+  if(npw.length<6){msg.textContent='Min 6 characters.';msg.style.color='var(--err)';return;}
+  var u=DB.users.find(function(x){return x.email.toLowerCase()===email;});
+  if(!u){msg.textContent='Email not found.';msg.style.color='var(--err)';return;}
+  u.ph=sh(npw);saveDB();
+  msg.textContent='Password reset! You can now login.';msg.style.color='var(--ok)';
+  setTimeout(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();},2000);
+}
+
+// REMOVE USER (permanent - tracked in deletedUsers)
+function removeUser(id){
+  if(!confirm('Remove this user permanently?'))return;
+  var u=DB.users.find(function(x){return x.id===id;});
+  if(u){u._deleted=true;u.status='rejected';}
+  if(!DB.deletedUsers)DB.deletedUsers=[];
+  if(!DB.deletedUsers.includes(id))DB.deletedUsers.push(id);
+  if(DB.blocks&&DB.blocks[id])delete DB.blocks[id];
+  if(DB.tracker&&DB.tracker[id])delete DB.tracker[id];
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  var url=localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
+  var payload={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+  fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  .then(function(){renderAdmin();alert('User removed!');})
+  .catch(function(){renderAdmin();alert('Removed locally.');});
+}
+
+// CLEAN DUPLICATES
+function cleanDuplicates(){
+  var seen={},clean=[];
+  DB.users.forEach(function(u){
+    var key=u.email.toLowerCase();
+    if(u._deleted||(DB.deletedUsers||[]).includes(u.id))return;
+    if(!seen[key]){seen[key]=u;clean.push(u);}
+    else if(u.status==='active'&&seen[key].status!=='active'){
+      var i=clean.indexOf(seen[key]);clean[i]=u;seen[key]=u;
+    }
+  });
+  var removed=DB.users.filter(function(u){return !u._deleted&&!(DB.deletedUsers||[]).includes(u.id);}).length-clean.length;
+  DB.users=clean;
+  saveDB();
+  renderAdmin();
+  alert(removed>0?'Removed '+removed+' duplicate(s).':'No duplicates found.');
+}
+
+// CHANGE DESIGNATION POPUP
+function changeDesig(id,current){
+  var u=DB.users.find(function(x){return x.id===id;});if(!u)return;
+  var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;
+  var existing=document.getElementById('desig-picker-modal');if(existing)existing.remove();
+  var modal=document.createElement('div');
+  modal.id='desig-picker-modal';
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  var html='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:20px;min-width:260px;max-width:320px">';
+  html+='<div style="font-size:14px;font-weight:600;margin-bottom:14px">Change designation for '+u.name+'</div>';
+  html+='<div style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto">';
+  opts.forEach(function(r){html+='<button onclick="applyDesig(\''+id+'\',\''+r+'\')" style="background:'+(r===current?'var(--ac)':'var(--s2)')+';border:1px solid var(--b2);border-radius:7px;padding:9px 14px;color:'+(r===current?'#000':'var(--tx)')+';font-size:13px;cursor:pointer;text-align:left">'+r+'</button>';});
+  html+='</div><button onclick="document.getElementById(\'desig-picker-modal\').remove()" style="margin-top:12px;width:100%;padding:8px;background:none;border:1px solid var(--b2);border-radius:7px;color:var(--mu);cursor:pointer;font-size:13px">Cancel</button></div>';
+  modal.innerHTML=html;
+  document.body.appendChild(modal);
+  modal.onclick=function(e){if(e.target===modal)modal.remove();};
+}
+function applyDesig(id,role){
+  var u=DB.users.find(function(x){return x.id===id;});if(!u)return;
+  u.orgRole=role;
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(pushMyData,3000);
+  var m=document.getElementById('desig-picker-modal');if(m)m.remove();
+  renderAdmin();
+}
+
+// SYNC FUNCTIONS
 function pushMyData(){
-  // Push ONLY current user's personal blocks/tracker
   if(!SERVER_URL||!CU)return;
-  var payload={userId:CU.id};
-  payload.blocks=(DB.blocks&&DB.blocks[CU.id])||[];
-  payload.tracker=(DB.tracker&&DB.tracker[CU.id])||{};
-  payload.taskAtt={};
-  if(DB.taskAtt){Object.keys(DB.taskAtt).forEach(function(k){if(k.indexOf(CU.id)!==-1)payload.taskAtt[k]=DB.taskAtt[k];});}
-  fetch(SERVER_URL+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});
-
-  // Push shared data
-  var shared={users:DB.users||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
-  fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(shared)}).then(function(r){return r.json();}).then(function(j){if(j.ok){_lastSync=Date.now();updateSyncDot(true);}}).catch(function(){});
+  var url=SERVER_URL||'https://habitly-server.onrender.com';
+  var up={userId:CU.id,blocks:(DB.blocks&&DB.blocks[CU.id])||[],tracker:(DB.tracker&&DB.tracker[CU.id])||{},taskAtt:{}};
+  if(DB.taskAtt){Object.keys(DB.taskAtt).forEach(function(k){if(k.indexOf(CU.id)!==-1)up.taskAtt[k]=DB.taskAtt[k];});}
+  fetch(url+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(up)}).catch(function(){});
+  var sp={users:DB.users||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}},deletedUsers:DB.deletedUsers||[]};
+  fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sp)}).then(function(r){return r.json();}).then(function(j){if(j.ok){_lastSync=Date.now();updateSyncDot(true);}}).catch(function(){});
 }
 
 function pullOtherUsersData(){
-  // ONLY fetch other users data - never touch current user's blocks/tracker
   if(!SERVER_URL||!CU)return;
-  fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
+  var url=SERVER_URL||'https://habitly-server.onrender.com';
+  fetch(url+'/data').then(function(r){return r.json();}).then(function(j){
     if(!j.ok||!j.data)return;
     var d=j.data,changed=false;
-    // Merge other users blocks
-    if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){if(uid!==CU.id){DB.blocks[uid]=d.blocks[uid];changed=true;}});}
-    // Merge other users tracker
-    if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){if(uid!==CU.id){DB.tracker[uid]=d.tracker[uid];changed=true;}});}
-    // Merge new users
-    if(d.users&&Array.isArray(d.users)){
-      if(!DB.users)DB.users=[];
-      var removedIds=d.removedUsers||[];
-      // First remove any locally present users that server has marked removed
-      if(removedIds.length>0){
-        var before=DB.users.length;
-        DB.users=DB.users.filter(function(u){return !removedIds.includes(u.id);});
-        if(DB.users.length<before)changed=true;
-      }
-      d.users.forEach(function(su){
-        if(removedIds.includes(su.id))return; // Skip removed users
-        var ex=DB.users.find(function(u){return u.id===su.id;});
-        if(!DB.deletedUsers)DB.deletedUsers=[];
-    if(DB.deletedUsers.includes(su.id)){return;}//skip deleted
-    if(!ex){DB.users.push(su);changed=true;}
-        else if(su.id!==CU.id){['status','orgRole','sysRole','canSee','canCmt','canReview','canTicket','canMasterCreate','subordinates'].forEach(function(k){if(su[k]!==undefined)ex[k]=su[k];});changed=true;}
-      });
-    }
-    // Notifications and tickets
+    if(d.deletedUsers&&Array.isArray(d.deletedUsers)){if(!DB.deletedUsers)DB.deletedUsers=[];d.deletedUsers.forEach(function(id){if(!DB.deletedUsers.includes(id)){DB.deletedUsers.push(id);DB.users=DB.users.filter(function(u){return u.id!==id;});changed=true;}});}
+    if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){DB.blocks[uid]=d.blocks[uid];changed=true;}});}
+    if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){DB.tracker[uid]=d.tracker[uid];changed=true;}});}
+    if(d.users&&Array.isArray(d.users)){if(!DB.users)DB.users=[];d.users.forEach(function(su){if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;var ex=DB.users.find(function(u){return u.id===su.id;});if(!ex){DB.users.push(su);changed=true;}else if(su.id!==CU.id){['status','orgRole','sysRole','canSee','canCmt','canReview','canTicket','canMasterCreate','subordinates'].forEach(function(k){if(su[k]!==undefined)ex[k]=su[k];});changed=true;}});}
     if(d.notifications){DB.notifications=d.notifications;changed=true;}
     if(d.tickets){DB.tickets=d.tickets;changed=true;}
-    if(d.chat){DB.chat=d.chat;changed=true;}
-    if(changed){
-      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-      _lastSync=Date.now();updateSyncDot(true);
-      var at=document.querySelector('.tb.on');
-      if(at){var t=at.dataset.tab;if(t==='team')renderTeam();else if(t==='admin')renderAdmin();else if(t==='summary')renderSummary();renderNotifBadge();updateCTBadge();}
-    }
+    if(d.chat&&d.chat.rooms){if(!DB.chat)DB.chat={rooms:{}};Object.keys(d.chat.rooms).forEach(function(rid){var sr=d.chat.rooms[rid];if(!DB.chat.rooms[rid]){DB.chat.rooms[rid]=sr;changed=true;}else{var lm=DB.chat.rooms[rid].messages||[];var sm=sr.messages||[];var ids=new Set(lm.map(function(m){return m.id;}));sm.forEach(function(m){if(!ids.has(m.id)){lm.push(m);changed=true;}});lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});DB.chat.rooms[rid].messages=lm;}});}
+    if(changed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}_lastSync=Date.now();updateSyncDot(true);var at=document.querySelector('.tb.on');if(at){var t=at.dataset.tab;if(t==='team')renderTeam();else if(t==='admin')renderAdmin();else if(t==='summary')renderSummary();renderNotifBadge();updateCTBadge();}}
   }).catch(function(){});
 }
 
-function updateSyncDot(ok){
-  var dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-status-txt'),last=document.getElementById('sync-last');
-  if(dot)dot.style.background=ok?'var(--ok)':'var(--warn)';
-  if(txt)txt.textContent=ok?'Connected':'Not connected';
-  if(last&&_lastSync)last.textContent=new Date(_lastSync).toLocaleTimeString('en-IN');
-}
+function updateSyncDot(ok){var dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-status-txt'),last=document.getElementById('sync-last');if(dot)dot.style.background=ok?'var(--ok)':'var(--warn)';if(txt)txt.textContent=ok?'Connected':'Not connected';if(last&&_lastSync)last.textContent=new Date(_lastSync).toLocaleTimeString('en-IN');}
 function showSyncStatus(){updateSyncDot(!!SERVER_URL&&_lastSync>0);var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=SERVER_URL||'Not set';}
 function setupTeamSync(){var m=document.getElementById('sync-setup-modal');if(m)m.classList.add('on');}
-function forceSyncNow(){if(!SERVER_URL){alert('Not connected.');return;}pushMyData();setTimeout(function(){pullOtherUsersData();alert('Synced!');},1000);}
-function adminCreateSync(){
-  var el=document.getElementById('sync-server-url'),url=(el?el.value.trim():'')||SERVER_URL;
-  url=url.replace(/\/+$/,'');
-  fetch(url+'/health').then(function(r){return r.json();}).then(function(j){
-    if(j.ok){SERVER_URL=url;localStorage.setItem('habitly_server_url',url);pushMyData();document.getElementById('sync-setup-modal').classList.remove('on');var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=url;var rv=document.getElementById('team-sync-reveal');if(rv)rv.style.display='block';var id=document.getElementById('team-sync-id-display');if(id)id.textContent=url;updateSyncDot(true);alert('Connected!\n\nShare this URL with your team:\n'+url);}
-    else{alert('Server error. Check URL.');}
-  }).catch(function(e){alert('Cannot connect.\nError: '+e.message+'\n\nWait 30 seconds and try again (server may be waking up).');});
-}
-function joinSyncBin(){
-  var el=document.getElementById('sync-join-id'),url=(el?el.value.trim():'')||SERVER_URL;
-  if(!url||!url.startsWith('http')){alert('Please enter the server URL.');return;}
-  url=url.replace(/\/+$/,'');
-  SERVER_URL=url;localStorage.setItem('habitly_server_url',url);
-  document.getElementById('sync-setup-modal').classList.remove('on');
-  pullOtherUsersData();
-  var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=url;
-  updateSyncDot(true);
-  alert('Connected! You can now login or create an account.');
-}
-function renderAllAccountsPanel(){var el=document.getElementById('all-users-list');if(!el)return;var stC={active:'var(--ok)',pending:'var(--warn)',rejected:'var(--err)'};var all=DB.users.filter(function(u){return u.id!=='admin-001';});el.innerHTML=all.length?all.map(function(u){return'<div class="arow"><div class="av av-xs" style="'+avs(u.color)+'">'+ini(u.name)+'</div><div class="ainfo"><div class="aname">'+u.name+(u.id===CU.id?' <span style="font-size:10px;color:var(--ac)">(you)</span>':'')+'</div><div class="aemail">'+u.email+'</div></div><div class="aacts"><span style="font-size:11px;font-weight:600;color:'+(stC[u.status]||'var(--mu)')+'">'+u.status.toUpperCase()+'</span> <span class="rtag" style="font-size:9px;background:var(--s2);color:var(--mu)">'+rlbl(u)+'</span>'+(u.status==='pending'?'<button class="abtn ab-ok" onclick="openApproveModal(\''+u.id+'\')">Approve</button>':'')+(u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-info" style="font-size:10px" onclick="openApproveModal(\''+u.id+'\')">Edit access</button>':'')+( u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-err" style="font-size:10px" onclick="removeUser(\''+u.id+'\')">Remove</button>':'')+'</div></div>';}).join(''):'<div style="padding:14px 18px;font-size:13px;color:var(--mu)">No users yet</div>';}
-function renderHierarchyPanel(){var el=document.getElementById('hierarchy-display');if(!el)return;var active=DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001';});var grouped={};HIERARCHY.forEach(function(h){grouped[h]=[];});active.forEach(function(u){var r=u.orgRole||'Other';if(grouped[r]!==undefined)grouped[r].push(u);else{if(!grouped['Other'])grouped['Other']=[];grouped['Other'].push(u);}});var colors=['#E8C547','#5B9BD5','#5B9BD5','#5BBD8A','#5BBD8A','#E8934A','#E8934A','#E85555'];var html='';HIERARCHY.forEach(function(level,i){var users=grouped[level]||[];var col=colors[i]||'var(--mu)';html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="width:20px;height:20px;border-radius:50%;background:'+col+'22;color:'+col+';font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+(i+1)+'</div><div><div style="font-size:12px;font-weight:600;color:'+col+'">'+level+'</div>'+(users.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'+users.map(function(u){return'<span style="font-size:10px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:1px 8px">'+u.name+'</span>';}).join('')+'</div>':'<div style="font-size:10px;color:var(--mu);margin-top:2px;font-style:italic">No members</div>')+'</div></div>';});el.innerHTML=html;}
+function forceSyncNow(){if(!SERVER_URL){alert('Not connected.');return;}var btn=document.querySelector('[onclick="forceSyncNow()"]');if(btn){btn.textContent='Syncing...';btn.disabled=true;}pushMyData();setTimeout(function(){pullOtherUsersData();if(btn){btn.textContent='Sync now';btn.disabled=false;}alert('Synced!');},1200);}
+function adminCreateSync(){var el=document.getElementById('sync-server-url'),url=(el?el.value.trim():'')||SERVER_URL;url=url.replace(/\/+$/,'');fetch(url+'/health').then(function(r){return r.json();}).then(function(j){if(j.ok){SERVER_URL=url;localStorage.setItem('habitly_server_url',url);pushMyData();document.getElementById('sync-setup-modal').classList.remove('on');var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=url;var rv=document.getElementById('team-sync-reveal');if(rv)rv.style.display='block';var id2=document.getElementById('team-sync-id-display');if(id2)id2.textContent=url;updateSyncDot(true);alert('Connected!\n\nShare this URL with your team:\n'+url);}else{alert('Server error.');}}).catch(function(e){alert('Cannot connect.\n'+e.message+'\n\nWait 30 seconds and try again.');});}
+function joinSyncBin(){var el=document.getElementById('sync-join-id'),url=(el?el.value.trim():'')||SERVER_URL;if(!url||!url.startsWith('http')){alert('Enter the server URL.');return;}url=url.replace(/\/+$/,'');SERVER_URL=url;localStorage.setItem('habitly_server_url',url);document.getElementById('sync-setup-modal').classList.remove('on');pullOtherUsersData();var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=url;updateSyncDot(true);alert('Connected! Login or create an account.');}
+
+// ADMIN PANEL FUNCTIONS
+function renderAllAccountsPanel(){var el=document.getElementById('all-users-list');if(!el)return;var stC={active:'var(--ok)',pending:'var(--warn)',rejected:'var(--err)'};var all=DB.users.filter(function(u){return u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);});el.innerHTML=all.length?all.map(function(u){return'<div class="arow"><div class="av av-xs" style="'+avs(u.color)+'">'+ini(u.name)+'</div><div class="ainfo"><div class="aname">'+u.name+(u.id===CU.id?' <span style="font-size:10px;color:var(--ac)">(you)</span>':'')+'</div><div class="aemail">'+u.email+'</div></div><div class="aacts"><span style="font-size:11px;font-weight:600;color:'+(stC[u.status]||'var(--mu)')+'">'+u.status.toUpperCase()+'</span> <span class="rtag" style="font-size:9px;background:var(--s2);color:var(--mu)">'+rlbl(u)+'</span>'+(u.status==='pending'?'<button class="abtn ab-ok" onclick="openApproveModal(\''+u.id+'\')">Approve</button>':'')+(u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-info" style="font-size:10px" onclick="openApproveModal(\''+u.id+'\')">Edit access</button>':'')+( u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-err" style="font-size:10px" onclick="removeUser(\''+u.id+'\')">Remove</button>':'')+'</div></div>';}).join(''):'<div style="padding:14px 18px;font-size:13px;color:var(--mu)">No users yet</div>';}
+function renderHierarchyPanel(){var el=document.getElementById('hierarchy-display');if(!el)return;var active=DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted;});var grouped={};HIERARCHY.forEach(function(h){grouped[h]=[];});active.forEach(function(u){var r=u.orgRole||'Other';if(grouped[r]!==undefined)grouped[r].push(u);});var colors=['#E8C547','#5B9BD5','#5B9BD5','#5BBD8A','#5BBD8A','#E8934A','#E8934A','#E85555'];var html='';HIERARCHY.forEach(function(level,i){var users=grouped[level]||[];var col=colors[i]||'var(--mu)';html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="width:20px;height:20px;border-radius:50%;background:'+col+'22;color:'+col+';font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+(i+1)+'</div><div><div style="font-size:12px;font-weight:600;color:'+col+'">'+level+'</div>'+(users.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'+users.map(function(u){return'<span style="font-size:10px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:1px 8px">'+u.name+'</span>';}).join('')+'</div>':'<div style="font-size:10px;color:var(--mu);margin-top:2px;font-style:italic">No members</div>')+'</div></div>';});el.innerHTML=html;}
 var _appId=null;
 function openApproveModal(id){_appId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;document.getElementById('approve-info').textContent=u.name+' — '+u.email;var sel=document.getElementById('approve-desig');var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option value="'+r+'"'+(u.orgRole===r?' selected':'')+'>'+r+'</option>';}).join('');document.getElementById('ap-canSee').checked=!!(u.canSee||u.sysRole==='admin');document.getElementById('ap-canCmt').checked=!!(u.canCmt||u.sysRole==='admin');document.getElementById('ap-canReview').checked=!!(u.canReview||u.sysRole==='admin');document.getElementById('ap-canTicket').checked=!!(u.canTicket||u.sysRole==='admin');var mEl=document.getElementById('ap-canMaster');if(mEl)mEl.checked=!!(u.canMasterCreate||u.sysRole==='admin');document.getElementById('approve-modal').classList.add('on');}
-function doApprove(){var u=DB.users.find(function(x){return x.id===_appId;});if(!u)return;u.orgRole=document.getElementById('approve-desig').value;u.canSee=document.getElementById('ap-canSee').checked;u.canCmt=document.getElementById('ap-canCmt').checked;u.canReview=document.getElementById('ap-canReview').checked;u.canTicket=document.getElementById('ap-canTicket').checked;var mEl=document.getElementById('ap-canMaster');u.canMasterCreate=!!(mEl&&mEl.checked);u.subordinates=u.subordinates||[];var wasActive=(u.status==='active');u.status='active';if(!wasActive){DB.notifications.unshift({id:genId('n'),type:'approved',from:CU.name,fromColor:CU.color,to:_appId,text:'Account approved as '+u.orgRole+'. Welcome to Habitly!',time:tnow(),date:td(),read:false});}saveDB();document.getElementById('approve-modal').classList.remove('on');renderAdmin();renderNotifBadge();}
+function doApprove(){var u=DB.users.find(function(x){return x.id===_appId;});if(!u)return;u.orgRole=document.getElementById('approve-desig').value;u.canSee=document.getElementById('ap-canSee').checked;u.canCmt=document.getElementById('ap-canCmt').checked;u.canReview=document.getElementById('ap-canReview').checked;u.canTicket=document.getElementById('ap-canTicket').checked;var mEl=document.getElementById('ap-canMaster');u.canMasterCreate=!!(mEl&&mEl.checked);u.subordinates=u.subordinates||[];var was=(u.status==='active');u.status='active';if(!was){DB.notifications.unshift({id:genId('n'),type:'approved',from:CU.name,fromColor:CU.color,to:_appId,text:'Account approved as '+u.orgRole+'.',time:tnow(),date:td(),read:false});}saveDB();document.getElementById('approve-modal').classList.remove('on');renderAdmin();renderNotifBadge();}
 var _subId=null;
-function openSubModal(id){_subId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;var myLvl=hierarchyLvl(u.orgRole);document.getElementById('sub-info').textContent='Who can '+u.name+' review?';var subs=u.subordinates||[];var others=DB.users.filter(function(x){return x.status==='active'&&x.id!==id&&x.id!=='admin-001';}).sort(function(a,b){return hierarchyLvl(a.orgRole)-hierarchyLvl(b.orgRole);});var html='';others.forEach(function(m){var rc=rcolor(m),isBelow=(hierarchyLvl(m.orgRole)>myLvl);html+='<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:'+(isBelow?'var(--s2)':'rgba(255,255,255,.02)')+';border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" value="'+m.id+'" '+(subs.includes(m.id)?'checked':'')+' style="accent-color:var(--ac);flex-shrink:0"/><div class="av av-xs" style="'+avs(m.color)+'">'+ini(m.name)+'</div><div><div style="font-size:13px;font-weight:500">'+m.name+'</div><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></label>';});document.getElementById('sub-list').innerHTML=html||'<div style="font-size:13px;color:var(--mu);padding:8px 0">No other members</div>';document.getElementById('sub-modal').classList.add('on');}
-function saveSubs(){var u=DB.users.find(function(x){return x.id===_subId;});if(!u)return;var cbs=document.querySelectorAll('#sub-list input[type=checkbox]:checked');u.subordinates=Array.from(cbs).map(function(cb){return cb.value;});if(u.subordinates.length>0)u.canReview=true;saveDB();document.getElementById('sub-modal').classList.remove('on');renderAdmin();alert('Saved!');}
-function quickApprove(id){openApproveModal(id);}
+function openSubModal(id){_subId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;var myLvl=hierarchyLvl(u.orgRole);document.getElementById('sub-info').textContent='Who can '+u.name+' review?';var subs=u.subordinates||[];var others=DB.users.filter(function(x){return x.status==='active'&&x.id!==id&&x.id!=='admin-001'&&!x._deleted;}).sort(function(a,b){return hierarchyLvl(a.orgRole)-hierarchyLvl(b.orgRole);});var html='';others.forEach(function(m){var rc=rcolor(m),isBelow=(hierarchyLvl(m.orgRole)>myLvl);html+='<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:'+(isBelow?'var(--s2)':'rgba(255,255,255,.02)')+';border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" value="'+m.id+'" '+(subs.includes(m.id)?'checked':'')+' style="accent-color:var(--ac);flex-shrink:0"/><div class="av av-xs" style="'+avs(m.color)+'">'+ini(m.name)+'</div><div><div style="font-size:13px;font-weight:500">'+m.name+'</div><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></label>';});document.getElementById('sub-list').innerHTML=html||'<div style="font-size:13px;color:var(--mu);padding:8px 0">No other members</div>';document.getElementById('sub-modal').classList.add('on');}
+function saveSubs(){var u=DB.users.find(function(x){return x.id===_subId;});if(!u)return;var cbs=document.querySelectorAll('#sub-list input[type=checkbox]:checked');u.subordinates=Array.from(cbs).map(function(cb){return cb.value;});if(u.subordinates.length>0)u.canReview=true;saveDB();document.getElementById('sub-modal').classList.remove('on');renderAdmin();alert('Saved! '+u.name+' can review '+u.subordinates.length+' member(s).');}
 function showAddMemberForm(){var f=document.getElementById('add-member-form');f.style.display=(f.style.display==='none'?'block':'none');var sel=document.getElementById('am-desig');if(sel){var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option value="'+r+'">'+r+'</option>';}).join('');}}
 function addMemberManually(){var name=document.getElementById('am-name').value.trim(),email=document.getElementById('am-email').value.trim().toLowerCase(),pass=document.getElementById('am-pass').value,desig=document.getElementById('am-desig').value,msg=document.getElementById('am-msg');if(!name||!email||!pass){msg.textContent='All fields required.';msg.style.color='var(--err)';return;}if(DB.users.find(function(u){return u.email.toLowerCase()===email;})){msg.textContent='Email already registered.';msg.style.color='var(--err)';return;}var COLS=['#5B9BD5','#E8934A','#5BBD8A','#D4537E','#AFA9EC','#FAC775'];DB.users.push({id:genId('u'),name:name,email:email,ph:sh(pass),orgRole:desig,sysRole:'member',color:COLS[DB.users.length%COLS.length],status:'active',canSee:false,canCmt:false,canReview:false,canTicket:false,canMasterCreate:false,subordinates:[],photo:'',phone:'',dept:'',bio:'',joinDate:td()});saveDB();msg.textContent='Added! Login: '+email;msg.style.color='var(--ok)';document.getElementById('am-name').value='';document.getElementById('am-email').value='';document.getElementById('am-pass').value='';renderAdmin();}
-function diagUsers(){var out='Users ('+DB.users.length+'):\n';DB.users.forEach(function(u,i){out+=(i+1)+'. '+u.name+' | '+u.email+' | '+u.status+' | '+(u.orgRole||'no role')+'\n';});document.getElementById('diag-out').textContent=out;}
+function diagUsers(){var out='Users ('+DB.users.length+'):\n';DB.users.forEach(function(u,i){out+=(i+1)+'. '+u.name+' | '+u.email+' | '+u.status+' | '+(u.orgRole||'no role')+(u._deleted?' [DELETED]':'')+'\n';});document.getElementById('diag-out').textContent=out;}
+function setOrgRole(id,r){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u.orgRole=r;try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(pushMyData,3000);}
+function setAccess(id,f,v){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u[f]=v;var L={canSee:'view team',canCmt:'comment',canReview:'review',canTicket:'tickets',canMasterCreate:'master'};DB.notifications.unshift({id:genId('n'),type:'access',from:CU.name,fromColor:CU.color,to:id,text:'Admin '+(v?'granted':'revoked')+': '+(L[f]||f)+'.',time:tnow(),date:td(),read:false});saveDB();renderNotifBadge();}
+function quickApprove(id){openApproveModal(id);}
+
+// Override renderAdmin to also render new panels + pull from server
+var _origRA=null;
+function initAdminPanels(){
+  if(_origRA)return;
+  _origRA=renderAdmin;
+  renderAdmin=function(){
+    if(SERVER_URL)pullOtherUsersData();
+    _origRA();
+    renderAllAccountsPanel();
+    renderHierarchyPanel();
+  };
+}
+
+// Startup: load from server then check session
+function startApp(){
+  loadDB();applyBranding();
+  initAdminPanels();
+  if(SERVER_URL){
+    fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
+      if(j.ok&&j.data&&j.data.users&&j.data.users.length>0){
+        var d=j.data;
+        if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
+        if(!DB.users)DB.users=[];
+        d.users.forEach(function(su){
+          if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
+          var ex=DB.users.find(function(u){return u.id===su.id;});
+          if(!ex)DB.users.push(su);else Object.assign(ex,su);
+        });
+        ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
+        try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+        applyBranding();
+      }
+    }).catch(function(){}).finally(function(){
+      var sid=loadSession();
+      if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
+      if(window._pollInterval)clearInterval(window._pollInterval);
+      window._pollInterval=setInterval(pullOtherUsersData,60000);
+    });
+  } else {
+    var sid=loadSession();
+    if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
+  }
+}
 </script>
 </body>
 </html>
