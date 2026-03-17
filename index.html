@@ -841,7 +841,7 @@ let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTk
 function saveDB(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){console.warn('Storage warning:',e.message);}cloudSync();}
 function loadDB(){
   try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt'].forEach(k=>{if(d[k]!==undefined)DB[k]=d[k];});}}catch(e){}
-  if(!DB.designations)DB.designations=[];if(!DB.chat)DB.chat={rooms:{}};if(!DB.taskAtt)DB.taskAtt={};DB.users.forEach(function(u){if(u.canTicket===undefined)u.canTicket=(u.sysRole==='admin');if(u.canReview===undefined)u.canReview=(u.sysRole==='admin'||!!u.canSee);if(!u.subordinates)u.subordinates=[];if(u.canMasterCreate===undefined)u.canMasterCreate=(u.sysRole==='admin');});
+  if(!DB.designations)DB.designations=[];if(!DB.deletedUsers)DB.deletedUsers=[];if(!DB.chat)DB.chat={rooms:{}};if(!DB.taskAtt)DB.taskAtt={};DB.users.forEach(function(u){if(u.canTicket===undefined)u.canTicket=(u.sysRole==='admin');if(u.canReview===undefined)u.canReview=(u.sysRole==='admin'||!!u.canSee);if(!u.subordinates)u.subordinates=[];if(u.canMasterCreate===undefined)u.canMasterCreate=(u.sysRole==='admin');});
   if(!DB.settings)DB.settings={companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'};
   if(!DB.settings.logoFont)DB.settings.logoFont='Syne';
   if(!DB.settings.logoSize)DB.settings.logoSize=16;
@@ -1614,31 +1614,18 @@ function cleanDuplicates(){
 }
 
 function removeUser(id){
-  if(!confirm('Remove this user? This cannot be undone.'))return;
-  // Remove locally
+  if(!confirm('Remove this user? They will lose all access.'))return;
   DB.users=DB.users.filter(function(u){return u.id!==id;});
+  if(!DB.deletedUsers)DB.deletedUsers=[];
+  if(!DB.deletedUsers.includes(id))DB.deletedUsers.push(id);
   if(DB.blocks&&DB.blocks[id])delete DB.blocks[id];
   if(DB.tracker&&DB.tracker[id])delete DB.tracker[id];
   try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-  // Remove from server permanently
-  if(SERVER_URL){
-    fetch(SERVER_URL+'/remove/user',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({userId:id})
-    }).then(function(r){return r.json();})
-    .then(function(j){
-      renderAdmin();
-      if(j.ok) alert('User permanently removed!');
-      else alert('Removed locally. Server: '+j.reason);
-    }).catch(function(){
-      renderAdmin();
-      alert('Removed locally. Server offline.');
-    });
-  } else {
-    renderAdmin();
-    alert('User removed!');
-  }
+  var url=SERVER_URL||localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
+  var payload={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+  fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  .then(function(){renderAdmin();alert('User removed!');})
+  .catch(function(){renderAdmin();alert('Removed locally.');});
 }
 
 function setOrgRole(id,r){
@@ -1981,7 +1968,10 @@ if(typeof SERVER_URL !== 'undefined' && SERVER_URL){
       var d = j.data;
       // Merge ALL users from server
       if(!DB.users) DB.users = [];
+      if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
       d.users.forEach(function(su){
+        if(!DB.deletedUsers)DB.deletedUsers=[];
+        if(DB.deletedUsers.includes(su.id))return;//skip deleted
         var exists = DB.users.find(function(u){return u.id===su.id;});
         if(!exists) DB.users.push(su);
         else Object.assign(exists, su);
@@ -2351,7 +2341,9 @@ function pullOtherUsersData(){
       d.users.forEach(function(su){
         if(removedIds.includes(su.id))return; // Skip removed users
         var ex=DB.users.find(function(u){return u.id===su.id;});
-        if(!ex){DB.users.push(su);changed=true;}
+        if(!DB.deletedUsers)DB.deletedUsers=[];
+    if(DB.deletedUsers.includes(su.id)){return;}//skip deleted
+    if(!ex){DB.users.push(su);changed=true;}
         else if(su.id!==CU.id){['status','orgRole','sysRole','canSee','canCmt','canReview','canTicket','canMasterCreate','subordinates'].forEach(function(k){if(su[k]!==undefined)ex[k]=su[k];});changed=true;}
       });
     }
