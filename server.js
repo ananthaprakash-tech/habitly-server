@@ -2,80 +2,148 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-// In-memory store (persists while server runs)
-// For Railway free tier - data persists as long as server is up
-let DB = {};
+let STORE = {
+  users:[], settings:{}, designations:[], tickets:[], editlog:[],
+  notifications:[], chat:{rooms:{}}, blocks:{}, tracker:{}, taskAtt:{}, _ts:0
+};
 const DB_FILE = path.join(__dirname, 'db.json');
+const HTML_FILE = path.join(__dirname, 'index.html');
 
-// Load saved data on startup
 try {
-  if (fs.existsSync(DB_FILE)) {
-    DB = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-    console.log('Loaded saved data');
+  if(fs.existsSync(DB_FILE)){
+    STORE = JSON.parse(fs.readFileSync(DB_FILE,'utf8'));
+    console.log('Loaded data. Users:', (STORE.users||[]).length);
   }
-} catch(e) { console.log('Starting fresh'); }
+} catch(e){ console.log('Fresh start'); }
 
-function saveDB() {
-  try { fs.writeFileSync(DB_FILE, JSON.stringify(DB)); } catch(e) {}
+function saveStore(){ try{fs.writeFileSync(DB_FILE,JSON.stringify(STORE));}catch(e){} }
+
+function cors(res){
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Methods','GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type');
 }
 
-const server = http.createServer((req, res) => {
-  // CORS headers - allow all origins
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Content-Type', 'application/json');
-  
-  if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
-  
-  const url = req.url;
-  
-  // GET /data - load all data
-  if (req.method === 'GET' && url === '/data') {
-    res.writeHead(200);
-    res.end(JSON.stringify({ ok: true, data: DB, ts: DB._ts || 0 }));
+function readBody(req,cb){
+  let body='';
+  req.on('data',c=>body+=c);
+  req.on('end',()=>{try{cb(JSON.parse(body));}catch(e){cb({});}});
+}
+
+const server = http.createServer((req,res)=>{
+  cors(res);
+  if(req.method==='OPTIONS'){res.writeHead(200);res.end();return;}
+
+  const url = req.url.split('?')[0];
+
+  // Serve the Habitly app
+  if(req.method==='GET' && (url==='/' || url==='/app' || url==='/habitly')){
+    try {
+      const html = fs.readFileSync(HTML_FILE,'utf8');
+      res.setHeader('Content-Type','text/html; charset=utf-8');
+      res.writeHead(200);
+      res.end(html);
+    } catch(e) {
+      res.setHeader('Content-Type','text/html');
+      res.writeHead(200);
+      res.end('<h1>Habitly</h1><p>App file not found. Please upload index.html</p>');
+    }
     return;
   }
-  
-  // POST /data - save all data  
-  if (req.method === 'POST' && url === '/data') {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', () => {
-      try {
-        const payload = JSON.parse(body);
-        const incomingTs = payload._ts || 0;
-        const currentTs = DB._ts || 0;
-        
-        // Only update if incoming data is newer
-        if (incomingTs >= currentTs) {
-          DB = payload;
-          DB._ts = incomingTs || Date.now();
-          saveDB();
-          res.writeHead(200);
-          res.end(JSON.stringify({ ok: true, ts: DB._ts }));
-        } else {
-          res.writeHead(200);
-          res.end(JSON.stringify({ ok: true, skipped: true, reason: 'older data' }));
-        }
-      } catch(e) {
-        res.writeHead(400);
-        res.end(JSON.stringify({ ok: false, error: e.message }));
-      }
+
+  res.setHeader('Content-Type','application/json');
+
+  // Health check
+  if(req.method==='GET' && url==='/health'){
+    res.writeHead(200);
+    res.end(JSON.stringify({ok:true,app:'Habitly v2',users:(STORE.users||[]).length}));
+    return;
+  }
+
+  // GET all data
+  if(req.method==='GET' && url==='/data'){
+    res.writeHead(200);
+    res.end(JSON.stringify({ok:true,data:STORE}));
+    return;
+  }
+
+  // POST sync user's personal data
+  if(req.method==='POST' && url==='/sync/user'){
+    readBody(req,function(body){
+      const uid=body.userId;
+      if(!uid){res.writeHead(400);res.end(JSON.stringify({ok:false}));return;}
+      if(!STORE.blocks) STORE.blocks={};
+      if(!STORE.tracker) STORE.tracker={};
+      if(!STORE.taskAtt) STORE.taskAtt={};
+      if(body.blocks!==undefined) STORE.blocks[uid]=body.blocks;
+      if(body.tracker!==undefined) STORE.tracker[uid]=body.tracker;
+      if(body.taskAtt) Object.assign(STORE.taskAtt,body.taskAtt);
+      STORE._ts=Date.now();
+      saveStore();
+      res.writeHead(200);
+      res.end(JSON.stringify({ok:true}));
     });
     return;
   }
-  
-  // GET / - health check
-  if (req.method === 'GET' && url === '/') {
-    res.writeHead(200);
-    res.end(JSON.stringify({ ok: true, app: 'Habitly Sync Server', version: '1.0' }));
+
+  // POST sync shared data
+  if(req.method==='POST' && url==='/sync/shared'){
+    readBody(req,function(body){
+      if(body.users&&Array.isArray(body.users)){
+        if(!STORE.users) STORE.users=[];
+        body.users.forEach(function(u){
+          const idx=STORE.users.findIndex(su=>su.id===u.id);
+          if(idx===-1) STORE.users.push(u);
+          else STORE.users[idx]=u;
+        });
+      }
+      ['settings','designations','tickets','editlog','notifications','chat'].forEach(function(k){
+        if(body[k]!==undefined) STORE[k]=body[k];
+      });
+      STORE._ts=Date.now();
+      saveStore();
+      res.writeHead(200);
+      res.end(JSON.stringify({ok:true}));
+    });
     return;
   }
-  
+
+  // POST legacy full sync
+  if(req.method==='POST' && url==='/data'){
+    readBody(req,function(body){
+      if(body.users&&Array.isArray(body.users)){
+        if(!STORE.users) STORE.users=[];
+        body.users.forEach(function(u){
+          const idx=STORE.users.findIndex(su=>su.id===u.id);
+          if(idx===-1) STORE.users.push(u);
+          else STORE.users[idx]=u;
+        });
+      }
+      if(body.blocks){
+        if(!STORE.blocks) STORE.blocks={};
+        Object.keys(body.blocks).forEach(k=>{STORE.blocks[k]=body.blocks[k];});
+      }
+      if(body.tracker){
+        if(!STORE.tracker) STORE.tracker={};
+        Object.keys(body.tracker).forEach(k=>{
+          if(!STORE.tracker[k]) STORE.tracker[k]={};
+          Object.assign(STORE.tracker[k],body.tracker[k]);
+        });
+      }
+      ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(k=>{
+        if(body[k]!==undefined) STORE[k]=body[k];
+      });
+      STORE._ts=Date.now();
+      saveStore();
+      res.writeHead(200);
+      res.end(JSON.stringify({ok:true,ts:STORE._ts}));
+    });
+    return;
+  }
+
   res.writeHead(404);
-  res.end(JSON.stringify({ ok: false, error: 'Not found' }));
+  res.end(JSON.stringify({ok:false,error:'Not found'}));
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log('Habitly sync server running on port', PORT));
+server.listen(PORT,()=>console.log('Habitly server on port',PORT));
