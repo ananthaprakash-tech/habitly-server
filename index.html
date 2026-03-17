@@ -2302,6 +2302,7 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
 // Event delegation for task buttons
 document.addEventListener('click',function(e){
   var el=e.target;
+  var tdp=el.closest('.tdp');if(tdp&&tdp.dataset.uid)openDP(tdp.dataset.uid);
   if(el.classList.contains('tcb')){chkTask(el.dataset.bid,el.dataset.tid);}
   if(el.classList.contains('tsbtn')){setTaskStatus(el.dataset.bid,el.dataset.tid,el.dataset.st||'');}
   if(el.classList.contains('tcmt')){try{openCmt(el.dataset.ctx);}catch(x){}}
