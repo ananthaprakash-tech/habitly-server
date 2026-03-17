@@ -1157,25 +1157,46 @@ function logEdit(action,blockName,taskId,taskName,prevName){
 // ══════════════════════ TEAM VIEW ══════════════════════
 function shiftTeam(n){const nd=sd(teamD,n);if(nd>td())return;teamD=nd;renderTeam();}
 function renderTeam(){
-  document.getElementById('team-dlbl').textContent=fs(teamD)+(teamD===td()?' — Today':'');
-  document.getElementById('team-next').classList.toggle('off',teamD===td());
-  const canSee=CU.sysRole==='admin'||CU.sysRole==='manager'||CU.canSee;
-  if(!canSee){document.getElementById('tgrid').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔒</div>No team view access.<br>Ask admin.</div>';document.getElementById('dp').classList.remove('on');return;}
-  var active=CU.sysRole==='admin'||CU.canSee?DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001';}):DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&(CU.subordinates||[]).includes(u.id);});
-  document.getElementById('tgrid').innerHTML=active.map(m=>{
-    const s=getStats(m.id,teamD),pct=s.pct!==undefined?s.pct:(s.total?Math.round(s.done/s.total*100):0);
-    const pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';
-    const bars=Object.values(s.blocks).slice(0,3).map(bs=>{const bp=bs.total?Math.round(bs.done/bs.total*100):0;return`<div class="mr"><div class="mr-dot" style="background:${bs.color}"></div><span class="mr-lbl">${bs.name||''}</span><div class="mr-wrap"><div class="mr-bar" style="width:${bp}%;background:${bs.color}"></div></div><span class="mr-cnt">${bs.done}/${bs.total}</span></div>`;}).join('');
-    const rc=rcolor(m);
-    return `<div class="mcard${openM===m.id?' sel':''}" onclick="openDP('${m.id}')">
-      <div class="mcard-top"><div class="av av-xs" style="${avs(m.color)}">${m.photo?`<img src="${m.photo}" alt=""/>`:ini(m.name)}</div>
-      <div class="mcard-info"><div class="mcard-name">${m.name}</div><div class="mcard-role"><span class="rtag" style="background:${rc}20;color:${rc}">${rlbl(m)}</span></div></div>
-      <div class="mcard-pct" style="color:${pc}">${pct}%${stats.na>0?` <span style="font-size:10px;color:#E8934A">${stats.na}NA</span>`:""}${stats.no>0?` <span style="font-size:10px;color:#E85555">${stats.no}NO</span>`:""}</div></div>
-      ${bars?`<div class="mcard-body">${bars}</div>`:''}
-    </div>`;
-  }).join('')||'<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div>No members yet</div>';
+  var dlbl=document.getElementById('team-dlbl');
+  var tnxt=document.getElementById('team-next');
+  var grid=document.getElementById('tgrid');
+  if(dlbl)dlbl.textContent=fs(teamD)+(teamD===td()?' - Today':'');
+  if(tnxt)tnxt.classList.toggle('off',teamD===td());
+  if(!grid)return;
+  var canAccess=CU.sysRole==='admin'||CU.canSee||CU.canReview||(CU.subordinates&&CU.subordinates.length>0);
+  if(!canAccess){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team view access.</div>';return;}
+  var nd=function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);};
+  var active=CU.sysRole==='admin'||CU.canSee?DB.users.filter(nd):DB.users.filter(function(u){return nd(u)&&(CU.subordinates||[]).includes(u.id);});
+  if(!active.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team members found.</div>';return;}
+  var html='';
+  for(var mi=0;mi<active.length;mi++){
+    var m=active[mi];
+    var st=getStats(m.id,teamD);
+    var pct=st.total?Math.round(st.done/st.total*100):0;
+    var pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';
+    var rc=rcolor(m);
+    var av=m.photo?'<img src="'+m.photo+'" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>':ini(m.name);
+    var barHtml='';
+    var bks=Object.values(st.blocks).slice(0,3);
+    for(var bi=0;bi<bks.length;bi++){
+      var bs=bks[bi];
+      var bp=bs.total?Math.round(bs.done/bs.total*100):0;
+      barHtml+='<div class="mr"><div class="mr-dot" style="background:'+bs.color+'"></div><span class="mr-lbl">'+(bs.name||'')+'</span><div class="mr-wrap"><div class="mr-bar" style="width:'+bp+'%;background:'+bs.color+'"></div></div><span class="mr-cnt">'+bs.done+'/'+bs.total+'</span></div>';
+    }
+    var naTag=st.na>0?' <span style="font-size:10px;color:#E8934A">'+st.na+'NA</span>':'';
+    var noTag=st.no>0?' <span style="font-size:10px;color:#E85555">'+st.no+'NO</span>':'';
+    html+='<div class="mcard'+(openM===m.id?' sel':'')+' tdp" data-uid="'+m.id+'">';
+    html+='<div class="mcard-top"><div class="av av-xs" style="'+avs(m.color)+'">'+av+'</div>';
+    html+='<div class="mcard-info"><div class="mcard-name">'+m.name+'</div>';
+    html+='<div class="mcard-role"><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></div>';
+    html+='<div class="mcard-pct" style="color:'+pc+'">'+pct+'%'+naTag+noTag+'</div></div>';
+    if(barHtml)html+='<div class="mcard-body">'+barHtml+'</div>';
+    html+='</div>';
+  }
+  grid.innerHTML=html;
   if(openM)openDP(openM);
 }
+
 function openDP(userId){
   openM=userId;const m=DB.users.find(u=>u.id===userId);if(!m)return;
   const data=getTD(userId,teamD);
