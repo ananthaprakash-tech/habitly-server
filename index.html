@@ -1063,7 +1063,8 @@ function doRegister(){
   if(!name||!em||!pw){err.textContent='All fields required.';return;}
   if(pw.length<6){err.textContent='Password min 6 chars.';return;}
   if(!/\S+@\S+\.\S+/.test(em)){err.textContent='Invalid email.';return;}
-  if(DB.users.find(u=>u.email.toLowerCase()===em)){err.textContent='Email already registered.';return;}
+  // Check email case-insensitively against all users including pre-loaded
+  if(DB.users.find(function(u){return u.email.toLowerCase()===em;})){err.textContent='Email already registered.';return;}
   const colors=['#E8C547','#5B9BD5','#E8934A','#5BBD8A','#D4537E','#AFA9EC','#F0997B'];
   const color=colors[DB.users.length%colors.length];
   const serverConn=!!(SERVER_URL&&SERVER_URL.length>0);
@@ -2496,19 +2497,27 @@ function removeUser(id){
 // CLEAN DUPLICATES
 function cleanDuplicates(){
   var seen={},clean=[];
-  DB.users.forEach(function(u){
+  // Sort: active first, then by joinDate desc (keep newest)
+  var sorted=DB.users.filter(function(u){return !u._deleted&&!(DB.deletedUsers||[]).includes(u.id);})
+    .sort(function(a,b){
+      if(a.status==='active'&&b.status!=='active')return -1;
+      if(b.status==='active'&&a.status!=='active')return 1;
+      return 0;
+    });
+  sorted.forEach(function(u){
     var key=u.email.toLowerCase();
-    if(u._deleted||(DB.deletedUsers||[]).includes(u.id))return;
     if(!seen[key]){seen[key]=u;clean.push(u);}
-    else if(u.status==='active'&&seen[key].status!=='active'){
-      var i=clean.indexOf(seen[key]);clean[i]=u;seen[key]=u;
-    }
+    // else skip duplicate
   });
-  var removed=DB.users.filter(function(u){return !u._deleted&&!(DB.deletedUsers||[]).includes(u.id);}).length-clean.length;
-  DB.users=clean;
-  saveDB();
-  renderAdmin();
-  alert(removed>0?'Removed '+removed+' duplicate(s).':'No duplicates found.');
+  var removed=DB.users.length-clean.length;
+  if(removed>0){
+    DB.users=clean;
+    saveDB();
+    renderAdmin();
+    alert('Removed '+removed+' duplicate account(s). Click Sync now in Settings to update server.');
+  } else {
+    alert('No duplicates found.');
+  }
 }
 
 // CHANGE DESIGNATION POPUP
@@ -2557,7 +2566,9 @@ function pullOtherUsersData(){
     if(d.deletedUsers&&Array.isArray(d.deletedUsers)){if(!DB.deletedUsers)DB.deletedUsers=[];d.deletedUsers.forEach(function(id){if(!DB.deletedUsers.includes(id)){DB.deletedUsers.push(id);DB.users=DB.users.filter(function(u){return u.id!==id;});changed=true;}});}
     if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){DB.blocks[uid]=d.blocks[uid];changed=true;}});}
     if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){DB.tracker[uid]=d.tracker[uid];changed=true;}});}
-    if(d.users&&Array.isArray(d.users)){if(!DB.users)DB.users=[];d.users.forEach(function(su){if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;var ex=DB.users.find(function(u){return u.id===su.id;});if(!ex){DB.users.push(su);changed=true;}else if(su.id!==CU.id){['status','orgRole','sysRole','canSee','canCmt','canReview','canTicket','canMasterCreate','subordinates'].forEach(function(k){if(su[k]!==undefined)ex[k]=su[k];});changed=true;}});}
+    if(d.users&&Array.isArray(d.users)){if(!DB.users)DB.users=[];d.users.forEach(function(su){if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;// Check by ID first, then by email to prevent duplicates
+var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});if(!ex){DB.users.push(su);changed=true;}else if(ex.id!==CU.id){['status','orgRole','sysRole','canSee','canCmt','canReview','canTicket','canMasterCreate','subordinates'].forEach(function(k){if(su[k]!==undefined)ex[k]=su[k];});// Ensure ID is consistent - keep the one that exists locally
+changed=true;}});}
     if(d.notifications){DB.notifications=d.notifications;changed=true;}
     if(d.tickets){DB.tickets=d.tickets;changed=true;}
     if(d.chat&&d.chat.rooms){if(!DB.chat)DB.chat={rooms:{}};Object.keys(d.chat.rooms).forEach(function(rid){var sr=d.chat.rooms[rid];if(!DB.chat.rooms[rid]){DB.chat.rooms[rid]=sr;changed=true;}else{var lm=DB.chat.rooms[rid].messages||[];var sm=sr.messages||[];var ids=new Set(lm.map(function(m){return m.id;}));sm.forEach(function(m){if(!ids.has(m.id)){lm.push(m);changed=true;}});lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});DB.chat.rooms[rid].messages=lm;}});}
@@ -2613,8 +2624,15 @@ function startApp(){
         if(!DB.users)DB.users=[];
         d.users.forEach(function(su){
           if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
-          var ex=DB.users.find(function(u){return u.id===su.id;});
-          if(!ex)DB.users.push(su);else Object.assign(ex,su);
+          // Match by ID or email to prevent duplicates
+          var ex=DB.users.find(function(u){return u.id===su.id;})||
+                 DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+          if(!ex)DB.users.push(su);
+          else{// Merge but keep local user's ID and password hash
+            var keepId=ex.id, keepPh=ex.ph;
+            Object.assign(ex,su);
+            ex.id=keepId; ex.ph=keepPh;
+          }
         });
         ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
