@@ -351,10 +351,74 @@ input,select,textarea,button{font-family:inherit}
 .rtag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;letter-spacing:.2px;display:inline-block;white-space:nowrap}
 
 @media(max-width:640px){
-  .pg{padding:14px}.stats{grid-template-columns:repeat(2,1fr)}
-  .topbar{padding:0 12px}.tabs{padding:0 8px}.tb{padding:11px 9px;font-size:12px}
-  .tgrid{grid-template-columns:1fr}.pgrid{grid-template-columns:1fr}
-  .aacts{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:4px}.tk-stats{grid-template-columns:repeat(2,1fr)}
+  /* Layout */
+  .pg{padding:10px 8px}
+  .topbar{padding:0 10px;height:52px}
+  .app-name{font-size:15px}
+  .logo-img{height:28px}
+
+  /* Tabs - scrollable on mobile */
+  .tabs{padding:0 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tb{padding:10px 8px;font-size:11px;white-space:nowrap;flex-shrink:0}
+
+  /* Grids */
+  .tgrid{grid-template-columns:1fr}
+  .pgrid{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .tk-stats{grid-template-columns:repeat(2,1fr)}
+
+  /* Task rows */
+  .trow{flex-wrap:wrap;gap:4px;padding:8px 6px}
+  .ttxt{font-size:13px;flex:1;min-width:0}
+  .task-status-btns{flex-shrink:0}
+  .task-acts{flex-shrink:0}
+  .ta-btn{padding:3px 8px;font-size:11px}
+
+  /* Blocks */
+  .block{margin-bottom:10px}
+  .block-hdr{padding:8px 10px}
+  .tlist{padding:4px 6px}
+
+  /* Admin */
+  .arow{flex-wrap:wrap;gap:6px;padding:10px 10px}
+  .aacts{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:4px}
+  .tgl-wrap{font-size:10px}
+  .asec-h{padding:10px 12px}
+
+  /* Modal */
+  .modal{padding:16px;margin:12px;max-width:calc(100vw - 24px)!important;max-height:85vh;overflow-y:auto}
+  .m-acts{flex-wrap:wrap;gap:6px}
+  .m-acts button{flex:1;min-width:100px}
+
+  /* Login */
+  .login-box{padding:20px 16px;margin:16px;border-radius:16px}
+  .fi{font-size:16px}/* prevents iOS zoom */
+  .btn-pri{font-size:15px;padding:13px}
+
+  /* Chat */
+  .chat-layout{flex-direction:column}
+  .chat-rooms{width:100%;max-height:120px;overflow-y:auto;border-right:none;border-bottom:1px solid var(--bd)}
+  .chat-main{height:calc(100vh - 280px)}
+
+  /* Heatmap */
+  .hmap{gap:4px;overflow-x:auto;padding-bottom:4px}
+  .hday{min-width:36px}
+
+  /* Detail panel */
+  .dp{width:100%!important;position:fixed;bottom:0;left:0;right:0;top:auto;max-height:70vh;overflow-y:auto;border-radius:16px 16px 0 0;z-index:200}
+
+  /* Misc */
+  .mcard-top{flex-wrap:wrap}
+  .add-task-row{flex-wrap:wrap;gap:6px}
+  .add-task-row input{min-width:0;flex:1}
+  .ati-sm{width:80px}
+}
+
+@media(max-width:400px){
+  .tb{padding:8px 6px;font-size:10px}
+  .stats{grid-template-columns:1fr}
+  .tk-stats{grid-template-columns:1fr}
 }
 
 .trow-na{opacity:.65}
@@ -1041,6 +1105,7 @@ function bootApp(u){
   if(window._pollInterval)clearInterval(window._pollInterval);
   window._pollInterval=setInterval(pullOtherUsersData,60000);
   setTimeout(pushMyData,2000);
+  checkStorageOnBoot();
   initChat();
   switchTab('my');renderNotifBadge();updateCTBadge();
 }
@@ -2254,17 +2319,75 @@ function importBackup(inp){
   };r.readAsText(file);
 }
 function showStorageInfo(){
-  var raw=localStorage.getItem(SK)||'';var kb=Math.round(raw.length/1024*10)/10;var pct=Math.round(kb/5120*100);
+  var raw=localStorage.getItem(SK)||'';
+  var kb=Math.round(raw.length/1024*10)/10;
+  var pct=Math.round(kb/5120*100);
   var au=DB.users.filter(function(u){return u.status==='active';}).length;
   var tt=Object.values(DB.blocks).reduce(function(a,bl){return a+bl.reduce(function(x,b){return x+b.tasks.length;},0);},0);
+  var barColor=pct>80?'var(--err)':pct>50?'var(--warn)':'var(--ok)';
+  var statusMsg='';
+  if(pct>=90){
+    statusMsg='<div style="background:rgba(232,80,80,.15);border:1px solid rgba(232,80,80,.4);border-radius:8px;padding:10px 12px;margin-top:10px;display:flex;align-items:center;gap:10px">'+
+      '<span style="font-size:20px">🚨</span>'+
+      '<div><div style="font-size:13px;font-weight:600;color:var(--err)">Storage Critical ('+pct+'%)</div>'+
+      '<div style="font-size:11px;color:var(--mu);margin-top:2px">Storage almost full! Clear old data now to prevent data loss.</div></div></div>';
+  } else if(pct>=80){
+    statusMsg='<div style="background:rgba(232,147,74,.15);border:1px solid rgba(232,147,74,.4);border-radius:8px;padding:10px 12px;margin-top:10px;display:flex;align-items:center;gap:10px">'+
+      '<span style="font-size:20px">⚠️</span>'+
+      '<div><div style="font-size:13px;font-weight:600;color:var(--warn)">Storage Warning ('+pct+'%)</div>'+
+      '<div style="font-size:11px;color:var(--mu);margin-top:2px">Storage is getting full. Consider clearing old tracker history.</div></div></div>';
+  } else if(pct>=60){
+    statusMsg='<div style="background:rgba(232,197,71,.1);border:1px solid rgba(232,197,71,.3);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:12px;color:var(--mu)">'+
+      '📊 Storage at '+pct+'% — approaching limit. A cleanup soon is recommended.</div>';
+  }
+  var clearBtn=pct>=60?'<button class="exp-btn" onclick="clearOldHistory()" style="background:rgba(232,80,80,.15);border-color:rgba(232,80,80,.4);color:var(--err)">🗑 Clear old history (30+ days)</button>':'';
   document.getElementById('storage-info').innerHTML=
     '<div>Users: <strong style="color:var(--tx)">'+DB.users.length+'</strong> ('+au+' active)</div>'+
     '<div>Total tasks: <strong style="color:var(--tx)">'+tt+'</strong></div>'+
     '<div>Tracker days: <strong style="color:var(--tx)">'+Object.keys(DB.tracker).length+'</strong></div>'+
     '<div>Edit log: <strong style="color:var(--tx)">'+DB.editlog.length+'</strong> entries</div>'+
     '<div>Tickets: <strong style="color:var(--tx)">'+DB.tickets.length+'</strong></div>'+
-    '<div>Storage: <strong style="color:var(--tx)">'+kb+' KB</strong> / 5120 KB ('+pct+'%)</div>'+
-    '<div style="margin-top:6px;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:'+Math.min(pct,100)+'%;height:100%;background:'+(pct>80?'var(--err)':pct>50?'var(--warn)':'var(--ok)')+';border-radius:3px"></div></div>';
+    '<div style="margin-top:4px">Storage: <strong style="color:'+(pct>=80?'var(--err)':pct>=60?'var(--warn)':'var(--tx)')+'">'+kb+' KB</strong> / 5120 KB ('+pct+'%)</div>'+
+    '<div style="margin-top:6px;height:8px;background:var(--bd);border-radius:4px;overflow:hidden"><div style="width:'+Math.min(pct,100)+'%;height:100%;background:'+barColor+';border-radius:4px;transition:width .5s"></div></div>'+
+    statusMsg+
+    (clearBtn?'<div style="margin-top:10px">'+clearBtn+'</div>':'');
+}
+
+function clearOldHistory(){
+  if(!confirm('This will delete tracker data older than 30 days for all users. Task blocks are kept. Continue?'))return;
+  var cutoff=sd(td(),-30);
+  var freed=0;
+  Object.keys(DB.tracker).forEach(function(uid){
+    if(!DB.tracker[uid])return;
+    Object.keys(DB.tracker[uid]).forEach(function(date){
+      if(date<cutoff){delete DB.tracker[uid][date];freed++;}
+    });
+  });
+  // Also trim edit log to last 200 entries
+  if(DB.editlog.length>200){DB.editlog=DB.editlog.slice(0,200);}
+  saveDB();
+  showStorageInfo();
+  alert('Cleared '+freed+' old tracker entries. Storage freed up!');
+}
+
+function checkStorageOnBoot(){
+  var raw=localStorage.getItem(SK)||'';
+  var pct=Math.round((raw.length/1024)/5120*100);
+  if(pct>=90){
+    setTimeout(function(){
+      var m=document.createElement('div');
+      m.style.cssText='position:fixed;top:0;left:0;width:100%;z-index:9999;background:var(--err);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.3)';
+      m.innerHTML='🚨 Storage is '+pct+'% full! Go to Settings → Storage info → Clear old history. <button onclick="this.parentNode.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px">Dismiss</button>';
+      document.body.appendChild(m);
+    },2000);
+  } else if(pct>=80){
+    setTimeout(function(){
+      var m=document.createElement('div');
+      m.style.cssText='position:fixed;top:0;left:0;width:100%;z-index:9999;background:#E8934A;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.3)';
+      m.innerHTML='⚠️ Storage is '+pct+'% full. Go to Settings → Storage info to clear old data. <button onclick="this.parentNode.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px">Dismiss</button>';
+      document.body.appendChild(m);
+    },2000);
+  }
 }
 function exportAllXLSX(){
   if(typeof XLSX==='undefined'){alert('Loading...');return;}
