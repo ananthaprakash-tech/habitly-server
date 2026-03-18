@@ -955,7 +955,7 @@ const SK='tt-v7',SESSION_KEY='tt-session-v7';
 
 
 const LOGO_COLORS=['#E8C547','#5B9BD5','#5BBD8A','#E8934A','#D4537E','#AFA9EC','#F0997B','#ffffff'];
-let DB={users:[{"id": "u-1000", "name": "Divya R", "email": "mcpc@candbindia.com", "ph": "-2061945005", "orgRole": "MCPC", "sysRole": "member", "color": "#5B9BD5", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1001", "name": "Jeeva", "email": "jeeva@propotentia.com", "ph": "-2061945005", "orgRole": "Manager", "sysRole": "member", "color": "#E8934A", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1002", "name": "Jeeva G", "email": "jeeva.g@propotentia.com", "ph": "-2061945005", "orgRole": "Manager", "sysRole": "member", "color": "#5BBD8A", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1003", "name": "Sutheesh", "email": "sutheesh@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#D4537E", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1004", "name": "Lokesh", "email": "lokesh@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#AFA9EC", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1005", "name": "Adhithyan", "email": "adhithyan@propotentia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#FAC775", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1006", "name": "Dineshkumar", "email": "dinesh@candbindia.com", "ph": "-2061945005", "orgRole": "Sr. Analyst", "sysRole": "member", "color": "#F0997B", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1007", "name": "Kevin", "email": "kevin@candbindia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#5B9BD5", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1008", "name": "Varun", "email": "varun@candbindia.com", "ph": "-2061945005", "orgRole": "Analyst", "sysRole": "member", "color": "#E8C547", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1009", "name": "Anandraj", "email": "anandaraj@candbindia.com", "ph": "-2061945005", "orgRole": "Sr. Analyst", "sysRole": "member", "color": "#5BBD8A", "status": "active", "canSee": false, "canCmt": false, "canReview": false, "canTicket": false, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}, {"id": "u-1010", "name": "Sivaraman", "email": "sivaraman@propotentia.com", "ph": "-2061945005", "orgRole": "Team Leader", "sysRole": "member", "color": "#AFA9EC", "status": "active", "canSee": true, "canCmt": true, "canReview": true, "canTicket": true, "canMasterCreate": false, "subordinates": [], "photo": "", "phone": "", "dept": "", "bio": "", "joinDate": "2026-03-17"}],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[],deletedUsers:[]};
+let DB={users:[],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[],deletedUsers:[]};
 let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTkId=null,tkFilter='all';
 
 function saveDB(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){console.warn('Storage warning:',e.message);}cloudSync();}
@@ -2512,10 +2512,17 @@ function cleanDuplicates(){
   var removed=DB.users.length-clean.length;
   if(removed>0){
     DB.users=clean;
-    saveDB();
-    renderAdmin();
-    alert('Removed '+removed+' duplicate account(s). Click Sync now in Settings to update server.');
+    try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+    // Push clean list to server immediately
+    var url=localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
+    var payload={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},
+      designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],
+      notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+    fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(){renderAdmin();alert('Removed '+removed+' duplicate(s) and synced to server!');})
+    .catch(function(){renderAdmin();alert('Removed '+removed+' duplicate(s) locally. Please Sync now.');});
   } else {
+    renderAdmin();
     alert('No duplicates found.');
   }
 }
@@ -2572,7 +2579,10 @@ changed=true;}});}
     if(d.notifications){DB.notifications=d.notifications;changed=true;}
     if(d.tickets){DB.tickets=d.tickets;changed=true;}
     if(d.chat&&d.chat.rooms){if(!DB.chat)DB.chat={rooms:{}};Object.keys(d.chat.rooms).forEach(function(rid){var sr=d.chat.rooms[rid];if(!DB.chat.rooms[rid]){DB.chat.rooms[rid]=sr;changed=true;}else{var lm=DB.chat.rooms[rid].messages||[];var sm=sr.messages||[];var ids=new Set(lm.map(function(m){return m.id;}));sm.forEach(function(m){if(!ids.has(m.id)){lm.push(m);changed=true;}});lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});DB.chat.rooms[rid].messages=lm;}});}
-    if(changed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}_lastSync=Date.now();updateSyncDot(true);var at=document.querySelector('.tb.on');if(at){var t=at.dataset.tab;if(t==='team')renderTeam();else if(t==='admin')renderAdmin();else if(t==='summary')renderSummary();renderNotifBadge();updateCTBadge();}}
+    if(changed){
+      // Always dedupe before saving
+      DB.users=dedupeUsers(DB.users, DB.deletedUsers);
+      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}_lastSync=Date.now();updateSyncDot(true);var at=document.querySelector('.tb.on');if(at){var t=at.dataset.tab;if(t==='team')renderTeam();else if(t==='admin')renderAdmin();else if(t==='summary')renderSummary();renderNotifBadge();updateCTBadge();}}
   }).catch(function(){});
 }
 
@@ -2613,30 +2623,48 @@ function initAdminPanels(){
 }
 
 // Startup: load from server then check session
+function dedupeUsers(users, deletedIds){
+  // Dedupe by email - keep active over pending, keep first occurrence
+  var seen={}, clean=[];
+  (users||[]).forEach(function(u){
+    if(!u||!u.email)return;
+    if((deletedIds||[]).includes(u.id)||u._deleted)return;
+    var key=u.email.toLowerCase();
+    if(!seen[key]){seen[key]=u;clean.push(u);}
+    else{
+      // Keep active one
+      if(u.status==='active'&&seen[key].status!=='active'){
+        var i=clean.indexOf(seen[key]);clean[i]=u;seen[key]=u;
+      }
+    }
+  });
+  return clean;
+}
+
 function startApp(){
   loadDB();applyBranding();
   initAdminPanels();
   if(SERVER_URL){
     fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
-      if(j.ok&&j.data&&j.data.users&&j.data.users.length>0){
+      if(j.ok&&j.data){
         var d=j.data;
+        // Load deletedUsers first
         if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
-        if(!DB.users)DB.users=[];
-        d.users.forEach(function(su){
-          if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
-          // Match by ID or email to prevent duplicates
-          var ex=DB.users.find(function(u){return u.id===su.id;})||
-                 DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
-          if(!ex)DB.users.push(su);
-          else{// Merge but keep local user's ID and password hash
-            var keepId=ex.id, keepPh=ex.ph;
-            Object.assign(ex,su);
-            ex.id=keepId; ex.ph=keepPh;
-          }
+        // Dedupe server users immediately
+        var cleanUsers=dedupeUsers(d.users, DB.deletedUsers);
+        DB.users=cleanUsers;
+        // Load all other data
+        ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
+          if(d[k]!==undefined)DB[k]=d[k];
         });
-        ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
+        // Save clean data locally
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
         applyBranding();
+        // Push clean user list back to server to fix it there too
+        var payload={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},
+          designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],
+          notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+        fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});
       }
     }).catch(function(){}).finally(function(){
       var sid=loadSession();
@@ -2645,6 +2673,9 @@ function startApp(){
       window._pollInterval=setInterval(pullOtherUsersData,60000);
     });
   } else {
+    // Even without server, dedupe local users
+    DB.users=dedupeUsers(DB.users, DB.deletedUsers);
+    try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
     var sid=loadSession();
     if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
   }
