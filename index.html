@@ -466,24 +466,6 @@ input,select,textarea,button{font-family:inherit}
     </div>
     <!-- AUTH AREA hidden until dept selected -->
     <div id="auth-area" style="display:none">
-    <!-- DEPARTMENT SELECTOR -->
-    <div style="margin-bottom:18px">
-      <div style="font-size:11px;color:var(--mu);text-align:center;margin-bottom:10px;letter-spacing:1px;font-weight:600;text-transform:uppercase">Select Your Department</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
-        <button onclick="selectDept('MC')" id="dept-mc" style="padding:14px 8px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;color:var(--tx);transition:all .2s;text-align:center">
-          <div style="font-size:20px;margin-bottom:4px">🏢</div>
-          <div style="font-size:15px;font-weight:700;color:var(--tx)">MC</div>
-          <div style="font-size:10px;color:var(--mu);margin-top:2px">Management Consulting</div>
-        </button>
-        <button onclick="selectDept('IA')" id="dept-ia" style="padding:14px 8px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;color:var(--tx);transition:all .2s;text-align:center">
-          <div style="font-size:20px;margin-bottom:4px">⚙️</div>
-          <div style="font-size:15px;font-weight:700;color:var(--tx)">IA</div>
-          <div style="font-size:10px;color:var(--mu);margin-top:2px">Internal Audit</div>
-        </button>
-      </div>
-    </div>
-    <!-- AUTH TABS -->
-    <div id="auth-area" style="display:none">
     <div class="atabs">
       <div class="atab on" onclick="showPane('login')">Sign in</div>
       <div class="atab" onclick="showPane('register')">Create account</div>
