@@ -2246,7 +2246,6 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
     h+='<div class="task-status-btns">';
     h+='<button class="tsb tsb-na'+(isNA?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNA?'':'na')+'">NA</button>';
     h+='<button class="tsb tsb-no'+(isNO?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNO?'':'no')+'">NO</button>';
-    var isPP=(ts==='pp');
     h+='<button class="tsb tsb-pp'+(isPP?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isPP?'':'pp')+'">PP</button>';
     h+='</div>';
   }
