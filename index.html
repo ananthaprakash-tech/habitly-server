@@ -546,6 +546,7 @@ input,select,textarea,button{font-family:inherit}
 
   <!-- MY TRACKER -->
   <div class="pg" id="tab-my">
+    <div id="debug-error" style="display:none;background:rgba(232,80,80,.15);border:1px solid #E85555;border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px;color:#E85555;font-family:monospace"></div>
     <div class="dnav"><div class="arr" onclick="shiftMy(-1)">&#8592;</div><div class="dnav-lbl" id="my-dlbl"></div><div class="arr off" id="my-next" onclick="shiftMy(1)">&#8594;</div><div class="today-pill hidden" id="my-today" onclick="goToday()">Today</div></div>
     <div class="ro-bar" id="ro-bar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>&nbsp;Past day — read only</div>
     <div class="hmap" id="hmap"></div>
@@ -1026,10 +1027,26 @@ function dl(name,data){const a=document.createElement('a');a.href='data:text/csv
 
 function getBlocks(uid){if(!DB.blocks[uid])DB.blocks[uid]=[];return DB.blocks[uid];}
 function getTD(uid,date){
-  if(!DB.tracker[date])DB.tracker[date]={};
-  if(!DB.tracker[date][uid])DB.tracker[date][uid]={checked:{},comments:{}};
-  if(!DB.tracker[date][uid].comments)DB.tracker[date][uid].comments={};
-  return DB.tracker[date][uid];
+  // Support both tracker formats:
+  // Format A (original): DB.tracker[date][uid]
+  // Format B (server):   DB.tracker[uid][date]
+  if(!DB.tracker)DB.tracker={};
+  // Detect format: if first key looks like a date (YYYY-MM-DD), it's format A
+  var keys=Object.keys(DB.tracker);
+  var isDateFirst=keys.length>0&&/^\d{4}-\d{2}-\d{2}$/.test(keys[0]);
+  if(isDateFirst){
+    // Format A - original
+    if(!DB.tracker[date])DB.tracker[date]={};
+    if(!DB.tracker[date][uid])DB.tracker[date][uid]={checked:{},comments:{}};
+    if(!DB.tracker[date][uid].comments)DB.tracker[date][uid].comments={};
+    return DB.tracker[date][uid];
+  } else {
+    // Format B - server uid-first, convert to format A on the fly
+    if(!DB.tracker[uid])DB.tracker[uid]={};
+    if(!DB.tracker[uid][date])DB.tracker[uid][date]={checked:{},comments:{}};
+    if(!DB.tracker[uid][date].comments)DB.tracker[uid][date].comments={};
+    return DB.tracker[uid][date];
+  }
 }
 function getStats(uid,date){
   const blocks=getBlocks(uid),data=getTD(uid,date);
@@ -1169,7 +1186,15 @@ function bootApp(u){
   });
   if(fixed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
   initChat();
-  switchTab('my');renderNotifBadge();updateCTBadge();
+  try{
+    switchTab('my');
+    renderNotifBadge();
+    updateCTBadge();
+  }catch(err){
+    var dbg=document.getElementById('debug-error');
+    if(dbg){dbg.style.display='block';dbg.textContent='Error: '+err.message+' at '+err.stack;}
+    console.error('bootApp error:',err);
+  }
 }
 function setAvEl(el,u){if(u.photo){el.innerHTML=`<img src="${u.photo}" alt=""/>`;el.style.background='none';}else{el.textContent=ini(u.name);el.style.cssText=avs(u.color);}}
 
@@ -1178,7 +1203,7 @@ function switchTab(t){
   document.querySelectorAll('.pg').forEach(p=>p.classList.add('hidden'));
   document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+t)?.classList.remove('hidden');
-  document.querySelector(`[data-tab="${t}"]`)?.classList.add('on');
+  document.querySelector('[data-tab="'+t+'"]')?.classList.add('on');
   if(t==='my')renderMyTracker();else if(t==='team')renderTeam();else if(t==='summary')renderSummary();
   else if(t==='editlog')renderEditLog();else if(t==='tickets')renderTickets();
   else if(t==='notif'){renderNotifs();markAllRead();}else if(t==='profile')renderProfile();
@@ -2505,6 +2530,16 @@ function clearOldHistory(){
   var cutoff=sd(td(),-30);
   var freed=0;
   Object.keys(DB.tracker).forEach(function(uid){
+    // Handle both tracker formats
+    var keys=Object.keys(DB.tracker);
+    var isDateFirst=keys.length>0&&/^\d{4}-\d{2}-\d{2}$/.test(keys[0]);
+    if(isDateFirst){
+      // Format A: tracker[date][uid]
+      Object.keys(DB.tracker).forEach(function(date){
+        if(date<cutoff&&DB.tracker[date]){delete DB.tracker[date];freed++;}
+      });
+      return; // exit after handling format A
+    }
     if(!DB.tracker[uid])return;
     Object.keys(DB.tracker[uid]).forEach(function(date){
       if(date<cutoff){delete DB.tracker[uid][date];freed++;}
