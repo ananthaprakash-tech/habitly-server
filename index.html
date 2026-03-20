@@ -2,16 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-<meta http-equiv="Pragma" content="no-cache"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<meta name="theme-color" content="#1A1C20"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Habitly"/>
-<meta name="mobile-web-app-capable" content="yes"/>
-<link rel="manifest" href="manifest.json"/>
-<link rel="apple-touch-icon" href="icon-192.png"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Habitly — Daily Habit Tracker</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:wght@400;600&family=Rajdhani:wght@400;600;700&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet"/>
@@ -360,84 +351,18 @@ input,select,textarea,button{font-family:inherit}
 .rtag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;letter-spacing:.2px;display:inline-block;white-space:nowrap}
 
 @media(max-width:640px){
-  /* Layout */
-  .pg{padding:10px 8px}
-  .topbar{padding:0 10px;height:52px}
-  .app-name{font-size:15px}
-  .logo-img{height:28px}
-
-  /* Tabs - scrollable on mobile */
-  .tabs{padding:0 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
-  .tb{padding:10px 8px;font-size:11px;white-space:nowrap;flex-shrink:0}
-
-  /* Grids */
-  .tgrid{grid-template-columns:1fr}
-  .pgrid{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .tk-stats{grid-template-columns:repeat(2,1fr)}
-
-  /* Task rows */
-  .trow{flex-wrap:wrap;gap:4px;padding:8px 6px}
-  .ttxt{font-size:13px;flex:1;min-width:0}
-  .task-status-btns{flex-shrink:0}
-  .task-acts{flex-shrink:0}
-  .ta-btn{padding:3px 8px;font-size:11px}
-
-  /* Blocks */
-  .block{margin-bottom:10px}
-  .block-hdr{padding:8px 10px}
-  .tlist{padding:4px 6px}
-
-  /* Admin */
-  .arow{flex-wrap:wrap;gap:6px;padding:10px 10px}
-  .aacts{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:4px}
-  .tgl-wrap{font-size:10px}
-  .asec-h{padding:10px 12px}
-
-  /* Modal */
+  .pg{padding:10px 8px}.stats{grid-template-columns:repeat(2,1fr)}
+  .topbar{padding:0 10px;height:52px}.tabs{padding:0 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}.tb{padding:10px 8px;font-size:11px;white-space:nowrap;flex-shrink:0}
+  .tgrid{grid-template-columns:1fr}.pgrid{grid-template-columns:1fr}
+  .aacts{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:4px}.tk-stats{grid-template-columns:repeat(2,1fr)}
+  .trow{flex-wrap:wrap;gap:4px;padding:8px 6px}.ttxt{font-size:13px;flex:1;min-width:0}
   .modal{padding:16px;margin:12px;max-width:calc(100vw - 24px)!important;max-height:85vh;overflow-y:auto}
-  .m-acts{flex-wrap:wrap;gap:6px}
-  .m-acts button{flex:1;min-width:100px}
-
-  /* Login */
-  .login-box{padding:20px 16px;margin:16px;border-radius:16px}
-  .fi{font-size:16px}/* prevents iOS zoom */
-  .btn-pri{font-size:15px;padding:13px}
-
-  /* Chat */
-  .chat-layout{flex-direction:column}
-  .chat-rooms{width:100%;max-height:120px;overflow-y:auto;border-right:none;border-bottom:1px solid var(--bd)}
-  .chat-main{height:calc(100vh - 280px)}
-
-  /* Heatmap */
-  .hmap{gap:4px;overflow-x:auto;padding-bottom:4px}
-  .hday{min-width:36px}
-
-  /* Detail panel */
+  .fi{font-size:16px}.btn-pri{font-size:15px;padding:13px}
   .dp{width:100%!important;position:fixed;bottom:0;left:0;right:0;top:auto;max-height:70vh;overflow-y:auto;border-radius:16px 16px 0 0;z-index:200}
-
-  /* Misc */
-  .mcard-top{flex-wrap:wrap}
-  .add-task-row{flex-wrap:wrap;gap:6px}
-  .add-task-row input{min-width:0;flex:1}
-  .ati-sm{width:80px}
+  .add-task-row{flex-wrap:wrap;gap:6px}.add-task-row input{min-width:0;flex:1}.ati-sm{width:80px}
 }
-
-@media(max-width:400px){
-  .tb{padding:8px 6px;font-size:10px}
-  .stats{grid-template-columns:1fr}
-  .tk-stats{grid-template-columns:1fr}
-}
-
-.trow-na{opacity:.65}
-.trow-no{opacity:.5;text-decoration:line-through}
-.task-status-btns{display:flex;gap:3px;margin-left:4px;flex-shrink:0;align-items:center}
-.tsb{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;line-height:1.4}
-.tsb-na{background:rgba(232,147,74,.15);color:#E8934A;border-color:rgba(232,147,74,.3)}
-.tsb-no{background:rgba(232,80,80,.15);color:#E85555;border-color:rgba(232,80,80,.3)}
-.tsb.tsb-active{filter:brightness(1.4);font-weight:700}
-.tsb:hover{filter:brightness(1.2)}
+@media(max-width:400px){.tb{padding:8px 6px;font-size:10px}.stats{grid-template-columns:1fr}.tk-stats{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -461,7 +386,6 @@ input,select,textarea,button{font-family:inherit}
       <input class="fi" type="password" id="li-pw" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/>
       <button class="btn-pri" onclick="doLogin()">Sign in</button>
       <div class="aerr" id="li-err"></div>
-      <div style="text-align:center;margin-top:6px;margin-bottom:2px"><button onclick="showForgotPw()" style="background:none;border:none;color:var(--mu);font-size:12px;cursor:pointer;text-decoration:underline">Forgot password?</button></div>
       <div style="margin-top:12px;text-align:center">
         <div style="font-size:11px;color:var(--mu);margin-bottom:8px">— or —</div>
         <label style="display:inline-flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;color:var(--mu);transition:border-color .2s">
@@ -503,10 +427,8 @@ input,select,textarea,button{font-family:inherit}
     <div class="tb-left">
       <img class="tb-logo-img" id="tb-logo-img" src="" alt=""/>
       <div class="tb-logo-txt" id="tb-logo-txt">Habitly</div>
-      <span id="dept-badge" style="display:none;background:var(--ac);color:#000;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:0.5px;margin-left:4px"></span>
     </div>
     <div class="tb-right">
-      <button id="switch-dept-btn" onclick="switchDepartment()" style="display:none;background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.4);color:var(--ac);font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;cursor:pointer;margin-right:6px">Switch Dept</button>
       <div class="ib" onclick="switchTab('notif')" title="Notifications"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="badge" id="nb"></div></div>
       <div class="uchip" onclick="switchTab('profile')">
         <div class="av av-xs" id="t-av"></div>
@@ -530,7 +452,6 @@ input,select,textarea,button{font-family:inherit}
 
   <!-- MY TRACKER -->
   <div class="pg" id="tab-my">
-    <div id="debug-error" style="display:none;background:rgba(232,80,80,.15);border:1px solid #E85555;border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px;color:#E85555;font-family:monospace"></div>
     <div class="dnav"><div class="arr" onclick="shiftMy(-1)">&#8592;</div><div class="dnav-lbl" id="my-dlbl"></div><div class="arr off" id="my-next" onclick="shiftMy(1)">&#8594;</div><div class="today-pill hidden" id="my-today" onclick="goToday()">Today</div></div>
     <div class="ro-bar" id="ro-bar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>&nbsp;Past day — read only</div>
     <div class="hmap" id="hmap"></div>
@@ -628,7 +549,6 @@ input,select,textarea,button{font-family:inherit}
       <div style="padding:10px 18px;border-top:1px solid var(--bd);display:flex;gap:8px">
         <button class="abtn ab-ok" onclick="showAddMemberForm()">+ Add member manually</button>
         <button class="abtn ab-info" onclick="diagUsers()">Debug</button>
-        <button class="abtn" onclick="emergencyRepair()" style="background:rgba(232,80,80,.2);border-color:rgba(232,80,80,.5);color:#ff6b6b;font-weight:600">🔧 Repair all accounts</button>
         <div id="diag-out" style="font-size:11px;color:var(--mu);margin-top:4px;width:100%;white-space:pre-wrap;font-family:monospace;max-height:100px;overflow-y:auto"></div>
       </div>
       <div id="add-member-form" style="display:none;padding:14px 18px;border-top:1px solid var(--bd)">
@@ -643,13 +563,13 @@ input,select,textarea,button{font-family:inherit}
       </div>
     </div>
     <div class="asec">
-      <div class="asec-h"><h3>All registered accounts</h3><span style="font-size:11px;color:var(--mu)">Every user &amp; their status</span></div>
+      <div class="asec-h"><h3>All registered accounts</h3></div>
       <div id="all-users-list"></div>
       <div style="padding:10px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;flex-wrap:wrap">
         <button class="abtn ab-ok" onclick="showAddMemberForm()">+ Add member manually</button>
         <button class="abtn ab-info" onclick="diagUsers()">Debug</button>
-        <button class="abtn" onclick="emergencyRepair()" style="background:rgba(232,80,80,.2);border-color:rgba(232,80,80,.5);color:#ff6b6b;font-weight:600">🔧 Repair all accounts</button>
         <button class="abtn" onclick="cleanDuplicates()" style="background:rgba(232,147,74,.1);border-color:rgba(232,147,74,.3);color:#E8934A">Clean duplicates</button>
+        <button class="abtn" onclick="showRejected()" style="background:rgba(91,189,138,.1);border-color:rgba(91,189,138,.3);color:#5BBD8A">Restore rejected</button>
         <div id="diag-out" style="font-size:11px;color:var(--mu);margin-top:4px;width:100%;white-space:pre-wrap;font-family:monospace;max-height:100px;overflow-y:auto"></div>
       </div>
       <div id="add-member-form" style="display:none;padding:14px 18px;border-top:1px solid var(--bd)">
@@ -744,18 +664,11 @@ input,select,textarea,button{font-family:inherit}
       <div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:14px;margin-bottom:12px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:8px">
-            <div id="sync-dot" style="width:8px;height:8px;border-radius:50%;background:var(--warn);flex-shrink:0"></div>
-            <span style="font-size:13px;font-weight:600">Sync status</span>
-            <span id="sync-status-txt" style="font-size:11px;color:var(--mu)">Not connected</span>
+            <div id="sync-dot" style="width:8px;height:8px;border-radius:50%;background:var(--ok);flex-shrink:0"></div>
+            <span id="sync-status-txt" style="font-size:13px;font-weight:600;color:var(--tx)">Connected</span>
           </div>
-          <button class="abtn ab-ok" onclick="setupTeamSync()">Setup / Join</button>
         </div>
-        <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Last sync: <span id="sync-last">Never</span></div>
-        <div style="font-size:11px;color:var(--mu);margin-bottom:10px">Server: <span id="sync-bin-display" style="font-family:monospace;color:var(--ac);font-size:10px;word-break:break-all">Not set</span></div>
-        <div id="team-sync-reveal" style="display:none;background:rgba(91,189,138,.1);border:1px solid rgba(91,189,138,.3);border-radius:8px;padding:10px;margin-bottom:10px">
-          <div style="font-size:11px;color:var(--ok);font-weight:600;margin-bottom:4px">Share URL with team:</div>
-          <div id="team-sync-id-display" style="font-family:monospace;font-size:11px;color:var(--ok);word-break:break-all"></div>
-        </div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:10px">Server: <span id="sync-bin-display" style="font-family:monospace;color:var(--ac);font-size:10px">https://habitly-server.onrender.com</span></div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="abtn ab-info" onclick="forceSyncNow()">Sync now</button>
           <button class="abtn" onclick="showSyncStatus()" style="background:none;border:1px solid var(--b2);color:var(--mu)">Check status</button>
@@ -893,28 +806,6 @@ input,select,textarea,button{font-family:inherit}
   </div>
 </div>
 
-<!-- TEAM SYNC MODAL -->
-<div class="overlay" id="sync-setup-modal">
-  <div class="modal" style="max-width:480px">
-    <h3>Team Sync Setup</h3>
-    <div class="m-lbl" style="margin-bottom:16px">Connect your team so everyone shares data</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      <div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:28px;margin-bottom:8px">👑</div>
-        <div style="font-size:13px;font-weight:600;margin-bottom:6px">I am Admin</div>
-        <input class="fi fi-sm" id="sync-server-url" value="https://habitly-server.onrender.com" style="text-align:center;margin-bottom:8px"/>
-        <button class="btn-pri" style="padding:10px;font-size:13px;width:100%" onclick="adminCreateSync()">Connect server</button>
-      </div>
-      <div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:16px;text-align:center">
-        <div style="font-size:28px;margin-bottom:8px">👤</div>
-        <div style="font-size:13px;font-weight:600;margin-bottom:6px">I am Team Member</div>
-        <input class="fi fi-sm" id="sync-join-id" value="https://habitly-server.onrender.com" style="text-align:center;margin-bottom:8px"/>
-        <button class="btn-pri" style="padding:10px;font-size:13px;width:100%" onclick="joinSyncBin()">Join team</button>
-      </div>
-    </div>
-    <div class="m-acts"><button class="btn-sec" onclick="document.getElementById('sync-setup-modal').classList.remove('on')">Close</button></div>
-  </div>
-</div>
 <!-- APPROVE MODAL -->
 <div class="overlay" id="approve-modal">
   <div class="modal" style="max-width:500px">
@@ -924,13 +815,13 @@ input,select,textarea,button{font-family:inherit}
     <select class="fi fi-sm" id="approve-desig"></select>
     <div class="fl" style="margin-bottom:8px;margin-top:12px">Permissions</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canSee" style="accent-color:var(--ac)"/><div><div style="font-size:12px;font-weight:500">View team tasks</div></div></label>
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canCmt" style="accent-color:var(--ac)"/><div><div style="font-size:12px;font-weight:500">Comment on tasks</div></div></label>
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canReview" style="accent-color:var(--ac)"/><div><div style="font-size:12px;font-weight:500">Review subordinates</div></div></label>
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canTicket" style="accent-color:var(--ac)"/><div><div style="font-size:12px;font-weight:500">Handle tickets</div></div></label>
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canMaster" style="accent-color:var(--ac)"/><div><div style="font-size:12px;font-weight:500">Master creation</div></div></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canSee" style="accent-color:var(--ac)"/><div style="font-size:12px;font-weight:500">View team</div></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canCmt" style="accent-color:var(--ac)"/><div style="font-size:12px;font-weight:500">Comment</div></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canReview" style="accent-color:var(--ac)"/><div style="font-size:12px;font-weight:500">Review</div></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canTicket" style="accent-color:var(--ac)"/><div style="font-size:12px;font-weight:500">Tickets</div></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canMaster" style="accent-color:var(--ac)"/><div style="font-size:12px;font-weight:500">Master</div></label>
     </div>
-    <div class="m-acts"><button class="btn-sec" onclick="document.getElementById('approve-modal').classList.remove('on')">Cancel</button><button class="btn-post" onclick="doApprove()">Approve &amp; activate</button></div>
+    <div class="m-acts"><button class="btn-sec" onclick="document.getElementById('approve-modal').classList.remove('on')">Cancel</button><button class="btn-post" onclick="doApprove()">Approve</button></div>
   </div>
 </div>
 <!-- SUBORDINATES MODAL -->
@@ -965,7 +856,7 @@ input,select,textarea,button{font-family:inherit}
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 // ══════════════════════ DB & STATE ══════════════════════
-var SK='tt-v7';const SESSION_KEY='tt-session-v7';
+const SK='tt-v7',SESSION_KEY='tt-session-v7';
 
 
 const LOGO_COLORS=['#E8C547','#5B9BD5','#5BBD8A','#E8934A','#D4537E','#AFA9EC','#F0997B','#ffffff'];
@@ -1009,44 +900,27 @@ function dl(name,data){const a=document.createElement('a');a.href='data:text/csv
 
 function getBlocks(uid){if(!DB.blocks[uid])DB.blocks[uid]=[];return DB.blocks[uid];}
 function getTD(uid,date){
-  // Support both tracker formats:
-  // Format A (original): DB.tracker[date][uid]
-  // Format B (server):   DB.tracker[uid][date]
-  if(!DB.tracker)DB.tracker={};
-  // Detect format: if first key looks like a date (YYYY-MM-DD), it's format A
-  var keys=Object.keys(DB.tracker);
-  var isDateFirst=keys.length>0&&/^\d{4}-\d{2}-\d{2}$/.test(keys[0]);
-  if(isDateFirst){
-    // Format A - original
-    if(!DB.tracker[date])DB.tracker[date]={};
-    if(!DB.tracker[date][uid])DB.tracker[date][uid]={checked:{},comments:{}};
-    if(!DB.tracker[date][uid].comments)DB.tracker[date][uid].comments={};
-    return DB.tracker[date][uid];
-  } else {
-    // Format B - server uid-first, convert to format A on the fly
-    if(!DB.tracker[uid])DB.tracker[uid]={};
-    if(!DB.tracker[uid][date])DB.tracker[uid][date]={checked:{},comments:{}};
-    if(!DB.tracker[uid][date].comments)DB.tracker[uid][date].comments={};
-    return DB.tracker[uid][date];
-  }
+  if(!DB.tracker[date])DB.tracker[date]={};
+  if(!DB.tracker[date][uid])DB.tracker[date][uid]={checked:{},comments:{}};
+  if(!DB.tracker[date][uid].comments)DB.tracker[date][uid].comments={};
+  return DB.tracker[date][uid];
 }
 function getStats(uid,date){
   const blocks=getBlocks(uid),data=getTD(uid,date);
-  let total=0,done=0,na=0,no=0,bs={};
+  let total=0,done=0,na=0,no_c=0,bs={};
   blocks.forEach(b=>{
-    let bt=0,bd=0,bna=0,bno=0;
+    let bt=0,bd=0;
     b.tasks.forEach(t=>{
       if(t.todayOnly&&t.addedDate&&t.addedDate!==date)return;
-      var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
-      var chk=!!data.checked[t.id]||ts==='done';
-      if(ts==='na'){na++;bna++;return;} // NA: excluded from total
       bt++;total++;
-      if(chk){done++;bd++;}
-      else if(ts==='no'){no++;bno++;}
+      var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
+      if(data.checked[t.id]||ts==='done'){done++;bd++;}
+      else if(ts==='na')na++;
+      else if(ts==='no')no_c++;
     });
-    bs[b.id]={done:bd,total:bt,na:bna,no:bno,name:b.name,color:b.color};
+    bs[b.id]={done:bd,total:bt,name:b.name,color:b.color};
   });
-  return{total,done,na,no,blocks:bs};
+  return{total,done,na,no:no_c,blocks:bs};
 }
 
 // ══════════════════════ BRANDING ══════════════════════
@@ -1077,18 +951,10 @@ function doLogin(){
   if(!em||!pw){err.textContent='Enter email and password.';return;}
   const u=DB.users.find(x=>x.email.toLowerCase()===em&&x.ph===sh(pw));
   if(!u){err.textContent='Incorrect email or password.';return;}
-  if(u.status==='pending'){
-    const hasAdmin=DB.users.some(x=>x.sysRole==='admin'&&x.status==='active'&&x.id!=='admin-001');
-    if(!hasAdmin){u.sysRole='admin';u.status='active';u.canSee=true;u.canCmt=true;saveDB();bootApp(u);return;}
-    err.textContent='Account pending admin approval.';return;
-  }
-  if(u.status==='rejected'){
-    // If user has admin role or tasks, they were wrongly rejected - auto fix
-    if(u.sysRole==='admin'||u.canMasterCreate||(DB.blocks&&DB.blocks[u.id]&&DB.blocks[u.id].length>0)){
-      u.status='active';saveDB();bootApp(u);return;
-    }
-    err.textContent='Account not approved.';return;
-  }
+  // Auto-fix: admin got rejected by sync bug
+  if((u.status==='rejected'||u.status==='pending')&&u.sysRole==='admin'){u.status='active';saveDB();bootApp(u);return;}
+  if(u.status==='pending'){err.textContent='Account pending admin approval.';return;}
+  if(u.status==='rejected'){err.textContent='Account not approved.';return;}
   bootApp(u);
 }
 function doRegister(){
@@ -1099,14 +965,12 @@ function doRegister(){
   if(!name||!em||!pw){err.textContent='All fields required.';return;}
   if(pw.length<6){err.textContent='Password min 6 chars.';return;}
   if(!/\S+@\S+\.\S+/.test(em)){err.textContent='Invalid email.';return;}
-  // Check email case-insensitively against all users including pre-loaded
-  if(DB.users.find(function(u){return u.email.toLowerCase()===em;})){err.textContent='Email already registered.';return;}
+  if(DB.users.find(u=>u.email.toLowerCase()===em)){err.textContent='Email already registered.';return;}
   const colors=['#E8C547','#5B9BD5','#E8934A','#5BBD8A','#D4537E','#AFA9EC','#F0997B'];
   const color=colors[DB.users.length%colors.length];
-  const serverConn=!!(SERVER_URL&&SERVER_URL.length>0);
   const hasAdmin=DB.users.some(u=>u.sysRole==='admin'&&u.status==='active');
-  const isFirst=!hasAdmin&&!serverConn;
-  const nu={id:genId('u'),name,email:em,ph:sh(pw),orgRole:isFirst?'Management':'',sysRole:isFirst?'admin':'member',color,status:isFirst?'active':'pending',canSee:isFirst,canCmt:isFirst,canReview:isFirst,canTicket:isFirst,canMasterCreate:isFirst,subordinates:[],photo:'',phone:'',department:DEPT,bio:'',joinDate:td()};
+  const isFirst=!hasAdmin;
+  const nu={id:genId('u'),name,email:em,ph:sh(pw),orgRole:isFirst?'Management':'',sysRole:isFirst?'admin':'member',color,status:isFirst?'active':'pending',canSee:isFirst,canCmt:isFirst,canReview:isFirst,canTicket:isFirst,canMasterCreate:isFirst,subordinates:[],photo:'',phone:'',dept:'',bio:'',joinDate:td()};
   DB.users.push(nu);
   if(isFirst){saveDB();bootApp(nu);return;}
   DB.users.filter(u=>u.sysRole==='admin'&&u.status==='active').forEach(a=>{
@@ -1116,24 +980,8 @@ function doRegister(){
 }
 function doLogout(){CU=null;clearSession();document.getElementById('app').classList.remove('on');document.getElementById('auth-screen').style.display='flex';document.getElementById('li-em').value='';document.getElementById('li-pw').value='';document.getElementById('li-err').textContent='';showPane('login');}
 function bootApp(u){
-  // Self-healing: ensure current user is always active
-  if(u.status!=='active'){
-    u.status='active';
-    try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-  }
-  CU=u;
-  // Show dept badge in topbar
-  var badge=document.getElementById('dept-badge');
-  if(badge&&DEPT){badge.textContent=DEPT;badge.style.display='inline-block';}
-  // Show switch dept button
-  var swBtn=document.getElementById('switch-dept-btn');
-  if(swBtn)swBtn.style.display='inline-block';
-  // Store dept in session
-  if(DEPT){
-      // Tag user with dept if not set
-    if(!u.department){u.department=DEPT;try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
-  }
-  saveSession(u.id);
+  if(u.status!=='active'){u.status='active';try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
+  CU=u;saveSession(u.id);
   applyBranding();
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').classList.add('on');
@@ -1156,26 +1004,8 @@ function bootApp(u){
   document.getElementById('summary-tab').classList.toggle('hidden',!canTeam);
   if(!DB.chat)DB.chat={rooms:{}};
   if(!DB.taskAtt)DB.taskAtt={};
-  if(window._pollInterval)clearInterval(window._pollInterval);
-  window._pollInterval=setInterval(pullOtherUsersData,60000);
-  setTimeout(pushMyData,2000);
-  checkStorageOnBoot();
-  // Fix any users that were wrongly rejected
-  var fixed=false;
-  DB.users.forEach(function(u){
-    if(u.status==='rejected'&&(u.sysRole==='admin'||u.canMasterCreate)){u.status='active';fixed=true;}
-  });
-  if(fixed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
   initChat();
-  try{
-    switchTab('my');
-    renderNotifBadge();
-    updateCTBadge();
-  }catch(err){
-    var dbg=document.getElementById('debug-error');
-    if(dbg){dbg.style.display='block';dbg.textContent='Error: '+err.message+' at '+err.stack;}
-    console.error('bootApp error:',err);
-  }
+  switchTab('my');renderNotifBadge();updateCTBadge();
 }
 function setAvEl(el,u){if(u.photo){el.innerHTML=`<img src="${u.photo}" alt=""/>`;el.style.background='none';}else{el.textContent=ini(u.name);el.style.cssText=avs(u.color);}}
 
@@ -1184,7 +1014,7 @@ function switchTab(t){
   document.querySelectorAll('.pg').forEach(p=>p.classList.add('hidden'));
   document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+t)?.classList.remove('hidden');
-  document.querySelector('[data-tab="'+t+'"]')?.classList.add('on');
+  document.querySelector(`[data-tab="${t}"]`)?.classList.add('on');
   if(t==='my')renderMyTracker();else if(t==='team')renderTeam();else if(t==='summary')renderSummary();
   else if(t==='editlog')renderEditLog();else if(t==='tickets')renderTickets();
   else if(t==='notif'){renderNotifs();markAllRead();}else if(t==='profile')renderProfile();
@@ -1202,20 +1032,14 @@ function renderHeatmap(){var today=td(),h='',i,d,s,p,isT,isSel;for(i=13;i>=0;i--
 function renderMyTracker(){
   const today=td(),isToday=myD===today;
   const data=getTD(CU.id,myD),stats=getStats(CU.id,myD);
-  const pct=stats.pct!==undefined?stats.pct:(stats.total?Math.round(stats.done/stats.total*100):0);
-  const naCount=stats.na||0;const noCount=stats.no||0;
+  const pct=stats.total?Math.round(stats.done/stats.total*100):0;
   document.getElementById('my-dlbl').textContent=isToday?'Today — '+fs(today):fs(myD);
   document.getElementById('my-next').classList.toggle('off',isToday);
   document.getElementById('my-today').classList.toggle('hidden',isToday);
   document.getElementById('ro-bar').classList.toggle('on',!isToday);
   renderHeatmap();
   document.getElementById('my-done').textContent=stats.done;document.getElementById('my-tot').textContent=stats.total;
-  document.getElementById('my-pct').textContent=pct+'%';
-  var extraStats='';
-  if(naCount>0)extraStats+='<span style="font-size:11px;color:#E8934A;margin-left:8px">'+naCount+' NA</span>';
-  if(noCount>0)extraStats+='<span style="font-size:11px;color:#E85555;margin-left:8px">'+noCount+' NO</span>';
-  var extraEl=document.getElementById('my-extra-stats');
-  if(extraEl)extraEl.innerHTML=extraStats;document.getElementById('my-left').textContent=stats.total-stats.done;
+  document.getElementById('my-pct').textContent=pct+'%';document.getElementById('my-left').textContent=stats.total-stats.done;
   document.getElementById('my-pf').style.width=pct+'%';
   const blocks=getBlocks(CU.id);
   document.getElementById('my-blocks').innerHTML=blocks.map((b,bi)=>{
@@ -1252,7 +1076,7 @@ function renderMyTracker(){
 }
 function togBlock(l,c){document.getElementById(l)?.classList.toggle('col');document.getElementById(c)?.classList.toggle('op');}
 function chkTask(bid,tid){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};var cur=data.taskStatus[tid]||'';if(cur==='done'){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
-function setTaskStatus(bid,tid,status){const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};data.taskStatus[tid]=status;data.checked[tid]=(status==='done');saveDB();renderMyTracker();}
+function setTaskStatus(bid,tid,status){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};data.taskStatus[tid]=status;data.checked[tid]=(status==='done');saveDB();renderMyTracker();}
 function addBlock(){
   const name=document.getElementById('nb-name').value.trim();if(!name)return;
   const time=document.getElementById('nb-time').value.trim();
@@ -1291,67 +1115,27 @@ function logEdit(action,blockName,taskId,taskName,prevName){
 // ══════════════════════ TEAM VIEW ══════════════════════
 function shiftTeam(n){const nd=sd(teamD,n);if(nd>td())return;teamD=nd;renderTeam();}
 function renderTeam(){
-  // Pull fresh data if blocks seem empty for active users
-  if(SERVER_URL && CU){
-    var active=DB.users.filter(function(u){return u.status==='active'&&u.id!==CU.id&&!u._deleted;});
-    var emptyCount=active.filter(function(u){return !DB.blocks[u.id]||DB.blocks[u.id].length===0;}).length;
-    if(emptyCount>0){
-      pullOtherUsersData(); // Fetch in background
-    }
-  }
-  var dlbl=document.getElementById('team-dlbl');
-  var tnxt=document.getElementById('team-next');
-  var grid=document.getElementById('tgrid');
-  if(dlbl)dlbl.textContent=fs(teamD)+(teamD===td()?' - Today':'');
-  if(tnxt)tnxt.classList.toggle('off',teamD===td());
-  if(!grid)return;
-  var canAccess=CU.sysRole==='admin'||CU.canSee||CU.canReview||(CU.subordinates&&CU.subordinates.length>0);
-  if(!canAccess){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team view access.</div>';return;}
-  var nd=function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id)&&(!u.department||u.department===DEPT);};
-  var active=CU.sysRole==='admin'||CU.canSee?DB.users.filter(nd):DB.users.filter(function(u){return nd(u)&&(CU.subordinates||[]).includes(u.id);});
-  if(!active.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team members found.</div>';return;}
-  var html='';
-  for(var mi=0;mi<active.length;mi++){
-    var m=active[mi];
-    var st=getStats(m.id,teamD);
-    var pct=st.total?Math.round(st.done/st.total*100):0;
-    var pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';
-    var rc=rcolor(m);
-    var av=m.photo?'<img src="'+m.photo+'" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>':ini(m.name);
-    var barHtml='';
-    var bks=Object.values(st.blocks).slice(0,3);
-    for(var bi=0;bi<bks.length;bi++){
-      var bs=bks[bi];
-      var bp=bs.total?Math.round(bs.done/bs.total*100):0;
-      barHtml+='<div class="mr"><div class="mr-dot" style="background:'+bs.color+'"></div><span class="mr-lbl">'+(bs.name||'')+'</span><div class="mr-wrap"><div class="mr-bar" style="width:'+bp+'%;background:'+bs.color+'"></div></div><span class="mr-cnt">'+bs.done+'/'+bs.total+'</span></div>';
-    }
-    var naTag=st.na>0?' <span style="font-size:10px;color:#E8934A">'+st.na+'NA</span>':'';
-    var noTag=st.no>0?' <span style="font-size:10px;color:#E85555">'+st.no+'NO</span>':'';
-    html+='<div class="mcard'+(openM===m.id?' sel':'')+' tdp" data-uid="'+m.id+'">';
-    html+='<div class="mcard-top"><div class="av av-xs" style="'+avs(m.color)+'">'+av+'</div>';
-    html+='<div class="mcard-info"><div class="mcard-name">'+m.name+'</div>';
-    html+='<div class="mcard-role"><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></div>';
-    html+='<div class="mcard-pct" style="color:'+pc+'">'+pct+'%'+naTag+noTag+'</div></div>';
-    if(barHtml)html+='<div class="mcard-body">'+barHtml+'</div>';
-    html+='</div>';
-  }
-  grid.innerHTML=html;
+  document.getElementById('team-dlbl').textContent=fs(teamD)+(teamD===td()?' — Today':'');
+  document.getElementById('team-next').classList.toggle('off',teamD===td());
+  const canSee=CU.sysRole==='admin'||CU.sysRole==='manager'||CU.canSee;
+  if(!canSee){document.getElementById('tgrid').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔒</div>No team view access.<br>Ask admin.</div>';document.getElementById('dp').classList.remove('on');return;}
+  var active=CU.sysRole==='admin'||CU.canSee?DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001';}):DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&(CU.subordinates||[]).includes(u.id);});
+  document.getElementById('tgrid').innerHTML=active.map(m=>{
+    const s=getStats(m.id,teamD),pct=s.total?Math.round(s.done/s.total*100):0;
+    const pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';
+    const bars=Object.values(s.blocks).slice(0,3).map(bs=>{const bp=bs.total?Math.round(bs.done/bs.total*100):0;return`<div class="mr"><div class="mr-dot" style="background:${bs.color}"></div><span class="mr-lbl">${bs.name||''}</span><div class="mr-wrap"><div class="mr-bar" style="width:${bp}%;background:${bs.color}"></div></div><span class="mr-cnt">${bs.done}/${bs.total}</span></div>`;}).join('');
+    const rc=rcolor(m);
+    return `<div class="mcard${openM===m.id?' sel':''}" onclick="openDP('${m.id}')">
+      <div class="mcard-top"><div class="av av-xs" style="${avs(m.color)}">${m.photo?`<img src="${m.photo}" alt=""/>`:ini(m.name)}</div>
+      <div class="mcard-info"><div class="mcard-name">${m.name}</div><div class="mcard-role"><span class="rtag" style="background:${rc}20;color:${rc}">${rlbl(m)}</span></div></div>
+      <div class="mcard-pct" style="color:${pc}">${pct}%</div></div>
+      ${bars?`<div class="mcard-body">${bars}</div>`:''}
+    </div>`;
+  }).join('')||'<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div>No members yet</div>';
   if(openM)openDP(openM);
 }
-
 function openDP(userId){
   openM=userId;const m=DB.users.find(u=>u.id===userId);if(!m)return;
-  // If user has no blocks, try to pull from server
-  if(SERVER_URL && (!DB.blocks[userId] || DB.blocks[userId].length===0)){
-    fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
-      if(j.ok&&j.data&&j.data.blocks&&j.data.blocks[userId]){
-        DB.blocks[userId]=j.data.blocks[userId];
-        if(j.data.tracker&&j.data.tracker[userId])DB.tracker[userId]=j.data.tracker[userId];
-        try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-        openDP(userId); // Re-render with fresh data
-      }
-    }).catch(function(){});
-  }
   const data=getTD(userId,teamD);
   setAvEl(document.getElementById('dp-av'),m);
   document.getElementById('dp-name').textContent=m.name+' ('+rlbl(m)+') — '+fs(teamD);
@@ -1378,7 +1162,7 @@ function shiftSum(n){const nd=sd(sumD,n);if(nd>td())return;sumD=nd;renderSummary
 function renderSummary(){
   const isT=sumD===td();document.getElementById('sum-dlbl').textContent=isT?'Today':fs(sumD);document.getElementById('sum-next').classList.toggle('off',isT);
   document.getElementById('sum-body').innerHTML=DB.users.filter(u=>u.status==='active'&&u.id!=='admin-001').map(m=>{
-    const s=getStats(m.id,sumD),pct=s.total?s.pct!==undefined?s.pct:Math.round(s.done/s.total*100):0;
+    const s=getStats(m.id,sumD),pct=s.total?Math.round(s.done/s.total*100):0;
     const pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';const rc=rcolor(m);
     const st=pct===100?'<span class="sp sp-done">Done</span>':pct>=50?'<span class="sp sp-track">On track</span>':'<span class="sp sp-behind">Behind</span>';
     return `<tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av av-xs" style="${avs(m.color)}">${m.photo?`<img src="${m.photo}" alt=""/>`:ini(m.name)}</div><div><div style="font-weight:500">${m.name}</div><div style="font-size:10px;color:var(--mu)">${m.email}</div></div></div></td>
@@ -1756,7 +1540,7 @@ function diagUsers(){
 
 function renderAdmin(){
   renderAllAccountsPanel();renderHierarchyPanel();
-  const pending=DB.users.filter(u=>u.status==='pending'&&(!u.department||u.department===DEPT));
+  const pending=DB.users.filter(u=>u.status==='pending');
   const active=DB.users.filter(u=>u.status==='active'&&u.id!==CU.id&&u.id!=='admin-001');
   document.getElementById('pend-cnt').textContent=pending.length?`(${pending.length})`:'';
   document.getElementById('desig-cnt').textContent=`(${DB.designations.length} designations)`;
@@ -1769,7 +1553,9 @@ function renderAdmin(){
     <div class="av av-xs" style="${avs(u.color)}">${ini(u.name)}</div>
     <div class="ainfo"><div class="aname">${u.name}</div><div class="aemail">${u.email}</div></div>
     <div class="aacts">
-      <button class="abtn" onclick="changeDesig('${u.id}','${u.orgRole||''}')" style="background:var(--s2);border:1px solid var(--b2);color:var(--tx);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;min-width:130px;text-align:left">${u.orgRole||'Set designation'} ▾</button>
+      <select class="role-sel" id="rs-${u.id}">
+        ${DB.designations.length?DB.designations.map(d=>`<option value="${d.name}">${d.name}</option>`).join(''):ROLES_FALLBACK.map(r=>`<option value="${r}">${r}</option>`).join('')}
+      </select>
       <button class="abtn ab-ok" onclick="openApproveModal('${u.id}')">Approve &amp; set access</button>
       <button class="abtn ab-err" onclick="rejectUser('${u.id}')">Reject</button>
     </div></div>`).join(''):'<div style="padding:16px 18px;font-size:13px;color:var(--mu)">No pending requests</div>';
@@ -1802,7 +1588,7 @@ function renderAdmin(){
 }
 
 const ROLES_FALLBACK=['Management','Manager','Assistant Manager','MCPC','Sr. Team Leader','Team Leader','Sr. Analyst','Analyst'];const HIERARCHY=['Management','Manager','Assistant Manager','MCPC','Sr. Team Leader','Team Leader','Sr. Analyst','Analyst'];function hierarchyLvl(r){var i=HIERARCHY.indexOf(r);return i===-1?99:i;}
-var SERVER_URL=localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
+var SERVER_URL='https://habitly-server.onrender.com';
 var _lastSync=0;
 // == SYNC VARIABLES =============================================
 var SERVER_URL = localStorage.getItem('habitly_server_url') || 'https://habitly-server.onrender.com';
@@ -2138,56 +1924,9 @@ function cloudLoad(cb){
 }
 // =============================================================
 
-
-function emergencyRepair(){
-  var fixed=0;
-  // Fix ALL users - set active if they have valid email and aren't in deletedUsers
-  DB.users.forEach(function(u){
-    if(!u||!u.email)return;
-    if((DB.deletedUsers||[]).includes(u.id))return;
-    if(u.status==='rejected'||u.status==='pending'){
-      // Restore if not a test/spam account
-      if(u.email!=='test@gmail.com'&&u.email.indexOf('@')>0){
-        u.status='active';
-        fixed++;
-      }
-    }
-  });
-  // Make sure current user is admin
-  if(CU){
-    CU.status='active';
-    CU.sysRole='admin';
-    CU.canSee=true;CU.canCmt=true;CU.canReview=true;CU.canTicket=true;CU.canMasterCreate=true;
-    var me=DB.users.find(function(u){return u.id===CU.id;});
-    if(me){me.status='active';me.sysRole='admin';me.canSee=true;me.canCmt=true;me.canReview=true;me.canTicket=true;me.canMasterCreate=true;}
-  }
-  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-  // Push repaired data to server immediately
-  var url=localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
-  var payload={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},
-    designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],
-    notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
-  fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-  .then(function(){
-    renderAdmin();
-    alert('Repaired '+fixed+' user(s)! All accounts restored to active.\nPushed to server successfully.');
-  })
-  .catch(function(){
-    renderAdmin();
-    alert('Repaired '+fixed+' user(s) locally.\nPlease click Sync now in Settings.');
-  });
-}
-
-
-
-
-
-
-
 // ══════════════════════ INIT ══════════════════════
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-// startApp() is called after all scripts load (see bottom of page)
-</script>
+// startApp called after all scripts load</script>
 <script>
 // ══ CHAT ══
 var curRoom=null,pendAtt=[];
@@ -2446,85 +2185,17 @@ function importBackup(inp){
   };r.readAsText(file);
 }
 function showStorageInfo(){
-  var raw=localStorage.getItem(SK)||'';
-  var kb=Math.round(raw.length/1024*10)/10;
-  var pct=Math.round(kb/5120*100);
+  var raw=localStorage.getItem(SK)||'';var kb=Math.round(raw.length/1024*10)/10;var pct=Math.round(kb/5120*100);
   var au=DB.users.filter(function(u){return u.status==='active';}).length;
   var tt=Object.values(DB.blocks).reduce(function(a,bl){return a+bl.reduce(function(x,b){return x+b.tasks.length;},0);},0);
-  var barColor=pct>80?'var(--err)':pct>50?'var(--warn)':'var(--ok)';
-  var statusMsg='';
-  if(pct>=90){
-    statusMsg='<div style="background:rgba(232,80,80,.15);border:1px solid rgba(232,80,80,.4);border-radius:8px;padding:10px 12px;margin-top:10px;display:flex;align-items:center;gap:10px">'+
-      '<span style="font-size:20px">🚨</span>'+
-      '<div><div style="font-size:13px;font-weight:600;color:var(--err)">Storage Critical ('+pct+'%)</div>'+
-      '<div style="font-size:11px;color:var(--mu);margin-top:2px">Storage almost full! Clear old data now to prevent data loss.</div></div></div>';
-  } else if(pct>=80){
-    statusMsg='<div style="background:rgba(232,147,74,.15);border:1px solid rgba(232,147,74,.4);border-radius:8px;padding:10px 12px;margin-top:10px;display:flex;align-items:center;gap:10px">'+
-      '<span style="font-size:20px">⚠️</span>'+
-      '<div><div style="font-size:13px;font-weight:600;color:var(--warn)">Storage Warning ('+pct+'%)</div>'+
-      '<div style="font-size:11px;color:var(--mu);margin-top:2px">Storage is getting full. Consider clearing old tracker history.</div></div></div>';
-  } else if(pct>=60){
-    statusMsg='<div style="background:rgba(232,197,71,.1);border:1px solid rgba(232,197,71,.3);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:12px;color:var(--mu)">'+
-      '📊 Storage at '+pct+'% — approaching limit. A cleanup soon is recommended.</div>';
-  }
-  var clearBtn=pct>=60?'<button class="exp-btn" onclick="clearOldHistory()" style="background:rgba(232,80,80,.15);border-color:rgba(232,80,80,.4);color:var(--err)">🗑 Clear old history (30+ days)</button>':'';
   document.getElementById('storage-info').innerHTML=
     '<div>Users: <strong style="color:var(--tx)">'+DB.users.length+'</strong> ('+au+' active)</div>'+
     '<div>Total tasks: <strong style="color:var(--tx)">'+tt+'</strong></div>'+
     '<div>Tracker days: <strong style="color:var(--tx)">'+Object.keys(DB.tracker).length+'</strong></div>'+
     '<div>Edit log: <strong style="color:var(--tx)">'+DB.editlog.length+'</strong> entries</div>'+
     '<div>Tickets: <strong style="color:var(--tx)">'+DB.tickets.length+'</strong></div>'+
-    '<div style="margin-top:4px">Storage: <strong style="color:'+(pct>=80?'var(--err)':pct>=60?'var(--warn)':'var(--tx)')+'">'+kb+' KB</strong> / 5120 KB ('+pct+'%)</div>'+
-    '<div style="margin-top:6px;height:8px;background:var(--bd);border-radius:4px;overflow:hidden"><div style="width:'+Math.min(pct,100)+'%;height:100%;background:'+barColor+';border-radius:4px;transition:width .5s"></div></div>'+
-    statusMsg+
-    (clearBtn?'<div style="margin-top:10px">'+clearBtn+'</div>':'');
-}
-
-function clearOldHistory(){
-  if(!confirm('This will delete tracker data older than 30 days for all users. Task blocks are kept. Continue?'))return;
-  var cutoff=sd(td(),-30);
-  var freed=0;
-  Object.keys(DB.tracker).forEach(function(uid){
-    // Handle both tracker formats
-    var keys=Object.keys(DB.tracker);
-    var isDateFirst=keys.length>0&&/^\d{4}-\d{2}-\d{2}$/.test(keys[0]);
-    if(isDateFirst){
-      // Format A: tracker[date][uid]
-      Object.keys(DB.tracker).forEach(function(date){
-        if(date<cutoff&&DB.tracker[date]){delete DB.tracker[date];freed++;}
-      });
-      return; // exit after handling format A
-    }
-    if(!DB.tracker[uid])return;
-    Object.keys(DB.tracker[uid]).forEach(function(date){
-      if(date<cutoff){delete DB.tracker[uid][date];freed++;}
-    });
-  });
-  // Also trim edit log to last 200 entries
-  if(DB.editlog.length>200){DB.editlog=DB.editlog.slice(0,200);}
-  saveDB();
-  showStorageInfo();
-  alert('Cleared '+freed+' old tracker entries. Storage freed up!');
-}
-
-function checkStorageOnBoot(){
-  var raw=localStorage.getItem(SK)||'';
-  var pct=Math.round((raw.length/1024)/5120*100);
-  if(pct>=90){
-    setTimeout(function(){
-      var m=document.createElement('div');
-      m.style.cssText='position:fixed;top:0;left:0;width:100%;z-index:9999;background:var(--err);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.3)';
-      m.innerHTML='🚨 Storage is '+pct+'% full! Go to Settings → Storage info → Clear old history. <button onclick="this.parentNode.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px">Dismiss</button>';
-      document.body.appendChild(m);
-    },2000);
-  } else if(pct>=80){
-    setTimeout(function(){
-      var m=document.createElement('div');
-      m.style.cssText='position:fixed;top:0;left:0;width:100%;z-index:9999;background:#E8934A;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.3)';
-      m.innerHTML='⚠️ Storage is '+pct+'% full. Go to Settings → Storage info to clear old data. <button onclick="this.parentNode.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px">Dismiss</button>';
-      document.body.appendChild(m);
-    },2000);
-  }
+    '<div>Storage: <strong style="color:var(--tx)">'+kb+' KB</strong> / 5120 KB ('+pct+'%)</div>'+
+    '<div style="margin-top:6px;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:'+Math.min(pct,100)+'%;height:100%;background:'+(pct>80?'var(--err)':pct>50?'var(--warn)':'var(--ok)')+';border-radius:3px"></div></div>';
 }
 function exportAllXLSX(){
   if(typeof XLSX==='undefined'){alert('Loading...');return;}
@@ -2548,9 +2219,9 @@ function exportAllXLSX(){
 
 
 <script>
-// ══ ALL NEW FUNCTIONS ══════════════════════════════════════════
+// ══ ALL FEATURES ══════════════════════════════════════════════════
 
-// TASK ROW BUILDER - avoids inline quote nesting issues
+// TASK ROW BUILDER
 function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
   if(t.todayOnly&&t.addedDate&&t.addedDate!==myD)return '';
   var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
@@ -2580,16 +2251,14 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
   h+='</div>'+getTAttHTML(bi,ti,t.id,isToday);
   return h;
 }
-
-// Event delegation for task buttons
 document.addEventListener('click',function(e){
   var el=e.target;
-  var tdp=el.closest('.tdp');if(tdp&&tdp.dataset.uid)openDP(tdp.dataset.uid);
   if(el.classList.contains('tcb')){chkTask(el.dataset.bid,el.dataset.tid);}
   if(el.classList.contains('tsbtn')){setTaskStatus(el.dataset.bid,el.dataset.tid,el.dataset.st||'');}
   if(el.classList.contains('tcmt')){try{openCmt(el.dataset.ctx);}catch(x){}}
   if(el.classList.contains('tedit')){openET(parseInt(el.dataset.bi),parseInt(el.dataset.ti));}
   if(el.classList.contains('tdel')){delTask(parseInt(el.dataset.bi),parseInt(el.dataset.ti));}
+  var tdp=el.closest&&el.closest('.tdp');if(tdp&&tdp.dataset.uid)openDP(tdp.dataset.uid);
 });
 
 // FORGOT PASSWORD
@@ -2613,7 +2282,7 @@ function doResetPw(){
   setTimeout(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();},2000);
 }
 
-// REMOVE USER (permanent - tracked in deletedUsers)
+// REMOVE USER
 function removeUser(id){
   if(!confirm('Remove this user permanently?'))return;
   var u=DB.users.find(function(x){return x.id===id;});
@@ -2623,194 +2292,228 @@ function removeUser(id){
   if(DB.blocks&&DB.blocks[id])delete DB.blocks[id];
   if(DB.tracker&&DB.tracker[id])delete DB.tracker[id];
   try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-  var url=localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
   var payload={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
-  fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
   .then(function(){renderAdmin();alert('User removed!');})
   .catch(function(){renderAdmin();alert('Removed locally.');});
+}
+
+// RESTORE REJECTED USERS
+function showRejected(){
+  var rejected=DB.users.filter(function(u){return u.status==='rejected'&&!(DB.deletedUsers||[]).includes(u.id);});
+  if(!rejected.length){alert('No rejected users found.');return;}
+  var modal=document.createElement('div');
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  var html='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:20px;width:420px;max-width:90vw;max-height:80vh;overflow-y:auto">';
+  html+='<h3 style="margin-bottom:14px;font-size:16px">Rejected Users ('+rejected.length+')</h3>';
+  rejected.forEach(function(u){
+    html+='<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;margin-bottom:8px">';
+    html+='<div style="width:36px;height:36px;border-radius:50%;background:'+u.color+';display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;flex-shrink:0">'+u.name.charAt(0).toUpperCase()+'</div>';
+    html+='<div style="flex:1"><div style="font-size:13px;font-weight:600">'+u.name+'</div><div style="font-size:11px;color:var(--mu)">'+u.email+'</div></div>';
+    html+='<button data-uid="'+u.id+'" onclick="restoreUser(this.dataset.uid)" style="background:rgba(91,189,138,.15);border:1px solid rgba(91,189,138,.4);color:#5BBD8A;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-weight:600">Restore</button>';
+    html+='</div>';
+  });
+  html+='<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;margin-top:10px;padding:8px;background:none;border:1px solid var(--b2);border-radius:8px;color:var(--mu);cursor:pointer">Close</button></div>';
+  modal.innerHTML=html;
+  document.body.appendChild(modal);
+  modal.onclick=function(e){if(e.target===modal)modal.remove();};
+}
+function restoreUser(id){
+  var u=DB.users.find(function(x){return x.id===id;});if(!u)return;
+  u.status='active';delete u._deleted;
+  if(DB.deletedUsers)DB.deletedUsers=DB.deletedUsers.filter(function(x){return x!==id;});
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  var payload={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+  fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  .then(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();renderAdmin();alert(u.name+' restored!');})
+  .catch(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();renderAdmin();alert('Restored locally.');});
 }
 
 // CLEAN DUPLICATES
 function cleanDuplicates(){
   var seen={},clean=[];
-  // Sort: active first, then by joinDate desc (keep newest)
-  var sorted=DB.users.filter(function(u){return !u._deleted&&!(DB.deletedUsers||[]).includes(u.id);})
-    .sort(function(a,b){
-      if(a.status==='active'&&b.status!=='active')return -1;
-      if(b.status==='active'&&a.status!=='active')return 1;
-      return 0;
-    });
-  sorted.forEach(function(u){
-    var key=u.email.toLowerCase();
-    if(!seen[key]){seen[key]=u;clean.push(u);}
-    // else skip duplicate
-  });
+  DB.users.filter(function(u){return !u._deleted&&!(DB.deletedUsers||[]).includes(u.id);})
+  .sort(function(a,b){return a.status==='active'&&b.status!=='active'?-1:1;})
+  .forEach(function(u){var key=u.email.toLowerCase();if(!seen[key]){seen[key]=u;clean.push(u);}});
   var removed=DB.users.length-clean.length;
   if(removed>0){
     DB.users=clean;
-    try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-    // Push clean list to server immediately
-    var url=localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
-    var payload={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},
-      designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],
-      notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
-    fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-    .then(function(){renderAdmin();alert('Removed '+removed+' duplicate(s) and synced to server!');})
-    .catch(function(){renderAdmin();alert('Removed '+removed+' duplicate(s) locally. Please Sync now.');});
-  } else {
-    renderAdmin();
-    alert('No duplicates found.');
-  }
+    var payload={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+    fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}renderAdmin();alert('Removed '+removed+' duplicate(s)!');})
+    .catch(function(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}renderAdmin();alert('Removed '+removed+' duplicate(s) locally.');});
+  } else {renderAdmin();alert('No duplicates found.');}
 }
 
 // CHANGE DESIGNATION POPUP
 function changeDesig(id,current){
   var u=DB.users.find(function(x){return x.id===id;});if(!u)return;
   var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;
-  var existing=document.getElementById('desig-picker-modal');if(existing)existing.remove();
   var modal=document.createElement('div');
-  modal.id='desig-picker-modal';
   modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
   var html='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:20px;min-width:260px;max-width:320px">';
   html+='<div style="font-size:14px;font-weight:600;margin-bottom:14px">Change designation for '+u.name+'</div>';
   html+='<div style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto">';
-  opts.forEach(function(r){html+='<button onclick="applyDesig(\''+id+'\',\''+r+'\')" style="background:'+(r===current?'var(--ac)':'var(--s2)')+';border:1px solid var(--b2);border-radius:7px;padding:9px 14px;color:'+(r===current?'#000':'var(--tx)')+';font-size:13px;cursor:pointer;text-align:left">'+r+'</button>';});
-  html+='</div><button onclick="document.getElementById(\'desig-picker-modal\').remove()" style="margin-top:12px;width:100%;padding:8px;background:none;border:1px solid var(--b2);border-radius:7px;color:var(--mu);cursor:pointer;font-size:13px">Cancel</button></div>';
-  modal.innerHTML=html;
-  document.body.appendChild(modal);
+  opts.forEach(function(r){html+='<button data-role="'+r+'" data-uid="'+id+'" onclick="applyDesig(this.dataset.uid,this.dataset.role)" style="background:'+(r===current?'var(--ac)':'var(--s2)')+';border:1px solid var(--b2);border-radius:7px;padding:9px 14px;color:'+(r===current?'#000':'var(--tx)')+';font-size:13px;cursor:pointer;text-align:left">'+r+'</button>';});
+  html+='</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="margin-top:12px;width:100%;padding:8px;background:none;border:1px solid var(--b2);border-radius:7px;color:var(--mu);cursor:pointer;font-size:13px">Cancel</button></div>';
+  modal.innerHTML=html;document.body.appendChild(modal);
   modal.onclick=function(e){if(e.target===modal)modal.remove();};
 }
 function applyDesig(id,role){
   var u=DB.users.find(function(x){return x.id===id;});if(!u)return;
-  u.orgRole=role;
-  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  u.orgRole=role;try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
   if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(pushMyData,3000);
-  var m=document.getElementById('desig-picker-modal');if(m)m.remove();
+  var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();
   renderAdmin();
 }
 
-// SYNC FUNCTIONS
-function pushMyData(){
-  if(!SERVER_URL||!CU)return;
-  var url=SERVER_URL||'https://habitly-server.onrender.com';
-  var up={userId:CU.id,blocks:(DB.blocks&&DB.blocks[CU.id])||[],tracker:(DB.tracker&&DB.tracker[CU.id])||{},taskAtt:{}};
-  if(DB.taskAtt){Object.keys(DB.taskAtt).forEach(function(k){if(k.indexOf(CU.id)!==-1)up.taskAtt[k]=DB.taskAtt[k];});}
-  fetch(url+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(up)}).catch(function(){});
-  var sp={users:DB.users||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}},deletedUsers:DB.deletedUsers||[],dept:DEPT};
-  fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sp)}).then(function(r){return r.json();}).then(function(j){if(j.ok){_lastSync=Date.now();updateSyncDot(true);}}).catch(function(){});
-}
-
-function pullOtherUsersData(){
-  if(!SERVER_URL||!CU)return;
-  var url=SERVER_URL||'https://habitly-server.onrender.com';
-  fetch(url+'/data').then(function(r){return r.json();}).then(function(j){
-    if(!j.ok||!j.data)return;
-    var d=j.data,changed=false;
-    if(d.deletedUsers&&Array.isArray(d.deletedUsers)){if(!DB.deletedUsers)DB.deletedUsers=[];d.deletedUsers.forEach(function(id){if(!DB.deletedUsers.includes(id)){DB.deletedUsers.push(id);DB.users=DB.users.filter(function(u){return u.id!==id;});changed=true;}});}
-    if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){DB.blocks[uid]=d.blocks[uid];changed=true;}});}
-    if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){DB.tracker[uid]=d.tracker[uid];changed=true;}});}
-    if(d.users&&Array.isArray(d.users)){if(!DB.users)DB.users=[];d.users.forEach(function(su){if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;// Check by ID first, then by email to prevent duplicates
-var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});if(!ex){DB.users.push(su);changed=true;}else if(ex.id!==CU.id){['status','orgRole','sysRole','canSee','canCmt','canReview','canTicket','canMasterCreate','subordinates'].forEach(function(k){if(su[k]!==undefined)ex[k]=su[k];});// Ensure ID is consistent - keep the one that exists locally
-changed=true;}});}
-    if(d.notifications){DB.notifications=d.notifications;changed=true;}
-    if(d.tickets){DB.tickets=d.tickets;changed=true;}
-    if(d.chat&&d.chat.rooms){if(!DB.chat)DB.chat={rooms:{}};Object.keys(d.chat.rooms).forEach(function(rid){var sr=d.chat.rooms[rid];if(!DB.chat.rooms[rid]){DB.chat.rooms[rid]=sr;changed=true;}else{var lm=DB.chat.rooms[rid].messages||[];var sm=sr.messages||[];var ids=new Set(lm.map(function(m){return m.id;}));sm.forEach(function(m){if(!ids.has(m.id)){lm.push(m);changed=true;}});lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});DB.chat.rooms[rid].messages=lm;}});}
-    if(changed){
-      // Always dedupe before saving
-      DB.users=dedupeUsers(DB.users, DB.deletedUsers);
-      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}_lastSync=Date.now();updateSyncDot(true);var at=document.querySelector('.tb.on');if(at){var t=at.dataset.tab;if(t==='team')renderTeam();else if(t==='admin')renderAdmin();else if(t==='summary')renderSummary();renderNotifBadge();updateCTBadge();}}
-  }).catch(function(){});
-}
-
-function updateSyncDot(ok){var dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-status-txt'),last=document.getElementById('sync-last');if(dot)dot.style.background=ok?'var(--ok)':'var(--warn)';if(txt)txt.textContent=ok?'Connected':'Not connected';if(last&&_lastSync)last.textContent=new Date(_lastSync).toLocaleTimeString('en-IN');}
-function showSyncStatus(){updateSyncDot(!!SERVER_URL&&_lastSync>0);var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=SERVER_URL||'Not set';}
-function setupTeamSync(){var m=document.getElementById('sync-setup-modal');if(m)m.classList.add('on');}
-function forceSyncNow(){if(!SERVER_URL){alert('Not connected.');return;}var btn=document.querySelector('[onclick="forceSyncNow()"]');if(btn){btn.textContent='Syncing...';btn.disabled=true;}pushMyData();setTimeout(function(){pullOtherUsersData();if(btn){btn.textContent='Sync now';btn.disabled=false;}alert('Synced!');},1200);}
-function adminCreateSync(){var el=document.getElementById('sync-server-url'),url=(el?el.value.trim():'')||SERVER_URL;url=url.replace(/\/+$/,'');fetch(url+'/health').then(function(r){return r.json();}).then(function(j){if(j.ok){SERVER_URL=url;localStorage.setItem('habitly_server_url',url);pushMyData();document.getElementById('sync-setup-modal').classList.remove('on');var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=url;var rv=document.getElementById('team-sync-reveal');if(rv)rv.style.display='block';var id2=document.getElementById('team-sync-id-display');if(id2)id2.textContent=url;updateSyncDot(true);alert('Connected!\n\nShare this URL with your team:\n'+url);}else{alert('Server error.');}}).catch(function(e){alert('Cannot connect.\n'+e.message+'\n\nWait 30 seconds and try again.');});}
-function joinSyncBin(){var el=document.getElementById('sync-join-id'),url=(el?el.value.trim():'')||SERVER_URL;if(!url||!url.startsWith('http')){alert('Enter the server URL.');return;}url=url.replace(/\/+$/,'');SERVER_URL=url;localStorage.setItem('habitly_server_url',url);document.getElementById('sync-setup-modal').classList.remove('on');pullOtherUsersData();var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=url;updateSyncDot(true);alert('Connected! Login or create an account.');}
-
-// ADMIN PANEL FUNCTIONS
-function renderAllAccountsPanel(){var el=document.getElementById('all-users-list');if(!el)return;var stC={active:'var(--ok)',pending:'var(--warn)',rejected:'var(--err)'};var all=DB.users.filter(function(u){return u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);});el.innerHTML=all.length?all.map(function(u){return'<div class="arow"><div class="av av-xs" style="'+avs(u.color)+'">'+ini(u.name)+'</div><div class="ainfo"><div class="aname">'+u.name+(u.id===CU.id?' <span style="font-size:10px;color:var(--ac)">(you)</span>':'')+'</div><div class="aemail">'+u.email+'</div></div><div class="aacts"><span style="font-size:11px;font-weight:600;color:'+(stC[u.status]||'var(--mu)')+'">'+u.status.toUpperCase()+'</span> <span class="rtag" style="font-size:9px;background:var(--s2);color:var(--mu)">'+rlbl(u)+'</span>'+(u.status==='pending'?'<button class="abtn ab-ok" onclick="openApproveModal(\''+u.id+'\')">Approve</button>':'')+(u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-info" style="font-size:10px" onclick="openApproveModal(\''+u.id+'\')">Edit access</button>':'')+( u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-err" style="font-size:10px" onclick="removeUser(\''+u.id+'\')">Remove</button>':'')+'</div></div>';}).join(''):'<div style="padding:14px 18px;font-size:13px;color:var(--mu)">No users yet</div>';}
-function renderHierarchyPanel(){var el=document.getElementById('hierarchy-display');if(!el)return;var active=DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted;});var grouped={};HIERARCHY.forEach(function(h){grouped[h]=[];});active.forEach(function(u){var r=u.orgRole||'Other';if(grouped[r]!==undefined)grouped[r].push(u);});var colors=['#E8C547','#5B9BD5','#5B9BD5','#5BBD8A','#5BBD8A','#E8934A','#E8934A','#E85555'];var html='';HIERARCHY.forEach(function(level,i){var users=grouped[level]||[];var col=colors[i]||'var(--mu)';html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="width:20px;height:20px;border-radius:50%;background:'+col+'22;color:'+col+';font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+(i+1)+'</div><div><div style="font-size:12px;font-weight:600;color:'+col+'">'+level+'</div>'+(users.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'+users.map(function(u){return'<span style="font-size:10px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:1px 8px">'+u.name+'</span>';}).join('')+'</div>':'<div style="font-size:10px;color:var(--mu);margin-top:2px;font-style:italic">No members</div>')+'</div></div>';});el.innerHTML=html;}
-var _appId=null;
-function openApproveModal(id){_appId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;document.getElementById('approve-info').textContent=u.name+' — '+u.email;var sel=document.getElementById('approve-desig');var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option value="'+r+'"'+(u.orgRole===r?' selected':'')+'>'+r+'</option>';}).join('');document.getElementById('ap-canSee').checked=!!(u.canSee||u.sysRole==='admin');document.getElementById('ap-canCmt').checked=!!(u.canCmt||u.sysRole==='admin');document.getElementById('ap-canReview').checked=!!(u.canReview||u.sysRole==='admin');document.getElementById('ap-canTicket').checked=!!(u.canTicket||u.sysRole==='admin');var mEl=document.getElementById('ap-canMaster');if(mEl)mEl.checked=!!(u.canMasterCreate||u.sysRole==='admin');document.getElementById('approve-modal').classList.add('on');}
-function doApprove(){var u=DB.users.find(function(x){return x.id===_appId;});if(!u)return;u.orgRole=document.getElementById('approve-desig').value;u.canSee=document.getElementById('ap-canSee').checked;u.canCmt=document.getElementById('ap-canCmt').checked;u.canReview=document.getElementById('ap-canReview').checked;u.canTicket=document.getElementById('ap-canTicket').checked;var mEl=document.getElementById('ap-canMaster');u.canMasterCreate=!!(mEl&&mEl.checked);u.subordinates=u.subordinates||[];var was=(u.status==='active');u.status='active';if(!was){DB.notifications.unshift({id:genId('n'),type:'approved',from:CU.name,fromColor:CU.color,to:_appId,text:'Account approved as '+u.orgRole+'.',time:tnow(),date:td(),read:false});}saveDB();document.getElementById('approve-modal').classList.remove('on');renderAdmin();renderNotifBadge();}
-var _subId=null;
-function openSubModal(id){_subId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;var myLvl=hierarchyLvl(u.orgRole);document.getElementById('sub-info').textContent='Who can '+u.name+' review?';var subs=u.subordinates||[];var others=DB.users.filter(function(x){return x.status==='active'&&x.id!==id&&x.id!=='admin-001'&&!x._deleted;}).sort(function(a,b){return hierarchyLvl(a.orgRole)-hierarchyLvl(b.orgRole);});var html='';others.forEach(function(m){var rc=rcolor(m),isBelow=(hierarchyLvl(m.orgRole)>myLvl);html+='<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:'+(isBelow?'var(--s2)':'rgba(255,255,255,.02)')+';border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" value="'+m.id+'" '+(subs.includes(m.id)?'checked':'')+' style="accent-color:var(--ac);flex-shrink:0"/><div class="av av-xs" style="'+avs(m.color)+'">'+ini(m.name)+'</div><div><div style="font-size:13px;font-weight:500">'+m.name+'</div><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></label>';});document.getElementById('sub-list').innerHTML=html||'<div style="font-size:13px;color:var(--mu);padding:8px 0">No other members</div>';document.getElementById('sub-modal').classList.add('on');}
-function saveSubs(){var u=DB.users.find(function(x){return x.id===_subId;});if(!u)return;var cbs=document.querySelectorAll('#sub-list input[type=checkbox]:checked');u.subordinates=Array.from(cbs).map(function(cb){return cb.value;});if(u.subordinates.length>0)u.canReview=true;saveDB();document.getElementById('sub-modal').classList.remove('on');renderAdmin();alert('Saved! '+u.name+' can review '+u.subordinates.length+' member(s).');}
-function showAddMemberForm(){var f=document.getElementById('add-member-form');f.style.display=(f.style.display==='none'?'block':'none');var sel=document.getElementById('am-desig');if(sel){var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option value="'+r+'">'+r+'</option>';}).join('');}}
-function addMemberManually(){var name=document.getElementById('am-name').value.trim(),email=document.getElementById('am-email').value.trim().toLowerCase(),pass=document.getElementById('am-pass').value,desig=document.getElementById('am-desig').value,msg=document.getElementById('am-msg');if(!name||!email||!pass){msg.textContent='All fields required.';msg.style.color='var(--err)';return;}if(DB.users.find(function(u){return u.email.toLowerCase()===email;})){msg.textContent='Email already registered.';msg.style.color='var(--err)';return;}var COLS=['#5B9BD5','#E8934A','#5BBD8A','#D4537E','#AFA9EC','#FAC775'];DB.users.push({id:genId('u'),name:name,email:email,ph:sh(pass),orgRole:desig,sysRole:'member',color:COLS[DB.users.length%COLS.length],status:'active',canSee:false,canCmt:false,canReview:false,canTicket:false,canMasterCreate:false,subordinates:[],photo:'',phone:'',dept:'',bio:'',joinDate:td()});saveDB();msg.textContent='Added! Login: '+email;msg.style.color='var(--ok)';document.getElementById('am-name').value='';document.getElementById('am-email').value='';document.getElementById('am-pass').value='';renderAdmin();}
-function diagUsers(){var out='Users ('+DB.users.length+'):\n';DB.users.forEach(function(u,i){out+=(i+1)+'. '+u.name+' | '+u.email+' | '+u.status+' | '+(u.orgRole||'no role')+(u._deleted?' [DELETED]':'')+'\n';});document.getElementById('diag-out').textContent=out;}
-function setOrgRole(id,r){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u.orgRole=r;try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(pushMyData,3000);}
-function setAccess(id,f,v){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u[f]=v;var L={canSee:'view team',canCmt:'comment',canReview:'review',canTicket:'tickets',canMasterCreate:'master'};DB.notifications.unshift({id:genId('n'),type:'access',from:CU.name,fromColor:CU.color,to:id,text:'Admin '+(v?'granted':'revoked')+': '+(L[f]||f)+'.',time:tnow(),date:td(),read:false});saveDB();renderNotifBadge();}
-function quickApprove(id){openApproveModal(id);}
-
-// Override renderAdmin to also render new panels + pull from server
-var _origRA=null;
-function initAdminPanels(){
-  if(_origRA)return;
-  _origRA=renderAdmin;
-  renderAdmin=function(){
-    if(SERVER_URL)pullOtherUsersData();
-    _origRA();
-    renderAllAccountsPanel();
-    renderHierarchyPanel();
-  };
-}
-
-// Startup: load from server then check session
-function dedupeUsers(users, deletedIds){
-  // Dedupe by email - keep active over pending, keep first occurrence
-  var seen={}, clean=[];
+// SAFE SYNC - never overwrites user data
+function dedupeUsers(users,deletedIds){
+  var seen={},clean=[];
   (users||[]).forEach(function(u){
     if(!u||!u.email)return;
     if((deletedIds||[]).includes(u.id)||u._deleted)return;
     var key=u.email.toLowerCase();
     if(!seen[key]){seen[key]=u;clean.push(u);}
-    else{
-      var existing=seen[key];
-      // Always keep active over non-active
-      if(u.status==='active'&&existing.status!=='active'){
-        var i=clean.indexOf(existing);clean[i]=u;seen[key]=u;
-      }
-      // If same status, merge data into existing - keep better one
-      else if(u.status===existing.status){
-        // Keep the one with more permissions
-        if(u.canSee||u.canReview||u.canMasterCreate){
-          Object.assign(existing,u);existing.id=existing.id;
-        }
-      }
-    }
+    else if(u.status==='active'&&seen[key].status!=='active'){var i=clean.indexOf(seen[key]);clean[i]=u;seen[key]=u;}
   });
   return clean;
 }
 
+function pushMyData(){
+  if(!SERVER_URL||!CU)return;
+  // Push own blocks/tracker
+  var up={userId:CU.id,blocks:(DB.blocks&&DB.blocks[CU.id])||[],tracker:(DB.tracker&&DB.tracker[CU.id])||{},taskAtt:{}};
+  if(DB.taskAtt){Object.keys(DB.taskAtt).forEach(function(k){if(k.indexOf(CU.id)!==-1)up.taskAtt[k]=DB.taskAtt[k];});}
+  fetch(SERVER_URL+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(up)}).catch(function(){});
+  // Push shared data
+  var sp={users:DB.users||[],deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+  fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sp)}).then(function(r){return r.json();}).then(function(j){if(j.ok){_lastSync=Date.now();}}).catch(function(){});
+}
 
+function pullOtherUsersData(){
+  if(!SERVER_URL||!CU)return;
+  fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
+    if(!j.ok||!j.data)return;
+    var d=j.data,changed=false;
+    // Process deletions first
+    if(d.deletedUsers){if(!DB.deletedUsers)DB.deletedUsers=[];d.deletedUsers.forEach(function(id){if(!DB.deletedUsers.includes(id)){DB.deletedUsers.push(id);DB.users=DB.users.filter(function(u){return u.id!==id;});changed=true;}});}
+    // Only add NEW users - never update existing ones' status
+    if(d.users){if(!DB.users)DB.users=[];d.users.forEach(function(su){
+      if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
+      var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+      if(!ex){DB.users.push(su);changed=true;}
+      // Never update status of existing users from server
+    });}
+    // Other users blocks/tracker
+    if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){DB.blocks[uid]=d.blocks[uid];changed=true;}});}
+    if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){DB.tracker[uid]=d.tracker[uid];changed=true;}});}
+    // Shared data
+    if(d.notifications){DB.notifications=d.notifications;changed=true;}
+    if(d.tickets){DB.tickets=d.tickets;changed=true;}
+    if(d.chat&&d.chat.rooms){if(!DB.chat)DB.chat={rooms:{}};Object.keys(d.chat.rooms).forEach(function(rid){var sr=d.chat.rooms[rid];if(!DB.chat.rooms[rid]){DB.chat.rooms[rid]=sr;changed=true;}else{var lm=DB.chat.rooms[rid].messages||[];var sm=sr.messages||[];var ids=new Set(lm.map(function(m){return m.id;}));sm.forEach(function(m){if(!ids.has(m.id)){lm.push(m);changed=true;}});lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});DB.chat.rooms[rid].messages=lm;}});}
+    if(changed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}_lastSync=Date.now();var at=document.querySelector('.tb.on');if(at){var t=at.dataset.tab;if(t==='team')renderTeam();else if(t==='admin')renderAdmin();renderNotifBadge();updateCTBadge();}}
+  }).catch(function(){});
+}
 
+function updateSyncDot(ok){var dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-status-txt'),last=document.getElementById('sync-last');if(dot)dot.style.background=ok?'var(--ok)':'var(--warn)';if(txt)txt.textContent=ok?'Connected':'Not connected';if(last&&_lastSync)last.textContent=new Date(_lastSync).toLocaleTimeString('en-IN');}
+function showSyncStatus(){updateSyncDot(!!SERVER_URL&&_lastSync>0);var bd=document.getElementById('sync-bin-display');if(bd)bd.textContent=SERVER_URL||'Not set';}
+function forceSyncNow(){if(!SERVER_URL){alert('Not connected.');return;}pushMyData();setTimeout(function(){pullOtherUsersData();alert('Synced!');},1200);}
 
+// ADMIN PANELS
+function renderAllAccountsPanel(){var el=document.getElementById('all-users-list');if(!el)return;var all=DB.users.filter(function(u){return u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);});el.innerHTML=all.length?all.map(function(u){var stC={active:'var(--ok)',pending:'var(--warn)',rejected:'var(--err)'};return'<div class="arow"><div class="av av-xs" style="'+avs(u.color)+'">'+ini(u.name)+'</div><div class="ainfo"><div class="aname">'+u.name+(u.id===CU.id?' <span style="font-size:10px;color:var(--ac)">(you)</span>':'')+'</div><div class="aemail">'+u.email+'</div></div><div class="aacts"><span style="font-size:11px;font-weight:600;color:'+(stC[u.status]||'var(--mu)')+'">'+u.status.toUpperCase()+'</span>'+(u.status==='pending'?'<button class="abtn ab-ok" onclick="openApproveModal(\''+u.id+'\')">Approve</button>':'')+(u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-info" style="font-size:10px" onclick="openApproveModal(\''+u.id+'\')">Edit</button>':'')+(u.id!==CU.id?'<button class="abtn ab-err" style="font-size:10px" onclick="removeUser(\''+u.id+'\')">Remove</button>':'')+'</div></div>';}).join(''):'<div style="padding:14px 18px;font-size:13px;color:var(--mu)">No users yet</div>';}
+function renderHierarchyPanel(){var el=document.getElementById('hierarchy-display');if(!el)return;var active=DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted;});var grouped={};HIERARCHY.forEach(function(h){grouped[h]=[];});active.forEach(function(u){var r=u.orgRole||'Other';if(grouped[r])grouped[r].push(u);else{if(!grouped.Other)grouped.Other=[];grouped.Other.push(u);}});var colors=['#E8C547','#5B9BD5','#5B9BD5','#5BBD8A','#5BBD8A','#E8934A','#E8934A','#E85555'];var html='';HIERARCHY.forEach(function(level,i){var users=grouped[level]||[];var col=colors[i]||'var(--mu)';html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="width:20px;height:20px;border-radius:50%;background:'+col+'22;color:'+col+';font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+(i+1)+'</div><div><div style="font-size:12px;font-weight:600;color:'+col+'">'+level+'</div>'+(users.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'+users.map(function(u){return'<span style="font-size:10px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:1px 8px">'+u.name+'</span>';}).join('')+'</div>':'<div style="font-size:10px;color:var(--mu);font-style:italic">No members</div>')+'</div></div>';});el.innerHTML=html;}
+var _appId=null;
+function openApproveModal(id){_appId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;document.getElementById('approve-info').textContent=u.name+' — '+u.email;var sel=document.getElementById('approve-desig');var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option value="'+r+'"'+(u.orgRole===r?' selected':'')+'>'+r+'</option>';}).join('');document.getElementById('ap-canSee').checked=!!(u.canSee||u.sysRole==='admin');document.getElementById('ap-canCmt').checked=!!(u.canCmt||u.sysRole==='admin');document.getElementById('ap-canReview').checked=!!(u.canReview||u.sysRole==='admin');document.getElementById('ap-canTicket').checked=!!(u.canTicket||u.sysRole==='admin');var mEl=document.getElementById('ap-canMaster');if(mEl)mEl.checked=!!(u.canMasterCreate||u.sysRole==='admin');document.getElementById('approve-modal').classList.add('on');}
+function doApprove(){var u=DB.users.find(function(x){return x.id===_appId;});if(!u)return;u.orgRole=document.getElementById('approve-desig').value;u.canSee=document.getElementById('ap-canSee').checked;u.canCmt=document.getElementById('ap-canCmt').checked;u.canReview=document.getElementById('ap-canReview').checked;u.canTicket=document.getElementById('ap-canTicket').checked;var mEl=document.getElementById('ap-canMaster');u.canMasterCreate=!!(mEl&&mEl.checked);u.subordinates=u.subordinates||[];var was=(u.status==='active');u.status='active';if(!was){DB.notifications.unshift({id:genId('n'),type:'approved',from:CU.name,fromColor:CU.color,to:_appId,text:'Account approved as '+u.orgRole+'.',time:tnow(),date:td(),read:false});}saveDB();setTimeout(pushMyData,500);document.getElementById('approve-modal').classList.remove('on');renderAdmin();renderNotifBadge();}
+var _subId=null;
+function openSubModal(id){_subId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;var myLvl=hierarchyLvl(u.orgRole);document.getElementById('sub-info').textContent='Who can '+u.name+' review?';var subs=u.subordinates||[];var others=DB.users.filter(function(x){return x.status==='active'&&x.id!==id&&x.id!=='admin-001'&&!x._deleted;}).sort(function(a,b){return hierarchyLvl(a.orgRole)-hierarchyLvl(b.orgRole);});var html='';others.forEach(function(m){var rc=rcolor(m),isBelow=(hierarchyLvl(m.orgRole)>myLvl);html+='<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:'+(isBelow?'var(--s2)':'rgba(255,255,255,.02)')+';border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" value="'+m.id+'" '+(subs.includes(m.id)?'checked':'')+' style="accent-color:var(--ac);flex-shrink:0"/><div class="av av-xs" style="'+avs(m.color)+'">'+ini(m.name)+'</div><div><div style="font-size:13px;font-weight:500">'+m.name+'</div><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></label>';});document.getElementById('sub-list').innerHTML=html||'<div style="font-size:13px;color:var(--mu);padding:8px 0">No other members</div>';document.getElementById('sub-modal').classList.add('on');}
+function saveSubs(){var u=DB.users.find(function(x){return x.id===_subId;});if(!u)return;var cbs=document.querySelectorAll('#sub-list input[type=checkbox]:checked');u.subordinates=Array.from(cbs).map(function(cb){return cb.value;});if(u.subordinates.length>0)u.canReview=true;saveDB();document.getElementById('sub-modal').classList.remove('on');renderAdmin();alert('Saved!');}
+function showAddMemberForm(){var f=document.getElementById('add-member-form');f.style.display=(f.style.display==='none'?'block':'none');var sel=document.getElementById('am-desig');if(sel){var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option value="'+r+'">'+r+'</option>';}).join('');}}
+function addMemberManually(){var name=document.getElementById('am-name').value.trim(),email=document.getElementById('am-email').value.trim().toLowerCase(),pass=document.getElementById('am-pass').value,desig=document.getElementById('am-desig').value,msg=document.getElementById('am-msg');if(!name||!email||!pass){msg.textContent='All fields required.';msg.style.color='var(--err)';return;}if(DB.users.find(function(u){return u.email.toLowerCase()===email;})){msg.textContent='Email already registered.';msg.style.color='var(--err)';return;}var COLS=['#5B9BD5','#E8934A','#5BBD8A','#D4537E','#AFA9EC','#FAC775'];DB.users.push({id:genId('u'),name:name,email:email,ph:sh(pass),orgRole:desig,sysRole:'member',color:COLS[DB.users.length%COLS.length],status:'active',canSee:false,canCmt:false,canReview:false,canTicket:false,canMasterCreate:false,subordinates:[],photo:'',phone:'',dept:'',bio:'',joinDate:td()});saveDB();msg.textContent='Added!';msg.style.color='var(--ok)';document.getElementById('am-name').value='';document.getElementById('am-email').value='';document.getElementById('am-pass').value='';renderAdmin();}
+function diagUsers(){var out='Users ('+DB.users.length+'):\n';DB.users.forEach(function(u,i){out+=(i+1)+'. '+u.name+' | '+u.email+' | '+u.status+' | '+(u.orgRole||'no role')+(u._deleted?' [DEL]':'')+'\n';});document.getElementById('diag-out').textContent=out;}
+function setOrgRole(id,r){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u.orgRole=r;try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(pushMyData,3000);}
+
+// STORAGE ALERTS
+function showStorageInfo(){var raw=localStorage.getItem(SK)||'';var kb=Math.round(raw.length/1024*10)/10;var pct=Math.round(kb/5120*100);var au=DB.users.filter(function(u){return u.status==='active';}).length;var tt=Object.values(DB.blocks).reduce(function(a,bl){return a+bl.reduce(function(x,b){return x+b.tasks.length;},0);},0);var bc=pct>80?'var(--err)':pct>50?'var(--warn)':'var(--ok)';var warn='';if(pct>=80)warn='<div style="background:rgba(232,80,80,.1);border:1px solid rgba(232,80,80,.3);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;color:var(--err)">⚠️ Storage is '+pct+'% full! Clear old history.</div>';var clearBtn=pct>=60?'<button class="exp-btn" onclick="clearOldHistory()" style="background:rgba(232,80,80,.1);border-color:rgba(232,80,80,.3);color:var(--err);margin-top:6px">Clear old history (30+ days)</button>':'';document.getElementById('storage-info').innerHTML='<div>Users: <strong style="color:var(--tx)">'+DB.users.length+'</strong> ('+au+' active)</div><div>Total tasks: <strong style="color:var(--tx)">'+tt+'</strong></div><div>Tracker days: <strong style="color:var(--tx)">'+Object.keys(DB.tracker).length+'</strong></div><div>Edit log: <strong style="color:var(--tx)">'+DB.editlog.length+'</strong> entries</div><div>Tickets: <strong style="color:var(--tx)">'+DB.tickets.length+'</strong></div><div style="margin-top:4px">Storage: <strong style="color:'+(pct>=80?'var(--err)':pct>=60?'var(--warn)':'var(--tx)')+'">'+kb+' KB</strong> / 5120 KB ('+pct+'%)</div><div style="margin-top:6px;height:8px;background:var(--bd);border-radius:4px;overflow:hidden"><div style="width:'+Math.min(pct,100)+'%;height:100%;background:'+bc+';border-radius:4px"></div></div>'+warn+(clearBtn?'<div>'+clearBtn+'</div>':'');}
+function clearOldHistory(){if(!confirm('Delete tracker data older than 30 days?'))return;var cutoff=sd(td(),-30);var freed=0;Object.keys(DB.tracker).forEach(function(uid){if(!DB.tracker[uid])return;Object.keys(DB.tracker[uid]).forEach(function(date){if(date<cutoff){delete DB.tracker[uid][date];freed++;}});});if(DB.editlog.length>200)DB.editlog=DB.editlog.slice(0,200);saveDB();showStorageInfo();alert('Cleared '+freed+' old entries!');}
+function checkStorageOnBoot(){var raw=localStorage.getItem(SK)||'';var pct=Math.round((raw.length/1024)/5120*100);if(pct>=80){setTimeout(function(){var m=document.createElement('div');m.style.cssText='position:fixed;top:0;left:0;width:100%;z-index:9999;background:'+(pct>=90?'var(--err)':'#E8934A')+';color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600';m.innerHTML=(pct>=90?'🚨':'⚠️')+' Storage is '+pct+'% full! Go to Settings → Storage info. <button onclick="this.parentNode.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px">Dismiss</button>';document.body.appendChild(m);},2000);}}
+
+// renderTeam override - clean version
+function renderTeam(){
+  var dlbl=document.getElementById('team-dlbl');var tnxt=document.getElementById('team-next');var grid=document.getElementById('tgrid');
+  if(dlbl)dlbl.textContent=fs(teamD)+(teamD===td()?' - Today':'');
+  if(tnxt)tnxt.classList.toggle('off',teamD===td());
+  if(!grid)return;
+  var canAccess=CU.sysRole==='admin'||CU.canSee||CU.canReview||(CU.subordinates&&CU.subordinates.length>0);
+  if(!canAccess){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team view access.</div>';return;}
+  var nd=function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);};
+  var active=CU.sysRole==='admin'||CU.canSee?DB.users.filter(nd):DB.users.filter(function(u){return nd(u)&&(CU.subordinates||[]).includes(u.id);});
+  if(SERVER_URL&&active.filter(function(u){return!DB.blocks[u.id]||DB.blocks[u.id].length===0;}).length>0)pullOtherUsersData();
+  var html='';
+  active.forEach(function(m){
+    var st=getStats(m.id,teamD);var pct=st.total?Math.round(st.done/st.total*100):0;
+    var pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';var rc=rcolor(m);
+    var av=m.photo?'<img src="'+m.photo+'" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>':ini(m.name);
+    var barHtml='';Object.values(st.blocks).slice(0,3).forEach(function(bs){var bp=bs.total?Math.round(bs.done/bs.total*100):0;barHtml+='<div class="mr"><div class="mr-dot" style="background:'+bs.color+'"></div><span class="mr-lbl">'+(bs.name||'')+'</span><div class="mr-wrap"><div class="mr-bar" style="width:'+bp+'%;background:'+bs.color+'"></div></div><span class="mr-cnt">'+bs.done+'/'+bs.total+'</span></div>';});
+    var naTag=st.na>0?' <span style="font-size:10px;color:#E8934A">'+st.na+'NA</span>':'';
+    var noTag=st.no>0?' <span style="font-size:10px;color:#E85555">'+st.no+'NO</span>':'';
+    html+='<div class="mcard'+(openM===m.id?' sel':'')+' tdp" data-uid="'+m.id+'">';
+    html+='<div class="mcard-top"><div class="av av-xs" style="'+avs(m.color)+'">'+av+'</div>';
+    html+='<div class="mcard-info"><div class="mcard-name">'+m.name+'</div>';
+    html+='<div class="mcard-role"><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></div>';
+    html+='<div class="mcard-pct" style="color:'+pc+'">'+pct+'%'+naTag+noTag+'</div></div>';
+    if(barHtml)html+='<div class="mcard-body">'+barHtml+'</div>';
+    html+='</div>';
+  });
+  grid.innerHTML=html||'<div class="empty" style="grid-column:1/-1">No team members.</div>';
+  if(openM)openDP(openM);
+}
+
+// Override renderAdmin
+var _origRA=null;
+function initAdminPanels(){
+  if(_origRA)return;
+  _origRA=renderAdmin;
+  renderAdmin=function(){_origRA();renderAllAccountsPanel();renderHierarchyPanel();};
+}
+
+// STARTUP - safe, clean, no dept complications
 function startApp(){
   loadDB();applyBranding();initAdminPanels();
-  if(savedDept){
-    DEPT=savedDept;SK=SK_BASE+'-'+savedDept;loadDB();
-    setTimeout(function(){
-      var btn=document.getElementById(savedDept==='MC'?'dept-mc':'dept-ia');
-      if(btn){btn.style.borderColor='var(--ac)';btn.style.background='rgba(232,197,71,.1)';}
-      var auth=document.getElementById('auth-area');if(auth)auth.style.display='block';
-    },50);
+  if(SERVER_URL){
+    fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
+      if(j.ok&&j.data){
+        var d=j.data;
+        if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
+        // Merge users - only add new ones, never change existing status
+        if(d.users&&Array.isArray(d.users)){
+          if(!DB.users)DB.users=[];
+          d.users.forEach(function(su){
+            if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
+            var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+            if(!ex)DB.users.push(su);
+            // Never update existing users from server
+          });
+        }
+        ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
+        // Self-heal: restore admin accounts
+        DB.users.forEach(function(u){if(u.sysRole==='admin'&&u.status!=='active')u.status='active';});
+        try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+        applyBranding();
+      }
+    }).catch(function(){}).finally(function(){
+      var sid=loadSession();
+      if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
+      if(window._pollInterval)clearInterval(window._pollInterval);
+      window._pollInterval=setInterval(pullOtherUsersData,60000);
+    });
+  } else {
     var sid=loadSession();
-    if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su){bootApp(su);return;}}
+    if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
   }
 }
 </script>
-
-<script>
-// Only register service worker when served from a real server (not local file)
-if('serviceWorker' in navigator && location.protocol !== 'file:' && location.hostname !== 'localhost'){
-  window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
-}
-</script>
-<script>if(typeof startApp==="function"){startApp();}else{console.error("startApp not found");}</script>
+<script>startApp();</script>
 </body>
 </html>
