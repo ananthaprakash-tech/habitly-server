@@ -980,12 +980,12 @@ input,select,textarea,button{font-family:inherit}
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 // ══════════════════════ DB & STATE ══════════════════════
-const SK='tt-v7',SESSION_KEY='tt-session-v7';
+var SK='tt-v7';const SESSION_KEY='tt-session-v7';
+var SK_BASE='tt-v7';
 
 
 const LOGO_COLORS=['#E8C547','#5B9BD5','#5BBD8A','#E8934A','#D4537E','#AFA9EC','#F0997B','#ffffff'];
 var DEPT=''; // Current department - set at login
-var SK_BASE='tt-v7';
 let DB={users:[],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[],deletedUsers:[]};
 let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTkId=null,tkFilter='all';
 
@@ -1130,7 +1130,12 @@ function bootApp(u){
   var swBtn=document.getElementById('switch-dept-btn');
   if(swBtn)swBtn.style.display='inline-block';
   // Store dept in session
-  if(DEPT)localStorage.setItem('habitly_dept',DEPT);saveSession(u.id);
+  if(DEPT){
+    localStorage.setItem('habitly_dept',DEPT);
+    // Tag user with dept if not set
+    if(!u.department){u.department=DEPT;try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
+  }
+  saveSession(u.id);
   applyBranding();
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').classList.add('on');
@@ -2790,7 +2795,24 @@ function dedupeUsers(users, deletedIds){
   return clean;
 }
 
+
+function migrateExistingData(){
+  try{
+    var oldData=localStorage.getItem('tt-v7');
+    if(!oldData)return; // Nothing to migrate
+    // Check if MC data already exists
+    var mcData=localStorage.getItem('tt-v7-MC');
+    if(!mcData){
+      // Copy old data to MC (existing team is MC)
+      localStorage.setItem('tt-v7-MC', oldData);
+      console.log('Migrated existing data to MC dept');
+    }
+    // Don't delete old data yet - keep as backup
+  }catch(e){}
+}
+
 function startApp(){
+  migrateExistingData();
   loadDB();applyBranding();initAdminPanels();
   var savedDept=localStorage.getItem('habitly_dept');
   if(savedDept){
