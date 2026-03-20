@@ -406,6 +406,7 @@ input,select,textarea,button{font-family:inherit}
       <input class="fi" type="password" id="li-pw" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/>
       <button class="btn-pri" onclick="doLogin()">Sign in</button>
       <div class="aerr" id="li-err"></div>
+      <div style="text-align:center;margin-top:8px"><button onclick="showForgotPw()" style="background:none;border:none;color:var(--mu);font-size:12px;cursor:pointer;text-decoration:underline">Forgot password?</button></div>
       <div style="margin-top:12px;text-align:center">
         <div style="font-size:11px;color:var(--mu);margin-bottom:8px">— or —</div>
         <label style="display:inline-flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;color:var(--mu);transition:border-color .2s">
@@ -2286,13 +2287,7 @@ document.addEventListener('click',function(e){
 });
 
 // FORGOT PASSWORD
-function showForgotPw(){
-  var m=document.createElement('div');
-  m.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
-  m.innerHTML='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:24px;width:320px;max-width:90vw"><h3 style="margin-bottom:8px;font-size:16px">Reset Password</h3><p style="font-size:12px;color:var(--mu);margin-bottom:16px;line-height:1.6">Enter your email and set a new password.</p><input class="fi" id="fp-email" placeholder="Your email" style="margin-bottom:10px"/><input class="fi" type="password" id="fp-newpw" placeholder="New password (min 6 chars)" style="margin-bottom:14px"/><div style="display:flex;gap:8px"><button class="btn-pri" onclick="doResetPw()" style="flex:1">Reset</button><button class="btn-sec" onclick="this.closest(\'[style*=fixed]\').remove()" style="flex:1">Cancel</button></div><div id="fp-msg" style="font-size:12px;margin-top:8px;min-height:16px"></div></div>';
-  document.body.appendChild(m);
-  m.onclick=function(e){if(e.target===m)m.remove();};
-}
+
 function doResetPw(){
   var email=document.getElementById('fp-email').value.trim().toLowerCase();
   var npw=document.getElementById('fp-newpw').value;
@@ -2972,6 +2967,7 @@ input,select,textarea,button{font-family:inherit}
       <input class="fi" type="password" id="li-pw" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/>
       <button class="btn-pri" onclick="doLogin()">Sign in</button>
       <div class="aerr" id="li-err"></div>
+      <div style="text-align:center;margin-top:8px;margin-bottom:4px"><button onclick="showForgotPw()" style="background:none;border:none;color:var(--mu);font-size:12px;cursor:pointer;text-decoration:underline">Forgot password?</button></div>
       <div style="margin-top:12px;text-align:center">
         <div style="font-size:11px;color:var(--mu);margin-bottom:8px">— or —</div>
         <label style="display:inline-flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;color:var(--mu);transition:border-color .2s">
