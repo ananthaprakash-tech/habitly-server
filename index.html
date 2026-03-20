@@ -1129,7 +1129,7 @@ function renderTeam(){
     return `<div class="mcard${openM===m.id?' sel':''}" onclick="openDP('${m.id}')">
       <div class="mcard-top"><div class="av av-xs" style="${avs(m.color)}">${m.photo?`<img src="${m.photo}" alt=""/>`:ini(m.name)}</div>
       <div class="mcard-info"><div class="mcard-name">${m.name}</div><div class="mcard-role"><span class="rtag" style="background:${rc}20;color:${rc}">${rlbl(m)}</span></div></div>
-      <div class="mcard-pct" style="color:${pc}">${pct}%</div></div>
+      <div class="mcard-pct" style="color:${pc}">${pct}%${st.na>0?` <span style="font-size:10px;color:#E8934A">${st.na}NA</span>`:``}${st.no>0?` <span style="font-size:10px;color:#E85555">${st.no}NO</span>`:``}${st.pp>0?` <span style="font-size:10px;color:#5B9BD5">${st.pp}PP</span>`:``}</div></div>
       ${bars?`<div class="mcard-body">${bars}</div>`:''}
     </div>`;
   }).join('')||'<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div>No members yet</div>';
@@ -2467,7 +2467,7 @@ function renderTeam(){
     html+='<div class="mcard-top"><div class="av av-xs" style="'+avs(m.color)+'">'+av+'</div>';
     html+='<div class="mcard-info"><div class="mcard-name">'+m.name+'</div>';
     html+='<div class="mcard-role"><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></div>';
-    html+='<div class="mcard-pct" style="color:'+pc+'">'+pct+'%'+naTag+noTag+'</div></div>';
+    html+='<div class="mcard-pct" style="color:'+pc+'">'+pct+'%'+naTag+noTag+ppTag+'</div></div>';
     if(barHtml)html+='<div class="mcard-body">'+barHtml+'</div>';
     html+='</div>';
   });
