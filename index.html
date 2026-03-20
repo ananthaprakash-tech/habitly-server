@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#1A1C20"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Habitly"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
 <title>Habitly — Daily Habit Tracker</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:wght@400;600&family=Rajdhani:wght@400;600;700&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet"/>
@@ -441,6 +448,42 @@ input,select,textarea,button{font-family:inherit}
       <div class="auth-logo-txt" id="a-logo-txt">Habitly</div>
     </div>
     <div class="auth-sub">Track. Sync. Achieve — every day.</div>
+    <!-- DEPARTMENT SELECTOR -->
+    <div id="dept-selector" style="margin-bottom:20px">
+      <div style="font-size:11px;color:var(--mu);text-align:center;margin-bottom:10px;letter-spacing:1px;font-weight:600">SELECT YOUR DEPARTMENT</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button onclick="selectDept('MC')" id="dept-mc" style="padding:16px 8px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;transition:all .2s;text-align:center;width:100%">
+          <div style="font-size:22px;margin-bottom:4px">🏢</div>
+          <div style="font-size:16px;font-weight:700;color:var(--ac)">MC</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px">Management Consulting</div>
+        </button>
+        <button onclick="selectDept('IA')" id="dept-ia" style="padding:16px 8px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;transition:all .2s;text-align:center;width:100%">
+          <div style="font-size:22px;margin-bottom:4px">⚙️</div>
+          <div style="font-size:16px;font-weight:700;color:var(--ac)">IA</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px">Internal Audit</div>
+        </button>
+      </div>
+    </div>
+    <!-- AUTH AREA hidden until dept selected -->
+    <div id="auth-area" style="display:none">
+    <!-- DEPARTMENT SELECTOR -->
+    <div style="margin-bottom:18px">
+      <div style="font-size:11px;color:var(--mu);text-align:center;margin-bottom:10px;letter-spacing:1px;font-weight:600;text-transform:uppercase">Select Your Department</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
+        <button onclick="selectDept('MC')" id="dept-mc" style="padding:14px 8px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;color:var(--tx);transition:all .2s;text-align:center">
+          <div style="font-size:20px;margin-bottom:4px">🏢</div>
+          <div style="font-size:15px;font-weight:700;color:var(--tx)">MC</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px">Management Consulting</div>
+        </button>
+        <button onclick="selectDept('IA')" id="dept-ia" style="padding:14px 8px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;color:var(--tx);transition:all .2s;text-align:center">
+          <div style="font-size:20px;margin-bottom:4px">⚙️</div>
+          <div style="font-size:15px;font-weight:700;color:var(--tx)">IA</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px">Internal Audit</div>
+        </button>
+      </div>
+    </div>
+    <!-- AUTH TABS -->
+    <div id="auth-area" style="display:none">
     <div class="atabs">
       <div class="atab on" onclick="showPane('login')">Sign in</div>
       <div class="atab" onclick="showPane('register')">Create account</div>
@@ -494,8 +537,10 @@ input,select,textarea,button{font-family:inherit}
     <div class="tb-left">
       <img class="tb-logo-img" id="tb-logo-img" src="" alt=""/>
       <div class="tb-logo-txt" id="tb-logo-txt">Habitly</div>
+      <span id="dept-badge" style="display:none;background:var(--ac);color:#000;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:0.5px;margin-left:4px"></span>
     </div>
     <div class="tb-right">
+      <button id="switch-dept-btn" onclick="switchDepartment()" style="display:none;background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.4);color:var(--ac);font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;cursor:pointer;margin-right:6px">Switch Dept</button>
       <div class="ib" onclick="switchTab('notif')" title="Notifications"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="badge" id="nb"></div></div>
       <div class="uchip" onclick="switchTab('profile')">
         <div class="av av-xs" id="t-av"></div>
@@ -616,6 +661,7 @@ input,select,textarea,button{font-family:inherit}
       <div style="padding:10px 18px;border-top:1px solid var(--bd);display:flex;gap:8px">
         <button class="abtn ab-ok" onclick="showAddMemberForm()">+ Add member manually</button>
         <button class="abtn ab-info" onclick="diagUsers()">Debug</button>
+        <button class="abtn" onclick="emergencyRepair()" style="background:rgba(232,80,80,.2);border-color:rgba(232,80,80,.5);color:#ff6b6b;font-weight:600">🔧 Repair all accounts</button>
         <div id="diag-out" style="font-size:11px;color:var(--mu);margin-top:4px;width:100%;white-space:pre-wrap;font-family:monospace;max-height:100px;overflow-y:auto"></div>
       </div>
       <div id="add-member-form" style="display:none;padding:14px 18px;border-top:1px solid var(--bd)">
@@ -635,6 +681,7 @@ input,select,textarea,button{font-family:inherit}
       <div style="padding:10px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;flex-wrap:wrap">
         <button class="abtn ab-ok" onclick="showAddMemberForm()">+ Add member manually</button>
         <button class="abtn ab-info" onclick="diagUsers()">Debug</button>
+        <button class="abtn" onclick="emergencyRepair()" style="background:rgba(232,80,80,.2);border-color:rgba(232,80,80,.5);color:#ff6b6b;font-weight:600">🔧 Repair all accounts</button>
         <button class="abtn" onclick="cleanDuplicates()" style="background:rgba(232,147,74,.1);border-color:rgba(232,147,74,.3);color:#E8934A">Clean duplicates</button>
         <div id="diag-out" style="font-size:11px;color:var(--mu);margin-top:4px;width:100%;white-space:pre-wrap;font-family:monospace;max-height:100px;overflow-y:auto"></div>
       </div>
@@ -955,6 +1002,8 @@ const SK='tt-v7',SESSION_KEY='tt-session-v7';
 
 
 const LOGO_COLORS=['#E8C547','#5B9BD5','#5BBD8A','#E8934A','#D4537E','#AFA9EC','#F0997B','#ffffff'];
+var DEPT=''; // Current department - set at login
+var SK_BASE='tt-v7';
 let DB={users:[],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[],deletedUsers:[]};
 let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTkId=null,tkFilter='all';
 
@@ -1052,7 +1101,13 @@ function doLogin(){
     if(!hasAdmin){u.sysRole='admin';u.status='active';u.canSee=true;u.canCmt=true;saveDB();bootApp(u);return;}
     err.textContent='Account pending admin approval.';return;
   }
-  if(u.status==='rejected'){err.textContent='Account not approved.';return;}
+  if(u.status==='rejected'){
+    // If user has admin role or tasks, they were wrongly rejected - auto fix
+    if(u.sysRole==='admin'||u.canMasterCreate||(DB.blocks&&DB.blocks[u.id]&&DB.blocks[u.id].length>0)){
+      u.status='active';saveDB();bootApp(u);return;
+    }
+    err.textContent='Account not approved.';return;
+  }
   bootApp(u);
 }
 function doRegister(){
@@ -1070,7 +1125,7 @@ function doRegister(){
   const serverConn=!!(SERVER_URL&&SERVER_URL.length>0);
   const hasAdmin=DB.users.some(u=>u.sysRole==='admin'&&u.status==='active');
   const isFirst=!hasAdmin&&!serverConn;
-  const nu={id:genId('u'),name,email:em,ph:sh(pw),orgRole:isFirst?'Management':'',sysRole:isFirst?'admin':'member',color,status:isFirst?'active':'pending',canSee:isFirst,canCmt:isFirst,canReview:isFirst,canTicket:isFirst,canMasterCreate:isFirst,subordinates:[],photo:'',phone:'',dept:'',bio:'',joinDate:td()};
+  const nu={id:genId('u'),name,email:em,ph:sh(pw),orgRole:isFirst?'Management':'',sysRole:isFirst?'admin':'member',color,status:isFirst?'active':'pending',canSee:isFirst,canCmt:isFirst,canReview:isFirst,canTicket:isFirst,canMasterCreate:isFirst,subordinates:[],photo:'',phone:'',department:DEPT,bio:'',joinDate:td()};
   DB.users.push(nu);
   if(isFirst){saveDB();bootApp(nu);return;}
   DB.users.filter(u=>u.sysRole==='admin'&&u.status==='active').forEach(a=>{
@@ -1080,7 +1135,20 @@ function doRegister(){
 }
 function doLogout(){CU=null;clearSession();document.getElementById('app').classList.remove('on');document.getElementById('auth-screen').style.display='flex';document.getElementById('li-em').value='';document.getElementById('li-pw').value='';document.getElementById('li-err').textContent='';showPane('login');}
 function bootApp(u){
-  CU=u;saveSession(u.id);
+  // Self-healing: ensure current user is always active
+  if(u.status!=='active'){
+    u.status='active';
+    try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  }
+  CU=u;
+  // Show dept badge in topbar
+  var badge=document.getElementById('dept-badge');
+  if(badge&&DEPT){badge.textContent=DEPT;badge.style.display='inline-block';}
+  // Show switch dept button
+  var swBtn=document.getElementById('switch-dept-btn');
+  if(swBtn)swBtn.style.display='inline-block';
+  // Store dept in session
+  if(DEPT)localStorage.setItem('habitly_dept',DEPT);saveSession(u.id);
   applyBranding();
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').classList.add('on');
@@ -1107,6 +1175,12 @@ function bootApp(u){
   window._pollInterval=setInterval(pullOtherUsersData,60000);
   setTimeout(pushMyData,2000);
   checkStorageOnBoot();
+  // Fix any users that were wrongly rejected
+  var fixed=false;
+  DB.users.forEach(function(u){
+    if(u.status==='rejected'&&(u.sysRole==='admin'||u.canMasterCreate)){u.status='active';fixed=true;}
+  });
+  if(fixed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
   initChat();
   switchTab('my');renderNotifBadge();updateCTBadge();
 }
@@ -1232,7 +1306,7 @@ function renderTeam(){
   if(!grid)return;
   var canAccess=CU.sysRole==='admin'||CU.canSee||CU.canReview||(CU.subordinates&&CU.subordinates.length>0);
   if(!canAccess){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team view access.</div>';return;}
-  var nd=function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);};
+  var nd=function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id)&&(!u.department||u.department===DEPT);};
   var active=CU.sysRole==='admin'||CU.canSee?DB.users.filter(nd):DB.users.filter(function(u){return nd(u)&&(CU.subordinates||[]).includes(u.id);});
   if(!active.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team members found.</div>';return;}
   var html='';
@@ -1670,7 +1744,7 @@ function diagUsers(){
 
 function renderAdmin(){
   renderAllAccountsPanel();renderHierarchyPanel();
-  const pending=DB.users.filter(u=>u.status==='pending');
+  const pending=DB.users.filter(u=>u.status==='pending'&&(!u.department||u.department===DEPT));
   const active=DB.users.filter(u=>u.status==='active'&&u.id!==CU.id&&u.id!=='admin-001');
   document.getElementById('pend-cnt').textContent=pending.length?`(${pending.length})`:'';
   document.getElementById('desig-cnt').textContent=`(${DB.designations.length} designations)`;
@@ -2051,6 +2125,109 @@ function cloudLoad(cb){
   .catch(function(){cb(false);});
 }
 // =============================================================
+
+
+function emergencyRepair(){
+  var fixed=0;
+  // Fix ALL users - set active if they have valid email and aren't in deletedUsers
+  DB.users.forEach(function(u){
+    if(!u||!u.email)return;
+    if((DB.deletedUsers||[]).includes(u.id))return;
+    if(u.status==='rejected'||u.status==='pending'){
+      // Restore if not a test/spam account
+      if(u.email!=='test@gmail.com'&&u.email.indexOf('@')>0){
+        u.status='active';
+        fixed++;
+      }
+    }
+  });
+  // Make sure current user is admin
+  if(CU){
+    CU.status='active';
+    CU.sysRole='admin';
+    CU.canSee=true;CU.canCmt=true;CU.canReview=true;CU.canTicket=true;CU.canMasterCreate=true;
+    var me=DB.users.find(function(u){return u.id===CU.id;});
+    if(me){me.status='active';me.sysRole='admin';me.canSee=true;me.canCmt=true;me.canReview=true;me.canTicket=true;me.canMasterCreate=true;}
+  }
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  // Push repaired data to server immediately
+  var url=localStorage.getItem('habitly_server_url')||'https://habitly-server.onrender.com';
+  var payload={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},
+    designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],
+    notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+  fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  .then(function(){
+    renderAdmin();
+    alert('Repaired '+fixed+' user(s)! All accounts restored to active.\nPushed to server successfully.');
+  })
+  .catch(function(){
+    renderAdmin();
+    alert('Repaired '+fixed+' user(s) locally.\nPlease click Sync now in Settings.');
+  });
+}
+
+
+
+function switchDepartment(){
+  // Log out and go back to dept selector
+  localStorage.removeItem('habitly_dept');
+  localStorage.removeItem('habitly_session');
+  DEPT='';SK=SK_BASE;CU=null;
+  var badge=document.getElementById('dept-badge');if(badge)badge.style.display='none';
+  var sw=document.getElementById('switch-dept-btn');if(sw)sw.style.display='none';
+  // Reset dept buttons
+  ['dept-mc','dept-ia'].forEach(function(id){var btn=document.getElementById(id);if(btn){btn.style.borderColor='var(--b2)';btn.style.background='var(--s2)';}});
+  var auth=document.getElementById('auth-area');if(auth)auth.style.display='none';
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.add('hidden');});
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+function selectDept(dept){
+  DEPT=dept;
+  SK=SK_BASE+'-'+dept;
+  // Update UI - highlight selected dept button
+  ['dept-mc','dept-ia'].forEach(function(id){
+    var btn=document.getElementById(id);
+    if(!btn)return;
+    var isSelected=(id==='dept-'+(dept==='IA'?'ia':dept.toLowerCase()));
+    btn.style.borderColor=isSelected?'var(--ac)':'var(--b2)';
+    btn.style.background=isSelected?'rgba(232,197,71,.1)':'var(--s2)';
+  });
+  // Show auth area
+  var auth=document.getElementById('auth-area');
+  if(auth)auth.style.display='block';
+  // Load dept-specific data
+  loadDB();
+  applyBranding();
+  // Pull from server for this dept
+  if(SERVER_URL){
+    fetch(SERVER_URL+'/data?dept='+dept)
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(j.ok&&j.data){
+        var d=j.data;
+        if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
+        if(d.users){
+          d.users.forEach(function(su){
+            if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
+            if(su.department&&su.department!==dept)return; // Only load same dept users
+            var ex=DB.users.find(function(u){return u.id===su.id;})||
+                   DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+            if(!ex)DB.users.push(su);
+          });
+        }
+        ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
+          if(d[k]!==undefined)DB[k]=d[k];
+        });
+        try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+        applyBranding();
+      }
+    }).catch(function(){});
+  }
+  // Show dept badge on login
+  var badge=document.getElementById('dept-badge');
+  if(badge){badge.textContent=dept+' Department';badge.style.display='inline-block';}
+}
 
 // ══════════════════════ INIT ══════════════════════
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -2560,7 +2737,7 @@ function pushMyData(){
   var up={userId:CU.id,blocks:(DB.blocks&&DB.blocks[CU.id])||[],tracker:(DB.tracker&&DB.tracker[CU.id])||{},taskAtt:{}};
   if(DB.taskAtt){Object.keys(DB.taskAtt).forEach(function(k){if(k.indexOf(CU.id)!==-1)up.taskAtt[k]=DB.taskAtt[k];});}
   fetch(url+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(up)}).catch(function(){});
-  var sp={users:DB.users||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}},deletedUsers:DB.deletedUsers||[]};
+  var sp={users:DB.users||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}},deletedUsers:DB.deletedUsers||[],dept:DEPT};
   fetch(url+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sp)}).then(function(r){return r.json();}).then(function(j){if(j.ok){_lastSync=Date.now();updateSyncDot(true);}}).catch(function(){});
 }
 
@@ -2632,9 +2809,17 @@ function dedupeUsers(users, deletedIds){
     var key=u.email.toLowerCase();
     if(!seen[key]){seen[key]=u;clean.push(u);}
     else{
-      // Keep active one
-      if(u.status==='active'&&seen[key].status!=='active'){
-        var i=clean.indexOf(seen[key]);clean[i]=u;seen[key]=u;
+      var existing=seen[key];
+      // Always keep active over non-active
+      if(u.status==='active'&&existing.status!=='active'){
+        var i=clean.indexOf(existing);clean[i]=u;seen[key]=u;
+      }
+      // If same status, merge data into existing - keep better one
+      else if(u.status===existing.status){
+        // Keep the one with more permissions
+        if(u.canSee||u.canReview||u.canMasterCreate){
+          Object.assign(existing,u);existing.id=existing.id;
+        }
       }
     }
   });
@@ -2642,6 +2827,27 @@ function dedupeUsers(users, deletedIds){
 }
 
 function startApp(){
+  // Restore dept from last session
+  var savedDept=localStorage.getItem('habitly_dept');
+  if(savedDept){
+    DEPT=savedDept;
+    SK=SK_BASE+'-'+savedDept;
+    // Pre-select the dept button
+    setTimeout(function(){
+        ['dept-mc','dept-ia'].forEach(function(id){
+        var btn=document.getElementById(id);
+        if(!btn)return;
+        var isSelected=(id==='dept-'+(savedDept==='IA'?'ia':savedDept.toLowerCase()));
+        if(btn){btn.style.borderColor=isSelected?'var(--ac)':'var(--b2)';btn.style.background=isSelected?'rgba(232,197,71,.1)':'var(--s2)';}
+      });
+      if(true){
+        var auth=document.getElementById('auth-area');
+        if(auth)auth.style.display='block';
+        var badge=document.getElementById('dept-badge');
+        if(badge){badge.textContent=savedDept;badge.style.display='none';}
+      }
+    },100);
+  }
   loadDB();applyBranding();
   initAdminPanels();
   if(SERVER_URL){
@@ -2656,6 +2862,10 @@ function startApp(){
         // Load all other data
         ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
           if(d[k]!==undefined)DB[k]=d[k];
+        });
+        // SELF-HEAL: restore any admin accounts that got corrupted
+        DB.users.forEach(function(u){
+          if(u.sysRole==='admin'&&(u.status==='rejected'||u.status==='pending'))u.status='active';
         });
         // Save clean data locally
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
@@ -2679,6 +2889,15 @@ function startApp(){
     var sid=loadSession();
     if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
   }
+}
+</script>
+
+<script>
+// Only register service worker when served from a real server (not local file)
+if('serviceWorker' in navigator && location.protocol !== 'file:' && location.hostname !== 'localhost'){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
 }
 </script>
 </body>
