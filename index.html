@@ -450,24 +450,6 @@ input,select,textarea,button{font-family:inherit}
       <div class="auth-logo-txt" id="a-logo-txt">Habitly</div>
     </div>
     <div class="auth-sub">Track. Sync. Achieve — every day.</div>
-    <!-- DEPARTMENT SELECTOR -->
-    <div id="dept-selector" style="margin-bottom:20px">
-      <div style="font-size:11px;color:var(--mu);text-align:center;margin-bottom:10px;letter-spacing:1px;font-weight:600">SELECT YOUR DEPARTMENT</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <button onclick="selectDept('MC')" id="dept-mc" style="padding:16px 8px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;transition:all .2s;text-align:center;width:100%">
-          <div style="font-size:22px;margin-bottom:4px">🏢</div>
-          <div style="font-size:16px;font-weight:700;color:var(--ac)">MC</div>
-          <div style="font-size:10px;color:var(--mu);margin-top:2px">Management Consulting</div>
-        </button>
-        <button onclick="selectDept('IA')" id="dept-ia" style="padding:16px 8px;background:var(--s2);border:2px solid var(--b2);border-radius:12px;cursor:pointer;transition:all .2s;text-align:center;width:100%">
-          <div style="font-size:22px;margin-bottom:4px">⚙️</div>
-          <div style="font-size:16px;font-weight:700;color:var(--ac)">IA</div>
-          <div style="font-size:10px;color:var(--mu);margin-top:2px">Internal Audit</div>
-        </button>
-      </div>
-    </div>
-    <!-- AUTH AREA hidden until dept selected -->
-    <div id="auth-area" style="display:none">
     <div class="atabs">
       <div class="atab on" onclick="showPane('login')">Sign in</div>
       <div class="atab" onclick="showPane('register')">Create account</div>
@@ -984,11 +966,9 @@ input,select,textarea,button{font-family:inherit}
 <script>
 // ══════════════════════ DB & STATE ══════════════════════
 var SK='tt-v7';const SESSION_KEY='tt-session-v7';
-var SK_BASE='tt-v7';
 
 
 const LOGO_COLORS=['#E8C547','#5B9BD5','#5BBD8A','#E8934A','#D4537E','#AFA9EC','#F0997B','#ffffff'];
-var DEPT=''; // Current department - set at login
 let DB={users:[],blocks:{},tracker:{},editlog:[],notifications:[],tickets:[],settings:{companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'},designations:[],deletedUsers:[]};
 let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTkId=null,tkFilter='all';
 
@@ -1150,8 +1130,7 @@ function bootApp(u){
   if(swBtn)swBtn.style.display='inline-block';
   // Store dept in session
   if(DEPT){
-    localStorage.setItem('habitly_dept',DEPT);
-    // Tag user with dept if not set
+      // Tag user with dept if not set
     if(!u.department){u.department=DEPT;try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
   }
   saveSession(u.id);
@@ -1312,6 +1291,14 @@ function logEdit(action,blockName,taskId,taskName,prevName){
 // ══════════════════════ TEAM VIEW ══════════════════════
 function shiftTeam(n){const nd=sd(teamD,n);if(nd>td())return;teamD=nd;renderTeam();}
 function renderTeam(){
+  // Pull fresh data if blocks seem empty for active users
+  if(SERVER_URL && CU){
+    var active=DB.users.filter(function(u){return u.status==='active'&&u.id!==CU.id&&!u._deleted;});
+    var emptyCount=active.filter(function(u){return !DB.blocks[u.id]||DB.blocks[u.id].length===0;}).length;
+    if(emptyCount>0){
+      pullOtherUsersData(); // Fetch in background
+    }
+  }
   var dlbl=document.getElementById('team-dlbl');
   var tnxt=document.getElementById('team-next');
   var grid=document.getElementById('tgrid');
@@ -1354,6 +1341,17 @@ function renderTeam(){
 
 function openDP(userId){
   openM=userId;const m=DB.users.find(u=>u.id===userId);if(!m)return;
+  // If user has no blocks, try to pull from server
+  if(SERVER_URL && (!DB.blocks[userId] || DB.blocks[userId].length===0)){
+    fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
+      if(j.ok&&j.data&&j.data.blocks&&j.data.blocks[userId]){
+        DB.blocks[userId]=j.data.blocks[userId];
+        if(j.data.tracker&&j.data.tracker[userId])DB.tracker[userId]=j.data.tracker[userId];
+        try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+        openDP(userId); // Re-render with fresh data
+      }
+    }).catch(function(){});
+  }
   const data=getTD(userId,teamD);
   setAvEl(document.getElementById('dp-av'),m);
   document.getElementById('dp-name').textContent=m.name+' ('+rlbl(m)+') — '+fs(teamD);
@@ -2182,54 +2180,9 @@ function emergencyRepair(){
 
 
 
-function switchDepartment(){
-  // Log out and go back to dept selector
-  localStorage.removeItem('habitly_dept');
-  localStorage.removeItem('habitly_session');
-  DEPT='';SK=SK_BASE;CU=null;
-  var badge=document.getElementById('dept-badge');if(badge)badge.style.display='none';
-  var sw=document.getElementById('switch-dept-btn');if(sw)sw.style.display='none';
-  // Reset dept buttons
-  ['dept-mc','dept-ia'].forEach(function(id){var btn=document.getElementById(id);if(btn){btn.style.borderColor='var(--b2)';btn.style.background='var(--s2)';}});
-  var auth=document.getElementById('auth-area');if(auth)auth.style.display='none';
-  document.querySelectorAll('.pg').forEach(function(p){p.classList.add('hidden');});
-  document.getElementById('login-screen').classList.remove('hidden');
-}
 
-function selectDept(dept){
-  DEPT=dept;SK=SK_BASE+'-'+dept;
-  // Highlight selected button
-  ['dept-mc','dept-ia'].forEach(function(id){
-    var btn=document.getElementById(id);if(!btn)return;
-    var sel=(dept==='MC'?'dept-mc':'dept-ia')===id;
-    btn.style.borderColor=sel?'var(--ac)':'var(--b2)';
-    btn.style.background=sel?'rgba(232,197,71,.1)':'var(--s2)';
-  });
-  // Show login area
-  var auth=document.getElementById('auth-area');
-  if(auth){auth.style.display='block';auth.scrollIntoView({behavior:'smooth',block:'nearest'});}
-  // Load dept data
-  loadDB();applyBranding();
-  // Fetch server data for this dept
-  if(SERVER_URL){
-    fetch(SERVER_URL+'/data?dept='+dept)
-    .then(function(r){return r.json();})
-    .then(function(j){
-      if(!j.ok||!j.data)return;
-      var d=j.data;
-      if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
-      if(d.users)d.users.forEach(function(su){
-        if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
-        if(su.department&&su.department!==dept)return;
-        var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
-        if(!ex)DB.users.push(su);
-      });
-      ['settings','designations','tickets','notifications','chat'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
-      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-      applyBranding();
-    }).catch(function(){});
-  }
-}
+
+
 
 // ══════════════════════ INIT ══════════════════════
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -2833,25 +2786,10 @@ function dedupeUsers(users, deletedIds){
 }
 
 
-function migrateExistingData(){
-  try{
-    var oldData=localStorage.getItem('tt-v7');
-    if(!oldData)return; // Nothing to migrate
-    // Check if MC data already exists
-    var mcData=localStorage.getItem('tt-v7-MC');
-    if(!mcData){
-      // Copy old data to MC (existing team is MC)
-      localStorage.setItem('tt-v7-MC', oldData);
-      console.log('Migrated existing data to MC dept');
-    }
-    // Don't delete old data yet - keep as backup
-  }catch(e){}
-}
+
 
 function startApp(){
-  migrateExistingData();
   loadDB();applyBranding();initAdminPanels();
-  var savedDept=localStorage.getItem('habitly_dept');
   if(savedDept){
     DEPT=savedDept;SK=SK_BASE+'-'+savedDept;loadDB();
     setTimeout(function(){
