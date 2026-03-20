@@ -2231,13 +2231,7 @@ function selectDept(dept){
 
 // ══════════════════════ INIT ══════════════════════
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-loadDB();
-applyBranding();
-// Auto-sync with server on load
-cloudLoad(function(){
-  const _sid=loadSession();
-  if(_sid){const _su=DB.users.find(x=>x.id===_sid&&x.status==='active');if(_su)bootApp(_su);}
-});
+startApp();
 </script>
 <script>
 // ══ CHAT ══
