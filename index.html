@@ -907,7 +907,7 @@ function getTD(uid,date){
 }
 function getStats(uid,date){
   const blocks=getBlocks(uid),data=getTD(uid,date);
-  let total=0,done=0,na=0,no_c=0,bs={};
+  let total=0,done=0,na=0,no_c=0,pp_c=0,bs={};
   blocks.forEach(b=>{
     let bt=0,bd=0;
     b.tasks.forEach(t=>{
@@ -917,10 +917,11 @@ function getStats(uid,date){
       if(data.checked[t.id]||ts==='done'){done++;bd++;}
       else if(ts==='na')na++;
       else if(ts==='no')no_c++;
+      else if(ts==='pp')pp_c++;
     });
     bs[b.id]={done:bd,total:bt,name:b.name,color:b.color};
   });
-  return{total,done,na,no:no_c,blocks:bs};
+  return{total,done,na,no:no_c,pp:pp_c,blocks:bs};
 }
 
 // ══════════════════════ BRANDING ══════════════════════
@@ -2226,7 +2227,8 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
   if(t.todayOnly&&t.addedDate&&t.addedDate!==myD)return '';
   var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
   var isDone=(ts==='done'||chk),isNA=(ts==='na'),isNO=(ts==='no');
-  var cls='trow'+(isDone?' done':isNA?' trow-na':isNO?' trow-no':'');
+  var isPP=(ts==='pp');
+  var cls='trow'+(isDone?' done':isNA?' trow-na':isNO?' trow-no':isPP?' trow-pp':'');
   var h='<div class="'+cls+'"><span class="tnum">'+(ti+1)+'</span>';
   if(isToday){
     h+='<div class="cb'+(isDone?' chk':'')+' tcb" data-bid="'+b.id+'" data-tid="'+t.id+'"></div>';
@@ -2236,6 +2238,7 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
     h+='<span class="ttxt'+(isDone?' done':isNO?' trow-no':'')+'">'+t.name+'</span>';
     if(isNA)h+='<span class="ttime-badge" style="background:rgba(232,147,74,.2);color:#E8934A">NA</span>';
     if(isNO)h+='<span class="ttime-badge" style="background:rgba(232,80,80,.2);color:#E85555">NO</span>';
+    if(ts==='pp')h+='<span class="ttime-badge" style="background:rgba(91,149,213,.2);color:#5B9BD5">Postponed</span>';
     if(isDone)h+='<span class="ttime-badge" style="background:rgba(91,189,138,.2);color:#5BBD8A">DONE</span>';
   }
   if(t.timeSlot)h+='<span class="ttime-badge">'+t.timeSlot+'</span>';
@@ -2243,6 +2246,8 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
     h+='<div class="task-status-btns">';
     h+='<button class="tsb tsb-na'+(isNA?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNA?'':'na')+'">NA</button>';
     h+='<button class="tsb tsb-no'+(isNO?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNO?'':'no')+'">NO</button>';
+    var isPP=(ts==='pp');
+    h+='<button class="tsb tsb-pp'+(isPP?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isPP?'':'pp')+'">PP</button>';
     h+='</div>';
   }
   if(cmts)h+='<span class="ncnt tcmt" data-ctx=\''+ctx+'\'>'+cmts+'</span>';
@@ -2458,6 +2463,7 @@ function renderTeam(){
     var barHtml='';Object.values(st.blocks).slice(0,3).forEach(function(bs){var bp=bs.total?Math.round(bs.done/bs.total*100):0;barHtml+='<div class="mr"><div class="mr-dot" style="background:'+bs.color+'"></div><span class="mr-lbl">'+(bs.name||'')+'</span><div class="mr-wrap"><div class="mr-bar" style="width:'+bp+'%;background:'+bs.color+'"></div></div><span class="mr-cnt">'+bs.done+'/'+bs.total+'</span></div>';});
     var naTag=st.na>0?' <span style="font-size:10px;color:#E8934A">'+st.na+'NA</span>':'';
     var noTag=st.no>0?' <span style="font-size:10px;color:#E85555">'+st.no+'NO</span>':'';
+    var ppTag=st.pp>0?' <span style="font-size:10px;color:#5B9BD5">'+st.pp+'PP</span>':''
     html+='<div class="mcard'+(openM===m.id?' sel':'')+' tdp" data-uid="'+m.id+'">';
     html+='<div class="mcard-top"><div class="av av-xs" style="'+avs(m.color)+'">'+av+'</div>';
     html+='<div class="mcard-info"><div class="mcard-name">'+m.name+'</div>';
