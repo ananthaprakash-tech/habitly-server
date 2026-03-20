@@ -2165,55 +2165,43 @@ function switchDepartment(){
 }
 
 function selectDept(dept){
-  DEPT=dept;
-  SK=SK_BASE+'-'+dept;
-  // Update UI - highlight selected dept button
+  DEPT=dept;SK=SK_BASE+'-'+dept;
+  // Highlight selected button
   ['dept-mc','dept-ia'].forEach(function(id){
-    var btn=document.getElementById(id);
-    if(!btn)return;
-    var isSelected=(id==='dept-'+(dept==='IA'?'ia':dept.toLowerCase()));
-    btn.style.borderColor=isSelected?'var(--ac)':'var(--b2)';
-    btn.style.background=isSelected?'rgba(232,197,71,.1)':'var(--s2)';
+    var btn=document.getElementById(id);if(!btn)return;
+    var sel=(dept==='MC'?'dept-mc':'dept-ia')===id;
+    btn.style.borderColor=sel?'var(--ac)':'var(--b2)';
+    btn.style.background=sel?'rgba(232,197,71,.1)':'var(--s2)';
   });
-  // Show auth area
+  // Show login area
   var auth=document.getElementById('auth-area');
-  if(auth)auth.style.display='block';
-  // Load dept-specific data
-  loadDB();
-  applyBranding();
-  // Pull from server for this dept
+  if(auth){auth.style.display='block';auth.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  // Load dept data
+  loadDB();applyBranding();
+  // Fetch server data for this dept
   if(SERVER_URL){
     fetch(SERVER_URL+'/data?dept='+dept)
     .then(function(r){return r.json();})
     .then(function(j){
-      if(j.ok&&j.data){
-        var d=j.data;
-        if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
-        if(d.users){
-          d.users.forEach(function(su){
-            if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
-            if(su.department&&su.department!==dept)return; // Only load same dept users
-            var ex=DB.users.find(function(u){return u.id===su.id;})||
-                   DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
-            if(!ex)DB.users.push(su);
-          });
-        }
-        ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
-          if(d[k]!==undefined)DB[k]=d[k];
-        });
-        try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-        applyBranding();
-      }
+      if(!j.ok||!j.data)return;
+      var d=j.data;
+      if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
+      if(d.users)d.users.forEach(function(su){
+        if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
+        if(su.department&&su.department!==dept)return;
+        var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+        if(!ex)DB.users.push(su);
+      });
+      ['settings','designations','tickets','notifications','chat'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
+      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+      applyBranding();
     }).catch(function(){});
   }
-  // Show dept badge on login
-  var badge=document.getElementById('dept-badge');
-  if(badge){badge.textContent=dept+' Department';badge.style.display='inline-block';}
 }
 
 // ══════════════════════ INIT ══════════════════════
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-startApp();
+// startApp() is called after all scripts load (see bottom of page)
 </script>
 <script>
 // ══ CHAT ══
@@ -2803,67 +2791,17 @@ function dedupeUsers(users, deletedIds){
 }
 
 function startApp(){
-  // Restore dept from last session
+  loadDB();applyBranding();initAdminPanels();
   var savedDept=localStorage.getItem('habitly_dept');
   if(savedDept){
-    DEPT=savedDept;
-    SK=SK_BASE+'-'+savedDept;
-    // Pre-select the dept button
+    DEPT=savedDept;SK=SK_BASE+'-'+savedDept;loadDB();
     setTimeout(function(){
-        ['dept-mc','dept-ia'].forEach(function(id){
-        var btn=document.getElementById(id);
-        if(!btn)return;
-        var isSelected=(id==='dept-'+(savedDept==='IA'?'ia':savedDept.toLowerCase()));
-        if(btn){btn.style.borderColor=isSelected?'var(--ac)':'var(--b2)';btn.style.background=isSelected?'rgba(232,197,71,.1)':'var(--s2)';}
-      });
-      if(true){
-        var auth=document.getElementById('auth-area');
-        if(auth)auth.style.display='block';
-        var badge=document.getElementById('dept-badge');
-        if(badge){badge.textContent=savedDept;badge.style.display='none';}
-      }
-    },100);
-  }
-  loadDB();applyBranding();
-  initAdminPanels();
-  if(SERVER_URL){
-    fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
-      if(j.ok&&j.data){
-        var d=j.data;
-        // Load deletedUsers first
-        if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
-        // Dedupe server users immediately
-        var cleanUsers=dedupeUsers(d.users, DB.deletedUsers);
-        DB.users=cleanUsers;
-        // Load all other data
-        ['blocks','tracker','settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
-          if(d[k]!==undefined)DB[k]=d[k];
-        });
-        // SELF-HEAL: restore any admin accounts that got corrupted
-        DB.users.forEach(function(u){
-          if(u.sysRole==='admin'&&(u.status==='rejected'||u.status==='pending'))u.status='active';
-        });
-        // Save clean data locally
-        try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-        applyBranding();
-        // Push clean user list back to server to fix it there too
-        var payload={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},
-          designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],
-          notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
-        fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});
-      }
-    }).catch(function(){}).finally(function(){
-      var sid=loadSession();
-      if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
-      if(window._pollInterval)clearInterval(window._pollInterval);
-      window._pollInterval=setInterval(pullOtherUsersData,60000);
-    });
-  } else {
-    // Even without server, dedupe local users
-    DB.users=dedupeUsers(DB.users, DB.deletedUsers);
-    try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+      var btn=document.getElementById(savedDept==='MC'?'dept-mc':'dept-ia');
+      if(btn){btn.style.borderColor='var(--ac)';btn.style.background='rgba(232,197,71,.1)';}
+      var auth=document.getElementById('auth-area');if(auth)auth.style.display='block';
+    },50);
     var sid=loadSession();
-    if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
+    if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su){bootApp(su);return;}}
   }
 }
 </script>
@@ -2876,5 +2814,6 @@ if('serviceWorker' in navigator && location.protocol !== 'file:' && location.hos
   });
 }
 </script>
+<script>startApp();</script>
 </body>
 </html>
