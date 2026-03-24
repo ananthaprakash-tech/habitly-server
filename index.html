@@ -2261,45 +2261,113 @@ function startKeepAlive(){if(!SERVER_URL)return;if(_ka)clearInterval(_ka);_ka=se
 
 function pushMyData(){
   if(!SERVER_URL||!CU)return;
-  var up={userId:CU.id,blocks:(DB.blocks&&DB.blocks[CU.id])||[],tracker:(DB.tracker&&DB.tracker[CU.id])||{},taskAtt:{}};
-  if(DB.taskAtt)Object.keys(DB.taskAtt).forEach(function(k){if(k.indexOf(CU.id)!==-1)up.taskAtt[k]=DB.taskAtt[k];});
-  fetch(SERVER_URL+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(up)}).catch(function(){});
-  var sp={users:DB.users||[],deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
-  fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sp)}).then(function(r){return r.json();}).then(function(j){if(j.ok)_lastSync=Date.now();}).catch(function(){});
+  // Push own blocks/tracker - user is ALWAYS master of their own data
+  var myBlocks=(DB.blocks&&DB.blocks[CU.id])||[];
+  var myTracker=(DB.tracker&&DB.tracker[CU.id])||{};
+  fetch(SERVER_URL+'/sync/user',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({userId:CU.id,blocks:myBlocks,tracker:myTracker})
+  }).catch(function(){});
+  // Push shared data (users, settings etc)
+  var sp={
+    users:DB.users||[],
+    deletedUsers:DB.deletedUsers||[],
+    settings:DB.settings||{},
+    designations:DB.designations||[],
+    tickets:DB.tickets||[],
+    editlog:DB.editlog||[],
+    notifications:DB.notifications||[],
+    chat:DB.chat||{rooms:{}}
+  };
+  fetch(SERVER_URL+'/sync/shared',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(sp)
+  }).then(function(r){return r.json();}).then(function(j){
+    if(j.ok)_lastSync=Date.now();
+  }).catch(function(){});
 }
 
 function pullOtherUsersData(){
   if(!SERVER_URL||!CU)return;
   fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
     if(!j.ok||!j.data)return;
-    var d=j.data,changed=false;
-    // Deletions first
-    if(d.deletedUsers){if(!DB.deletedUsers)DB.deletedUsers=[];d.deletedUsers.forEach(function(id){if(!DB.deletedUsers.includes(id)){DB.deletedUsers.push(id);DB.users=DB.users.filter(function(u){return u.id!==id;});changed=true;}});}
-    // Only add NEW users - NEVER update existing users' status/permissions from server
-    if(d.users){if(!DB.users)DB.users=[];d.users.forEach(function(su){
-      if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
-      var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
-      if(!ex){DB.users.push(su);changed=true;}
-      // NEVER update existing users from server - local is master
-    });}
-    // Other users blocks - only if server has data (never wipe with empty)
-    if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){
-      if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){
-        var sb=d.blocks[uid]||[];var lb=DB.blocks[uid]||[];
+    var d=j.data; var changed=false;
+    // Handle deletions
+    if(d.deletedUsers){
+      if(!DB.deletedUsers)DB.deletedUsers=[];
+      d.deletedUsers.forEach(function(id){
+        if(!DB.deletedUsers.includes(id)){
+          DB.deletedUsers.push(id);
+          DB.users=DB.users.filter(function(u){return u.id!==id;});
+          changed=true;
+        }
+      });
+    }
+    // Add NEW users only - NEVER update existing users from server
+    if(d.users){
+      d.users.forEach(function(su){
+        if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
+        var ex=DB.users.find(function(u){return u.id===su.id;})||
+               DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+        if(!ex){DB.users.push(su);changed=true;}
+        // NEVER update existing - local is master for existing users
+      });
+    }
+    // Pull OTHER users blocks/tracker - never touch CU's own data
+    if(d.blocks){
+      if(!DB.blocks)DB.blocks={};
+      Object.keys(d.blocks).forEach(function(uid){
+        if(uid===CU.id)return; // Never overwrite own data from server
+        if((DB.deletedUsers||[]).includes(uid))return;
+        var sb=d.blocks[uid]||[];
         if(sb.length>0){DB.blocks[uid]=sb;changed=true;}
-      }
-    });}
-    if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){
-      if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){
-        var st=d.tracker[uid]||{};var lt=DB.tracker[uid]||{};
-        Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});
-        if(Object.keys(st).length>0){DB.tracker[uid]=lt;changed=true;}
-      }
-    });}
+      });
+    }
+    if(d.tracker){
+      if(!DB.tracker)DB.tracker={};
+      Object.keys(d.tracker).forEach(function(uid){
+        if(uid===CU.id)return; // Never overwrite own data
+        if((DB.deletedUsers||[]).includes(uid))return;
+        var st=d.tracker[uid]||{};
+        if(!DB.tracker[uid])DB.tracker[uid]={};
+        Object.keys(st).forEach(function(date){
+          if(!DB.tracker[uid][date])DB.tracker[uid][date]=st[date];
+        });
+        if(Object.keys(st).length>0)changed=true;
+      });
+    }
+    // Notifications and tickets
     if(d.notifications){DB.notifications=d.notifications;changed=true;}
     if(d.tickets){DB.tickets=d.tickets;changed=true;}
-    if(d.chat&&d.chat.rooms){if(!DB.chat)DB.chat={rooms:{}};Object.keys(d.chat.rooms).forEach(function(rid){var sr=d.chat.rooms[rid];if(!DB.chat.rooms[rid]){DB.chat.rooms[rid]=sr;changed=true;}else{var lm=DB.chat.rooms[rid].messages||[];var sm=sr.messages||[];var ids=new Set(lm.map(function(m){return m.id;}));sm.forEach(function(m){if(!ids.has(m.id)){lm.push(m);changed=true;}});lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});DB.chat.rooms[rid].messages=lm;}});}
-    if(changed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}_lastSync=Date.now();var at=document.querySelector('.tb.on');if(at){var t=at.dataset.tab;if(t==='team')renderTeam();else if(t==='admin')renderAdmin();renderNotifBadge();updateCTBadge();}}
+    // Chat - merge only new messages
+    if(d.chat&&d.chat.rooms){
+      if(!DB.chat)DB.chat={rooms:{}};
+      Object.keys(d.chat.rooms).forEach(function(rid){
+        var sr=d.chat.rooms[rid];
+        if(!DB.chat.rooms[rid]){DB.chat.rooms[rid]=sr;changed=true;}
+        else{
+          var lm=DB.chat.rooms[rid].messages||[];
+          var sm=sr.messages||[];
+          var ids=new Set(lm.map(function(m){return m.id;}));
+          sm.forEach(function(m){if(!ids.has(m.id)){lm.push(m);changed=true;}});
+          lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});
+          DB.chat.rooms[rid].messages=lm;
+        }
+      });
+    }
+    if(changed){
+      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+      _lastSync=Date.now();
+      var at=document.querySelector('.tb.on');
+      if(at){
+        var t=at.dataset.tab;
+        if(t==='team')renderTeam();
+        else if(t==='admin')renderAdmin();
+        renderNotifBadge();updateCTBadge();
+      }
+    }
   }).catch(function(){});
 }
 
@@ -2500,33 +2568,68 @@ function startApp(){
     fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
       if(j.ok&&j.data){
         var d=j.data;
+        // Deletions
         if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
-        // Only add NEW users - never touch existing user status/permissions
+        // Add new users only
         if(d.users&&Array.isArray(d.users)){
           if(!DB.users)DB.users=[];
           d.users.forEach(function(su){
             if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
-            var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+            var ex=DB.users.find(function(u){return u.id===su.id;})||
+                   DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
             if(!ex)DB.users.push(su);
-            // NEVER update existing users from server
+            // NEVER overwrite existing user data from server
           });
         }
-        // Blocks - only merge if server has data
-        if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){var sb=d.blocks[uid]||[];var lb=DB.blocks[uid]||[];if(sb.length>0&&lb.length===0)DB.blocks[uid]=sb;});}
-        if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){var st=d.tracker[uid]||{};var lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});if(!DB.tracker[uid])DB.tracker[uid]=lt;});}
-        ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
+        // Blocks - ONLY load if local is empty for that user
+        if(d.blocks){
+          if(!DB.blocks)DB.blocks={};
+          Object.keys(d.blocks).forEach(function(uid){
+            var sb=d.blocks[uid]||[];
+            var lb=DB.blocks[uid]||[];
+            // Only take server data if we have nothing locally
+            if(sb.length>0&&lb.length===0)DB.blocks[uid]=sb;
+          });
+        }
+        // Tracker - merge only missing dates
+        if(d.tracker){
+          if(!DB.tracker)DB.tracker={};
+          Object.keys(d.tracker).forEach(function(uid){
+            var st=d.tracker[uid]||{};
+            if(!DB.tracker[uid])DB.tracker[uid]={};
+            Object.keys(st).forEach(function(date){
+              if(!DB.tracker[uid][date])DB.tracker[uid][date]=st[date];
+            });
+          });
+        }
+        // Shared data
+        ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
+          if(d[k]!==undefined)DB[k]=d[k];
+        });
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
         applyBranding();
       }
     }).catch(function(){}).finally(function(){
+      // Login from session
       var sid=loadSession();
-      if(sid){var su=DB.users.find(function(x){return x.id===sid;});if(su){su.status='active';bootApp(su);}}
+      if(sid){
+        var su=DB.users.find(function(x){return x.id===sid;});
+        if(su){
+          su.status='active'; // Always active on login
+          bootApp(su);
+          return;
+        }
+      }
+      // Start polling
       if(window._pollInterval)clearInterval(window._pollInterval);
       window._pollInterval=setInterval(pullOtherUsersData,60000);
     });
   } else {
     var sid=loadSession();
-    if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
+    if(sid){
+      var su=DB.users.find(function(x){return x.id===sid;});
+      if(su){su.status='active';bootApp(su);}
+    }
   }
 }
 </script>
