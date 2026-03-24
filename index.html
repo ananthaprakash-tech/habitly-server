@@ -1147,47 +1147,8 @@ function logEdit(action,blockName,taskId,taskName,prevName){
 
 // ══════════════════════ TEAM VIEW ══════════════════════
 function shiftTeam(n){const nd=sd(teamD,n);if(nd>td())return;teamD=nd;renderTeam();}
-function renderTeam(){
-  document.getElementById('team-dlbl').textContent=fs(teamD)+(teamD===td()?' — Today':'');
-  document.getElementById('team-next').classList.toggle('off',teamD===td());
-  const canSee=CU.sysRole==='admin'||CU.sysRole==='manager'||CU.canSee;
-  if(!canSee){document.getElementById('tgrid').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔒</div>No team view access.<br>Ask admin.</div>';document.getElementById('dp').classList.remove('on');return;}
-  var active=CU.sysRole==='admin'||CU.canSee?DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001';}):DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&(CU.subordinates||[]).includes(u.id);});
-  document.getElementById('tgrid').innerHTML=active.map(m=>{
-    const s=getStats(m.id,teamD),pct=s.total?Math.round(s.done/s.total*100):0;
-    const pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';
-    const bars=Object.values(s.blocks).slice(0,3).map(bs=>{const bp=bs.total?Math.round(bs.done/bs.total*100):0;return`<div class="mr"><div class="mr-dot" style="background:${bs.color}"></div><span class="mr-lbl">${bs.name||''}</span><div class="mr-wrap"><div class="mr-bar" style="width:${bp}%;background:${bs.color}"></div></div><span class="mr-cnt">${bs.done}/${bs.total}</span></div>`;}).join('');
-    const rc=rcolor(m);
-    return `<div class="mcard${openM===m.id?' sel':''}" onclick="openDP('${m.id}')">
-      <div class="mcard-top"><div class="av av-xs" style="${avs(m.color)}">${m.photo?`<img src="${m.photo}" alt=""/>`:ini(m.name)}</div>
-      <div class="mcard-info"><div class="mcard-name">${m.name}</div><div class="mcard-role"><span class="rtag" style="background:${rc}20;color:${rc}">${rlbl(m)}</span></div></div>
-      <div class="mcard-pct" style="color:${pc}">${pct}%</div></div>
-      ${bars?`<div class="mcard-body">${bars}</div>`:''}
-    </div>`;
-  }).join('')||'<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div>No members yet</div>';
-  if(openM)openDP(openM);
-}
-function openDP(userId){
-  openM=userId;const m=DB.users.find(u=>u.id===userId);if(!m)return;
-  const data=getTD(userId,teamD);
-  setAvEl(document.getElementById('dp-av'),m);
-  document.getElementById('dp-name').textContent=m.name+' ('+rlbl(m)+') — '+fs(teamD);
-  document.getElementById('dp').classList.add('on');
-  const blocks=getBlocks(userId);const canC=userId!==CU.id&&(CU.sysRole==='admin'||CU.canCmt||CU.canReview||(CU.subordinates&&CU.subordinates.includes(userId)));
-  document.getElementById('dp-body').innerHTML=blocks.length?blocks.map(b=>{
-    const rows=b.tasks.map(t=>{
-      const chk=!!data.checked[t.id],cmts=(data.comments[t.id]||[]).length;
-      const ctx=JSON.stringify({uid:userId,bid:b.id,tid:t.id,date:teamD});
-      return `<div class="drow"><div class="dt-cb${chk?' chk':''}"></div>
-        <span class="dt-txt${chk?' done':''}">${t.name}${t.timeSlot?` <small style="color:var(--mu)">(${t.timeSlot})</small>`:''}</span>
-        ${cmts?`<span class="ncnt" onclick='openCmt(${ctx})'>${cmts}</span>`:''}
-        ${canC?`<button class="cmtbtn" onclick='openCmt(${ctx})'>Comment</button>`:''}
-      </div>`;
-    }).join('');
-    return `<div class="dp-sec"><span class="dp-sec-hdr" style="background:${b.color}20;color:${b.color}">${b.name}${b.timeSlot?' — '+b.timeSlot:''}</span>${rows||'<div style="font-size:11px;color:var(--mu);padding:6px 0">No tasks yet</div>'}</div>`;
-  }).join(''):'<div style="font-size:13px;color:var(--mu);padding:8px 0">No task blocks set up.</div>';
-  document.getElementById('dp').scrollIntoView({behavior:'smooth',block:'nearest'});renderTeam();
-}
+
+
 function closeDP(){document.getElementById('dp').classList.remove('on');openM=null;}
 
 // ══════════════════════ SUMMARY ══════════════════════
