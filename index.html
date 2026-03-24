@@ -2447,15 +2447,18 @@ function renderTeam(){
   var updated=[],notUpdated=[];
   active.forEach(function(m){
     var st=getStats(m.id,teamD);
-    if(st.total>0&&(st.done+st.na+st.no+st.pp)>0)updated.push({m:m,st:st});
-    else if(st.total>0)notUpdated.push({m:m,st:st});
-    else updated.push({m:m,st:st}); // no tasks = show in main
+    var hasAnyUpdate=(st.done+st.na+st.no+st.pp)>0;
+    if(st.total>0&&hasAnyUpdate){
+      updated.push({m:m,st:st}); // Has tasks AND has updates
+    } else {
+      notUpdated.push({m:m,st:st}); // No tasks OR has tasks but no updates
+    }
   });
   var html='';
   // Not yet updated section
-  if(notUpdated.length>0&&teamD===td()){
+  if(notUpdated.length>0){
     html+='<div style="grid-column:1/-1;background:rgba(232,197,71,.08);border:1px solid rgba(232,197,71,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px">';
-    html+='<div style="font-size:12px;font-weight:600;color:var(--ac);margin-bottom:8px">\u23F0 Not yet updated ('+notUpdated.length+')</div>';
+    html+='<div style="font-size:13px;font-weight:700;color:var(--ac);margin-bottom:10px">⏰ Not yet updated — '+notUpdated.length+' member'+(notUpdated.length>1?'s':'')+' ('+teamD+')</div>';
     html+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
     notUpdated.forEach(function(item){
       var m=item.m;html+='<div class="tdp" data-uid="'+m.id+'" style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><div class="av" style="width:24px;height:24px;font-size:9px;'+avs(m.color)+'">'+ini(m.name)+'</div><span style="font-size:12px">'+m.name+'</span></div>';
