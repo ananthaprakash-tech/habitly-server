@@ -961,13 +961,34 @@ function doLogin(){
   const pw=document.getElementById('li-pw').value;
   const err=document.getElementById('li-err');err.textContent='';
   if(!em||!pw){err.textContent='Enter email and password.';return;}
-  const u=DB.users.find(x=>x.email.toLowerCase()===em&&x.ph===sh(pw));
-  if(!u){err.textContent='Incorrect email or password.';return;}
-  // Self-heal: restore any user whose status got corrupted by sync
-  if(u.status!=='active'){
-    u.status='active';
-    try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  // Find user by email first
+  const u=DB.users.find(x=>x.email.toLowerCase()===em);
+  if(!u){
+    // User not in local DB - try fetching from server first
+    if(SERVER_URL){
+      err.textContent='Checking with server...';
+      fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
+        if(j.ok&&j.data&&j.data.users){
+          j.data.users.forEach(function(su){
+            var ex=DB.users.find(function(x){return x.email&&su.email&&x.email.toLowerCase()===su.email.toLowerCase();});
+            if(!ex)DB.users.push(su);
+          });
+          try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+          doLogin(); // retry
+        } else {
+          err.textContent='Account not found. Register first.';
+        }
+      }).catch(function(){err.textContent='Incorrect email or password.';});
+    } else {
+      err.textContent='Incorrect email or password.';
+    }
+    return;
   }
+  // Check password
+  if(u.ph!==sh(pw)){err.textContent='Incorrect password.';return;}
+  // Always allow login - fix status if corrupted
+  u.status='active';
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
   bootApp(u);
 }
 function doRegister(){
@@ -1088,8 +1109,8 @@ function renderMyTracker(){
   </div>`:'';
 }
 function togBlock(l,c){document.getElementById(l)?.classList.toggle('col');document.getElementById(c)?.classList.toggle('op');}
-function chkTask(bid,tid){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};var cur=data.taskStatus[tid]||'';if(cur==='done'||data.checked[tid]){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
-function setTaskStatus(bid,tid,status){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};if(data.taskStatus[tid]===status){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]=status;data.checked[tid]=(status==='done');}saveDB();renderMyTracker();}
+function chkTask(bid,tid){if(myD!==td()&&myD!==sd(td(),-1))return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};var cur=data.taskStatus[tid]||'';if(cur==='done'||data.checked[tid]){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
+function setTaskStatus(bid,tid,status){if(myD!==td()&&myD!==sd(td(),-1))return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};if(data.taskStatus[tid]===status){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]=status;data.checked[tid]=(status==='done');}saveDB();renderMyTracker();}
 function addBlock(){
   const name=document.getElementById('nb-name').value.trim();if(!name)return;
   const time=document.getElementById('nb-time').value.trim();
@@ -1938,7 +1959,7 @@ function cloudLoad(cb){
 
 // ══════════════════════ INIT ══════════════════════
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-startApp();</script>
+// startApp called after all scripts load</script>
 <script>
 // ══ CHAT ══
 var curRoom=null,pendAtt=[];
@@ -2227,6 +2248,7 @@ function exportAllXLSX(){
   XLSX.writeFile(wb,'habitly-full-'+td()+'.xlsx');
 }
 </script>
+<script>startApp();</script>
 </body>
 </html>
 
@@ -2286,9 +2308,10 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
   if(t.todayOnly&&t.addedDate&&t.addedDate!==myD)return '';
   var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
   var isDone=(ts==='done'||chk),isNA=(ts==='na'),isNO=(ts==='no'),isPP=(ts==='pp');
+  var isEditable=isEditableDay(myD);
   var cls='trow'+(isDone?' done':isNA?' trow-na':isNO?' trow-no':isPP?' trow-pp':'');
   var h='<div class="'+cls+'"><span class="tnum">'+(ti+1)+'</span>';
-  if(isToday){
+  if(isEditable){
     h+='<div class="cb'+(isDone?' chk':'')+' tcb" data-bid="'+b.id+'" data-tid="'+t.id+'"></div>';
     h+='<span class="ttxt tcb" data-bid="'+b.id+'" data-tid="'+t.id+'">'+t.name+'</span>';
   } else {
@@ -2300,7 +2323,7 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
     if(isDone)h+='<span class="ttime-badge" style="background:rgba(91,189,138,.2);color:#5BBD8A">DONE</span>';
   }
   if(t.timeSlot)h+='<span class="ttime-badge">'+t.timeSlot+'</span>';
-  if(isToday&&!isDone){
+  if(isEditable&&!isDone){
     h+='<div class="task-status-btns">';
     h+='<button class="tsb tsb-na'+(isNA?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNA?'':'na')+'">NA</button>';
     h+='<button class="tsb tsb-no'+(isNO?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNO?'':'no')+'">NO</button>';
@@ -2308,8 +2331,8 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
     h+='</div>';
   }
   if(cmts)h+='<span class="ncnt tcmt" data-ctx="'+encodeURIComponent(ctx)+'">'+cmts+'</span>';
-  if(isToday)h+='<button class="note-btn tcmt" data-ctx="'+encodeURIComponent(ctx)+'">Note</button>';
-  if(isToday)h+='<div class="task-acts"><button class="ta-btn tedit" data-bi="'+bi+'" data-ti="'+ti+'">Edit</button><button class="ta-btn del tdel" data-bi="'+bi+'" data-ti="'+ti+'">&#215;</button></div>';
+  if(isEditable)h+='<button class="note-btn tcmt" data-ctx="'+encodeURIComponent(ctx)+'">Note</button>';
+  if(isEditable)h+='<div class="task-acts"><button class="ta-btn tedit" data-bi="'+bi+'" data-ti="'+ti+'">Edit</button><button class="ta-btn del tdel" data-bi="'+bi+'" data-ti="'+ti+'">&#215;</button></div>';
   h+='</div>'+getTAttHTML(bi,ti,t.id,isToday);
   return h;
 }
@@ -2497,7 +2520,7 @@ function startApp(){
       }
     }).catch(function(){}).finally(function(){
       var sid=loadSession();
-      if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
+      if(sid){var su=DB.users.find(function(x){return x.id===sid;});if(su){su.status='active';bootApp(su);}}
       if(window._pollInterval)clearInterval(window._pollInterval);
       window._pollInterval=setInterval(pullOtherUsersData,60000);
     });
