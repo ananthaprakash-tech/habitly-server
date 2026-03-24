@@ -2147,5 +2147,6 @@ function startApp(){
   }else{var sid=loadSession();if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}}
 }
 </script>
+<script>startApp();</script>
 </body>
 </html>
