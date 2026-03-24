@@ -265,10 +265,10 @@ input,select,textarea,button{font-family:inherit}
 .ni-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:7px}
 
 /* ADMIN */
-.asec{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:14px;overflow:visible}
+.asec{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
 .asec-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd)}
 .asec-h h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:600}
-.arow{display:flex;align-items:flex-start;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap;overflow:visible}
+.arow{display:flex;align-items:flex-start;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap}
 .arow:last-child{border-bottom:none}
 .arow:hover{background:var(--s2)}
 .ainfo{flex:1;min-width:0}
@@ -358,7 +358,7 @@ input,select,textarea,button{font-family:inherit}
 }
 
 .ttime-badge{background:rgba(255,255,255,.07);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--mu)}
-.trow-na .ttxt{color:#E8934A!important}.trow-na .tnum{color:#E8934A!important}
+.trow-na .ttxt,.trow-na .tnum{color:#E8934A!important}
 .trow-no .ttxt{color:#E85555!important;text-decoration:line-through}.trow-no .tnum{color:#E85555!important}
 .trow-pp .ttxt{color:#5B9BD5!important;font-style:italic}.trow-pp .tnum{color:#5B9BD5!important}
 .task-status-btns{display:flex;gap:3px;margin-left:4px;flex-shrink:0;align-items:center}
@@ -370,13 +370,17 @@ input,select,textarea,button{font-family:inherit}
 .tsb-active.tsb-no{background:#E85555!important;color:#fff!important;box-shadow:0 0 8px rgba(232,80,80,.5)}
 .tsb-active.tsb-pp{background:#5B9BD5!important;color:#fff!important;box-shadow:0 0 8px rgba(91,149,213,.5)}
 .task-status-btns:has(.tsb-active) .tsb:not(.tsb-active){opacity:.2;filter:grayscale(.8)}
+.nyu-bar{background:rgba(232,197,71,.08);border:1px solid rgba(232,197,71,.25);border-radius:10px;padding:12px 16px;margin-bottom:12px}
+.nyu-title{font-size:13px;font-weight:700;color:var(--ac);margin-bottom:10px}
+.nyu-chips{display:flex;flex-wrap:wrap;gap:6px}
+.nyu-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer;transition:border-color .15s}
+.nyu-chip:hover{border-color:var(--ac)}
 @media(max-width:640px){
-  .pg{padding:10px 8px}.stats{grid-template-columns:repeat(2,1fr)}
-  .topbar{padding:0 10px}.tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;scrollbar-width:none}
+  .pg{padding:10px 8px}.topbar{padding:0 10px}
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}.tb{padding:10px 8px;font-size:11px;white-space:nowrap;flex-shrink:0}
   .tgrid{grid-template-columns:1fr}.pgrid{grid-template-columns:1fr}
   .modal{padding:16px;margin:12px;max-width:calc(100vw - 24px)!important;max-height:85vh;overflow-y:auto}
-  .fi{font-size:16px}.btn-pri{padding:13px}
   .dp{width:100%!important;position:fixed;bottom:0;left:0;right:0;top:auto;max-height:70vh;overflow-y:auto;border-radius:16px 16px 0 0;z-index:200}
 }
 </style>
@@ -587,15 +591,15 @@ input,select,textarea,button{font-family:inherit}
         <button class="abtn" onclick="cleanDuplicates()" style="background:rgba(232,147,74,.1);border-color:rgba(232,147,74,.3);color:#E8934A">Clean duplicates</button>
         <button class="abtn" onclick="showRejected()" style="background:rgba(91,189,138,.1);border-color:rgba(91,189,138,.3);color:#5BBD8A">Restore rejected</button>
       </div>
-      <div id="diag-out" style="font-size:11px;color:var(--mu);padding:0 18px 10px;white-space:pre-wrap;font-family:monospace;max-height:120px;overflow-y:auto"></div>
+      <div id="diag-out" style="font-size:11px;color:var(--mu);padding:0 18px 10px;white-space:pre-wrap;font-family:monospace;max-height:100px;overflow-y:auto"></div>
       <div id="add-member-form" style="display:none;padding:14px 18px;border-top:1px solid var(--bd)">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
           <div><div class="fl" style="margin-bottom:4px">Full name</div><input class="fi fi-sm" id="am-name" placeholder="Full name" style="margin-bottom:0"/></div>
           <div><div class="fl" style="margin-bottom:4px">Email</div><input class="fi fi-sm" id="am-email" placeholder="email@company.com" style="margin-bottom:0"/></div>
-          <div><div class="fl" style="margin-bottom:4px">Password</div><input class="fi fi-sm" type="password" id="am-pass" placeholder="Set password" style="margin-bottom:0"/></div>
+          <div><div class="fl" style="margin-bottom:4px">Password</div><input class="fi fi-sm" type="password" id="am-pass" placeholder="Password" style="margin-bottom:0"/></div>
           <div><div class="fl" style="margin-bottom:4px">Designation</div><select class="fi fi-sm" id="am-desig" style="margin-bottom:0"></select></div>
         </div>
-        <div style="display:flex;gap:6px"><button class="abtn ab-ok" onclick="addMemberManually()">Add member</button><button class="btn-sec" onclick="document.getElementById('add-member-form').style.display='none'" style="padding:6px 12px;font-size:12px">Cancel</button></div>
+        <div style="display:flex;gap:6px"><button class="abtn ab-ok" onclick="addMemberManually()">Add</button><button class="btn-sec" onclick="document.getElementById('add-member-form').style.display='none'" style="padding:6px 12px;font-size:12px">Cancel</button></div>
         <div id="am-msg" style="font-size:12px;margin-top:6px"></div>
       </div>
     </div>
@@ -678,12 +682,8 @@ input,select,textarea,button{font-family:inherit}
     <div class="set-sec">
       <h3>Team Sync</h3>
       <div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:14px;margin-bottom:12px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div id="sync-dot" style="width:8px;height:8px;border-radius:50%;background:var(--ok)"></div>
-          <span id="sync-status-txt" style="font-size:13px;font-weight:600">Connected</span>
-        </div>
-        <div style="font-size:11px;color:var(--mu);margin-bottom:10px">Server: <span id="sync-bin-display" style="font-family:monospace;color:var(--ac);font-size:10px">https://habitly-server.onrender.com</span></div>
-        <div style="display:flex;gap:6px"><button class="abtn ab-info" onclick="pushMyData();alert('Sync started!')">Sync now</button></div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px">Server: <span style="font-family:monospace;color:var(--ac);font-size:11px">https://habitly-server.onrender.com</span></div>
+        <button class="abtn ab-info" onclick="pushMyData();showToast('Syncing...','#E8C547')">Sync now</button>
       </div>
     </div>
     <div class="set-sec">
@@ -821,27 +821,25 @@ input,select,textarea,button{font-family:inherit}
 <div class="overlay" id="approve-modal">
   <div class="modal" style="max-width:500px">
     <h3>Approve &amp; set access</h3>
-    <div class="m-lbl" id="approve-info" style="margin-bottom:14px;font-size:13px;color:var(--mu)"></div>
-    <div class="fl">Designation</div>
-    <select class="fi fi-sm" id="approve-desig"></select>
+    <div id="approve-info" style="margin-bottom:12px;font-size:13px;color:var(--mu)"></div>
+    <div class="fl">Designation</div><select class="fi fi-sm" id="approve-desig"></select>
     <div class="fl" style="margin-top:12px;margin-bottom:8px">Permissions</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canSee" style="accent-color:var(--ac)"/><span style="font-size:12px;font-weight:500">View team</span></label>
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canCmt" style="accent-color:var(--ac)"/><span style="font-size:12px;font-weight:500">Comment</span></label>
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canReview" style="accent-color:var(--ac)"/><span style="font-size:12px;font-weight:500">Review</span></label>
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canTicket" style="accent-color:var(--ac)"/><span style="font-size:12px;font-weight:500">Tickets</span></label>
-      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canMaster" style="accent-color:var(--ac)"/><span style="font-size:12px;font-weight:500">Master</span></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canSee" style="accent-color:var(--ac)"/><span style="font-size:12px">View team</span></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canCmt" style="accent-color:var(--ac)"/><span style="font-size:12px">Comment</span></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canReview" style="accent-color:var(--ac)"/><span style="font-size:12px">Review</span></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canTicket" style="accent-color:var(--ac)"/><span style="font-size:12px">Tickets</span></label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" id="ap-canMaster" style="accent-color:var(--ac)"/><span style="font-size:12px">Master</span></label>
     </div>
     <div class="m-acts"><button class="btn-sec" onclick="document.getElementById('approve-modal').classList.remove('on')">Cancel</button><button class="btn-post" onclick="doApprove()">Approve &amp; activate</button></div>
   </div>
 </div>
-<!-- SUBORDINATES MODAL -->
 <div class="overlay" id="sub-modal">
   <div class="modal" style="max-width:460px">
     <h3>Assign subordinates</h3>
-    <div class="m-lbl" id="sub-info" style="margin-bottom:12px;font-size:13px;color:var(--mu)"></div>
+    <div id="sub-info" style="margin-bottom:12px;font-size:13px;color:var(--mu)"></div>
     <div id="sub-list" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto"></div>
-    <div class="m-acts" style="margin-top:14px"><button class="btn-sec" onclick="document.getElementById('sub-modal').classList.remove('on')">Cancel</button><button class="btn-post" onclick="saveSubs()">Save subordinates</button></div>
+    <div class="m-acts" style="margin-top:14px"><button class="btn-sec" onclick="document.getElementById('sub-modal').classList.remove('on')">Cancel</button><button class="btn-post" onclick="saveSubs()">Save</button></div>
   </div>
 </div>
 <!-- COMMENT MODAL -->
@@ -919,19 +917,7 @@ function getTD(uid,date){
 function getStats(uid,date){
   const blocks=getBlocks(uid),data=getTD(uid,date);
   let total=0,done=0,na=0,no_c=0,pp_c=0,bs={};
-  blocks.forEach(b=>{
-    let bt=0,bd=0;
-    b.tasks.forEach(t=>{
-      if(t.todayOnly&&t.addedDate&&t.addedDate!==date)return;
-      bt++;total++;
-      var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
-      if(data.checked[t.id]||ts==='done'){done++;bd++;}
-      else if(ts==='na')na++;
-      else if(ts==='no')no_c++;
-      else if(ts==='pp')pp_c++;
-    });
-    bs[b.id]={done:bd,total:bt,name:b.name,color:b.color};
-  });
+  blocks.forEach(b=>{let bt=0,bd=0;b.tasks.forEach(t=>{if(t.todayOnly&&t.addedDate&&t.addedDate!==date)return;bt++;total++;var ts=(data.taskStatus&&data.taskStatus[t.id])||'';if(data.checked[t.id]||ts==='done'){done++;bd++;}else if(ts==='na')na++;else if(ts==='no')no_c++;else if(ts==='pp')pp_c++;});bs[b.id]={done:bd,total:bt,name:b.name,color:b.color};});
   return{total,done,na,no:no_c,pp:pp_c,blocks:bs};
 }
 
@@ -961,31 +947,8 @@ function doLogin(){
   const pw=document.getElementById('li-pw').value;
   const err=document.getElementById('li-err');err.textContent='';
   if(!em||!pw){err.textContent='Enter email and password.';return;}
-  // Find user by email first
-  const u=DB.users.find(x=>x.email.toLowerCase()===em);
-  if(!u){
-    // User not in local DB - try fetching from server first
-    if(SERVER_URL){
-      err.textContent='Checking with server...';
-      fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
-        if(j.ok&&j.data&&j.data.users){
-          j.data.users.forEach(function(su){
-            var ex=DB.users.find(function(x){return x.email&&su.email&&x.email.toLowerCase()===su.email.toLowerCase();});
-            if(!ex)DB.users.push(su);
-          });
-          try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-          doLogin(); // retry
-        } else {
-          err.textContent='Account not found. Register first.';
-        }
-      }).catch(function(){err.textContent='Incorrect email or password.';});
-    } else {
-      err.textContent='Incorrect email or password.';
-    }
-    return;
-  }
-  // Check password
-  if(u.ph!==sh(pw)){err.textContent='Incorrect password.';return;}
+  const u=DB.users.find(x=>x.email.toLowerCase()===em&&x.ph===sh(pw));
+  if(!u){err.textContent='Incorrect email or password.';return;}
   // Always allow login - fix status if corrupted
   u.status='active';
   try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
@@ -1061,7 +1024,7 @@ function shiftMy(n){const nd=sd(myD,n);if(nd>td())return;myD=nd;renderMyTracker(
 function goToday(){myD=td();renderMyTracker();}
 function jumpDay(d){myD=d;renderMyTracker();}
 
-function renderHeatmap(){var today=td(),h='',i,d,s,p,isT,isSel;for(i=13;i>=0;i--){d=sd(today,-i);s=getStats(CU.id,d);p=s.total?Math.round(s.done/s.total*100):0;isT=(d===today);isSel=(d===myD);h+='<div class="hday" onclick="jumpDay(this.dataset.d)" data-d="'+d+'" title="'+fs(d)+': '+p+'%">';h+='<div class="hday-l"'+(isT?' style="color:var(--ac);font-weight:700;font-size:8px"':'')+'>'+( isT?'TODAY':dn(d))+'</div>';h+='<div class="hcell'+(isSel?' sel':'')+'" style="background:'+hc(p)+(isT?';border:1.5px solid var(--ac)':'')+'" ></div>';h+='<div class="hday-n"'+(isT?' style="color:var(--ac);font-weight:700"':'')+'>'+dnum(d)+'</div></div>';}document.getElementById('hmap').innerHTML=h;}
+function renderHeatmap(){var today=td(),h='';for(var i=13;i>=0;i--){var d=sd(today,-i),s=getStats(CU.id,d),p=s.total?Math.round(s.done/s.total*100):0,isT=(d===today),isSel=(d===myD);h+='<div class="hday" onclick="jumpDay(this.dataset.d)" data-d="'+d+'" title="'+fs(d)+': '+p+'%"><div class="hday-l"'+(isT?' style="color:var(--ac);font-weight:700;font-size:8px"':'')+'>'+( isT?'TODAY':dn(d))+'</div><div class="hcell'+(isSel?' sel':'')+'" style="background:'+hc(p)+(isT?';border:1.5px solid var(--ac)':'')+'" ></div><div class="hday-n"'+(isT?' style="color:var(--ac);font-weight:700"':'')+'>'+dnum(d)+'</div></div>';}document.getElementById('hmap').innerHTML=h;}
 
 function renderMyTracker(){
   const today=td(),isToday=myD===today;
@@ -1079,10 +1042,10 @@ function renderMyTracker(){
   document.getElementById('my-blocks').innerHTML=blocks.map((b,bi)=>{
     const bs=stats.blocks[b.id]||{done:0,total:b.tasks.length};
     const rows=b.tasks.map((t,ti)=>{
-      const chk=!!data.checked[t.id];const cmts=(data.comments[t.id]||[]).length;
+      const chk=!!data.checked[t.id],cmts=(data.comments[t.id]||[]).length;
       const ctx=JSON.stringify({uid:CU.id,bid:b.id,tid:t.id,date:myD});
       return buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx);
-    }).filter(Boolean).join('');
+    }).filter(Boolean).join('');;
     const addRow=isToday?`<div class="add-task-row"><input class="ati" id="ati-${b.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask(${bi})"/><input class="ati-sm" id="atit-${b.id}" placeholder="Time slot"/><label style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--mu);cursor:pointer;white-space:nowrap"><input type="checkbox" id="ati-tod-${b.id}" style="accent-color:var(--ac)"/>Today only</label><button class="atb" onclick="addTask(${bi})">+ Add</button></div>`:'';
     const dbtn=isToday?`<button class="ta-btn del" onclick="delBlock(${bi})" style="opacity:.6;font-size:10px;padding:2px 7px;margin-left:4px">Del</button>`:'';
     return `<div class="bcard"><div class="bhdr" onclick="togBlock('tl-${b.id}','ch-${b.id}')">
@@ -1109,8 +1072,8 @@ function renderMyTracker(){
   </div>`:'';
 }
 function togBlock(l,c){document.getElementById(l)?.classList.toggle('col');document.getElementById(c)?.classList.toggle('op');}
-function chkTask(bid,tid){if(myD!==td()&&myD!==sd(td(),-1))return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};var cur=data.taskStatus[tid]||'';if(cur==='done'||data.checked[tid]){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
-function setTaskStatus(bid,tid,status){if(myD!==td()&&myD!==sd(td(),-1))return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};if(data.taskStatus[tid]===status){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]=status;data.checked[tid]=(status==='done');}saveDB();renderMyTracker();}
+function chkTask(bid,tid){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};var cur=data.taskStatus[tid]||'';if(cur==='done'||data.checked[tid]){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
+function setTaskStatus(bid,tid,status){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};if(data.taskStatus[tid]===status){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]=status;data.checked[tid]=(status==='done');}saveDB();renderMyTracker();}
 function addBlock(){
   const name=document.getElementById('nb-name').value.trim();if(!name)return;
   const time=document.getElementById('nb-time').value.trim();
@@ -1125,7 +1088,7 @@ function addTask(bi){
   const time=document.getElementById('atit-'+b.id)?.value.trim();
   const todEl=document.getElementById('ati-tod-'+b.id);
   const todayOnly=todEl?todEl.checked:false;
-  const t={id:genId('t'),name,timeSlot:time||'',todayOnly:todayOnly,addedDate:todayOnly?td():null};
+  const t={id:genId('t'),name,timeSlot:time||'',todayOnly,addedDate:todayOnly?td():null};
   b.tasks.push(t);logEdit('ADD',b.name,t.id,t.name,'');saveDB();renderMyTracker();
 }
 function delTask(bi,ti){
@@ -1582,8 +1545,6 @@ function renderAdmin(){
 }
 
 const ROLES_FALLBACK=['Management','Manager','Assistant Manager','MCPC','Sr. Team Leader','Team Leader','Sr. Analyst','Analyst'];const HIERARCHY=['Management','Manager','Assistant Manager','MCPC','Sr. Team Leader','Team Leader','Sr. Analyst','Analyst'];function hierarchyLvl(r){var i=HIERARCHY.indexOf(r);return i===-1?99:i;}
-var SERVER_URL='https://habitly-server.onrender.com';
-var _lastSync=0;
 // == SYNC VARIABLES =============================================
 var SERVER_URL = localStorage.getItem('habitly_server_url') || 'https://habitly-server.onrender.com';
 var _lastSync = 0;
@@ -1920,7 +1881,7 @@ function cloudLoad(cb){
 
 // ══════════════════════ INIT ══════════════════════
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-// startApp called after all scripts load</script>
+startApp();</script>
 <script>
 // ══ CHAT ══
 var curRoom=null,pendAtt=[];
@@ -2209,141 +2170,23 @@ function exportAllXLSX(){
   XLSX.writeFile(wb,'habitly-full-'+td()+'.xlsx');
 }
 </script>
-<script>startApp();</script>
-</body>
-</html>
+
+
 
 <script>
-// ══ CORE FEATURES ════════════════════════════════════════════════
+// ══ ALL FEATURES - SINGLE CLEAN BLOCK ══════════════════════════
 
-// SAFE SYNC - key principle: LOCAL IS MASTER, server only adds new users
-var _ka=null;
-function startKeepAlive(){if(!SERVER_URL)return;if(_ka)clearInterval(_ka);_ka=setInterval(function(){fetch(SERVER_URL+'/health').catch(function(){});},14*60*1000);}
-
-function pushMyData(){
-  if(!SERVER_URL||!CU)return;
-  // Push own blocks/tracker - user is ALWAYS master of their own data
-  var myBlocks=(DB.blocks&&DB.blocks[CU.id])||[];
-  var myTracker=(DB.tracker&&DB.tracker[CU.id])||{};
-  fetch(SERVER_URL+'/sync/user',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({userId:CU.id,blocks:myBlocks,tracker:myTracker})
-  }).catch(function(){});
-  // Push shared data (users, settings etc)
-  var sp={
-    users:DB.users||[],
-    deletedUsers:DB.deletedUsers||[],
-    settings:DB.settings||{},
-    designations:DB.designations||[],
-    tickets:DB.tickets||[],
-    editlog:DB.editlog||[],
-    notifications:DB.notifications||[],
-    chat:DB.chat||{rooms:{}}
-  };
-  fetch(SERVER_URL+'/sync/shared',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(sp)
-  }).then(function(r){return r.json();}).then(function(j){
-    if(j.ok)_lastSync=Date.now();
-  }).catch(function(){});
-}
-
-function pullOtherUsersData(){
-  if(!SERVER_URL||!CU)return;
-  fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
-    if(!j.ok||!j.data)return;
-    var d=j.data; var changed=false;
-    // Handle deletions
-    if(d.deletedUsers){
-      if(!DB.deletedUsers)DB.deletedUsers=[];
-      d.deletedUsers.forEach(function(id){
-        if(!DB.deletedUsers.includes(id)){
-          DB.deletedUsers.push(id);
-          DB.users=DB.users.filter(function(u){return u.id!==id;});
-          changed=true;
-        }
-      });
-    }
-    // Add NEW users only - NEVER update existing users from server
-    if(d.users){
-      d.users.forEach(function(su){
-        if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
-        var ex=DB.users.find(function(u){return u.id===su.id;})||
-               DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
-        if(!ex){DB.users.push(su);changed=true;}
-        // NEVER update existing - local is master for existing users
-      });
-    }
-    // Pull OTHER users blocks/tracker - never touch CU's own data
-    if(d.blocks){
-      if(!DB.blocks)DB.blocks={};
-      Object.keys(d.blocks).forEach(function(uid){
-        if(uid===CU.id)return; // Never overwrite own data from server
-        if((DB.deletedUsers||[]).includes(uid))return;
-        var sb=d.blocks[uid]||[];
-        if(sb.length>0){DB.blocks[uid]=sb;changed=true;}
-      });
-    }
-    if(d.tracker){
-      if(!DB.tracker)DB.tracker={};
-      Object.keys(d.tracker).forEach(function(uid){
-        if(uid===CU.id)return; // Never overwrite own data
-        if((DB.deletedUsers||[]).includes(uid))return;
-        var st=d.tracker[uid]||{};
-        if(!DB.tracker[uid])DB.tracker[uid]={};
-        Object.keys(st).forEach(function(date){
-          if(!DB.tracker[uid][date])DB.tracker[uid][date]=st[date];
-        });
-        if(Object.keys(st).length>0)changed=true;
-      });
-    }
-    // Notifications and tickets
-    if(d.notifications){DB.notifications=d.notifications;changed=true;}
-    if(d.tickets){DB.tickets=d.tickets;changed=true;}
-    // Chat - merge only new messages
-    if(d.chat&&d.chat.rooms){
-      if(!DB.chat)DB.chat={rooms:{}};
-      Object.keys(d.chat.rooms).forEach(function(rid){
-        var sr=d.chat.rooms[rid];
-        if(!DB.chat.rooms[rid]){DB.chat.rooms[rid]=sr;changed=true;}
-        else{
-          var lm=DB.chat.rooms[rid].messages||[];
-          var sm=sr.messages||[];
-          var ids=new Set(lm.map(function(m){return m.id;}));
-          sm.forEach(function(m){if(!ids.has(m.id)){lm.push(m);changed=true;}});
-          lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});
-          DB.chat.rooms[rid].messages=lm;
-        }
-      });
-    }
-    if(changed){
-      try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
-      _lastSync=Date.now();
-      var at=document.querySelector('.tb.on');
-      if(at){
-        var t=at.dataset.tab;
-        if(t==='team')renderTeam();
-        else if(t==='admin')renderAdmin();
-        renderNotifBadge();updateCTBadge();
-      }
-    }
-  }).catch(function(){});
-}
-
-// TASK ROW BUILDER
+// ── TASK ROW ──
 function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
   if(t.todayOnly&&t.addedDate&&t.addedDate!==myD)return '';
   var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
   var isDone=(ts==='done'||chk),isNA=(ts==='na'),isNO=(ts==='no'),isPP=(ts==='pp');
-  var isEditable=isEditableDay(myD);
   var cls='trow'+(isDone?' done':isNA?' trow-na':isNO?' trow-no':isPP?' trow-pp':'');
   var h='<div class="'+cls+'"><span class="tnum">'+(ti+1)+'</span>';
-  if(isEditable){
+  if(isToday){
     h+='<div class="cb'+(isDone?' chk':'')+' tcb" data-bid="'+b.id+'" data-tid="'+t.id+'"></div>';
     h+='<span class="ttxt tcb" data-bid="'+b.id+'" data-tid="'+t.id+'">'+t.name+'</span>';
-  } else {
+  }else{
     h+='<div class="cb'+(isDone?' chk':'')+' ro"></div>';
     h+='<span class="ttxt'+(isDone?' done':'')+'">'+t.name+'</span>';
     if(isNA)h+='<span class="ttime-badge" style="background:rgba(232,147,74,.2);color:#E8934A">NA</span>';
@@ -2352,7 +2195,7 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
     if(isDone)h+='<span class="ttime-badge" style="background:rgba(91,189,138,.2);color:#5BBD8A">DONE</span>';
   }
   if(t.timeSlot)h+='<span class="ttime-badge">'+t.timeSlot+'</span>';
-  if(isEditable&&!isDone){
+  if(isToday&&!isDone){
     h+='<div class="task-status-btns">';
     h+='<button class="tsb tsb-na'+(isNA?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNA?'':'na')+'">NA</button>';
     h+='<button class="tsb tsb-no'+(isNO?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNO?'':'no')+'">NO</button>';
@@ -2360,8 +2203,8 @@ function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){
     h+='</div>';
   }
   if(cmts)h+='<span class="ncnt tcmt" data-ctx="'+encodeURIComponent(ctx)+'">'+cmts+'</span>';
-  if(isEditable)h+='<button class="note-btn tcmt" data-ctx="'+encodeURIComponent(ctx)+'">Note</button>';
-  if(isEditable)h+='<div class="task-acts"><button class="ta-btn tedit" data-bi="'+bi+'" data-ti="'+ti+'">Edit</button><button class="ta-btn del tdel" data-bi="'+bi+'" data-ti="'+ti+'">&#215;</button></div>';
+  if(isToday)h+='<button class="note-btn tcmt" data-ctx="'+encodeURIComponent(ctx)+'">Note</button>';
+  if(isToday)h+='<div class="task-acts"><button class="ta-btn tedit" data-bi="'+bi+'" data-ti="'+ti+'">Edit</button><button class="ta-btn del tdel" data-bi="'+bi+'" data-ti="'+ti+'">&#215;</button></div>';
   h+='</div>'+getTAttHTML(bi,ti,t.id,isToday);
   return h;
 }
@@ -2375,7 +2218,102 @@ document.addEventListener('click',function(e){
   var tdp=el.closest&&el.closest('.tdp');if(tdp&&tdp.dataset.uid)openDP(tdp.dataset.uid);
 });
 
-// FAST TEAM DETAIL PANEL
+// ── SYNC - LOCAL IS MASTER ──
+function pushMyData(){
+  if(!SERVER_URL||!CU)return;
+  var up={userId:CU.id,blocks:(DB.blocks&&DB.blocks[CU.id])||[],tracker:(DB.tracker&&DB.tracker[CU.id])||{}};
+  fetch(SERVER_URL+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(up)}).catch(function(){});
+  var sp={users:DB.users||[],deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+  fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sp)}).then(function(r){return r.json();}).then(function(j){if(j.ok)_lastSync=Date.now();}).catch(function(){});
+}
+
+function pullOtherUsersData(){
+  if(!SERVER_URL||!CU)return;
+  fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
+    if(!j.ok||!j.data)return;
+    var d=j.data,changed=false;
+    if(d.deletedUsers){if(!DB.deletedUsers)DB.deletedUsers=[];d.deletedUsers.forEach(function(id){if(!DB.deletedUsers.includes(id)){DB.deletedUsers.push(id);DB.users=DB.users.filter(function(u){return u.id!==id;});changed=true;}});}
+    // Only add NEW users - NEVER update existing
+    if(d.users){d.users.forEach(function(su){
+      if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
+      var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+      if(!ex){DB.users.push(su);changed=true;}
+    });}
+    // Other users blocks - merge only
+    if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){
+      if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){
+        var sb=d.blocks[uid]||[];if(sb.length>0){DB.blocks[uid]=sb;changed=true;}
+      }
+    });}
+    if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){
+      if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){
+        var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};
+        Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});
+        if(Object.keys(st).length>0){DB.tracker[uid]=lt;changed=true;}
+      }
+    });}
+    if(d.notifications){DB.notifications=d.notifications;changed=true;}
+    if(d.tickets){DB.tickets=d.tickets;changed=true;}
+    if(changed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}var at=document.querySelector('.tb.on');if(at&&at.dataset.tab==='team')renderTeam();renderNotifBadge();updateCTBadge();}
+  }).catch(function(){});
+}
+
+// ── TEAM VIEW with NOT YET UPDATED ──
+function renderTeam(){
+  var dlbl=document.getElementById('team-dlbl'),tnxt=document.getElementById('team-next'),grid=document.getElementById('tgrid');
+  if(dlbl)dlbl.textContent=fs(teamD)+(teamD===td()?' \u2014 Today':'');
+  if(tnxt)tnxt.classList.toggle('off',teamD===td());
+  if(!grid)return;
+  var canAccess=CU.sysRole==='admin'||CU.canSee||CU.canReview||(CU.subordinates&&CU.subordinates.length>0);
+  if(!canAccess){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team view access.</div>';return;}
+  var nd=function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);};
+  var active=(CU.sysRole==='admin'||CU.canSee)?DB.users.filter(nd):DB.users.filter(function(u){return nd(u)&&(CU.subordinates||[]).includes(u.id);});
+  // Pull fresh data in background if blocks missing
+  if(SERVER_URL&&active.filter(function(u){return!DB.blocks[u.id]||DB.blocks[u.id].length===0;}).length>0)setTimeout(pullOtherUsersData,100);
+  
+  var updated=[],notUpdated=[];
+  active.forEach(function(m){
+    var st=getStats(m.id,teamD);
+    if((st.done+st.na+st.no+st.pp)>0)updated.push({m:m,st:st});
+    else notUpdated.push({m:m,st:st});
+  });
+
+  var html='';
+  // ── NOT YET UPDATED BAR ──
+  if(notUpdated.length>0){
+    html+='<div class="nyu-bar" style="grid-column:1/-1">';
+    html+='<div class="nyu-title">\u23F0 Not yet updated ('+notUpdated.length+')</div>';
+    html+='<div class="nyu-chips">';
+    notUpdated.forEach(function(item){
+      var m=item.m;
+      html+='<div class="nyu-chip tdp" data-uid="'+m.id+'">';
+      html+='<div class="av" style="width:24px;height:24px;font-size:9px;flex-shrink:0;'+avs(m.color)+'">'+ini(m.name)+'</div>';
+      html+='<div><div style="font-size:12px;font-weight:600">'+m.name+'</div><div style="font-size:10px;color:var(--mu)">'+rlbl(m)+'</div></div>';
+      html+='</div>';
+    });
+    html+='</div></div>';
+  }
+
+  // ── UPDATED MEMBERS GRID ──
+  updated.forEach(function(item){
+    var m=item.m,st=item.st;
+    var pct=st.total?Math.round(st.done/st.total*100):0;
+    var pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';
+    var av=m.photo?'<img src="'+m.photo+'" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>':ini(m.name);
+    var barHtml='';Object.values(st.blocks).slice(0,3).forEach(function(bs){var bp=bs.total?Math.round(bs.done/bs.total*100):0;barHtml+='<div class="mr"><div class="mr-dot" style="background:'+bs.color+'"></div><span class="mr-lbl">'+bs.name+'</span><div class="mr-wrap"><div class="mr-bar" style="width:'+bp+'%;background:'+bs.color+'"></div></div><span class="mr-cnt">'+bs.done+'/'+bs.total+'</span></div>';});
+    var tags=(st.na>0?' <span style="font-size:10px;color:#E8934A">'+st.na+'NA</span>':'')+(st.no>0?' <span style="font-size:10px;color:#E85555">'+st.no+'NO</span>':'')+(st.pp>0?' <span style="font-size:10px;color:#5B9BD5">'+st.pp+'PP</span>':'');
+    html+='<div class="mcard'+(openM===m.id?' sel':'')+' tdp" data-uid="'+m.id+'">';
+    html+='<div class="mcard-top"><div class="av av-xs" style="'+avs(m.color)+'">'+av+'</div>';
+    html+='<div class="mcard-info"><div class="mcard-name">'+m.name+'</div><div class="mcard-role"><span class="rtag" style="background:'+rcolor(m)+'20;color:'+rcolor(m)+'">'+rlbl(m)+'</span></div></div>';
+    html+='<div class="mcard-pct" style="color:'+pc+'">'+pct+'%'+tags+'</div></div>';
+    if(barHtml)html+='<div class="mcard-body">'+barHtml+'</div>';
+    html+='</div>';
+  });
+  grid.innerHTML=html||'<div class="empty" style="grid-column:1/-1">No team members.</div>';
+  if(openM)renderDP(openM);
+}
+
+// ── INSTANT DETAIL PANEL ──
 function openDP(userId){
   openM=userId;
   var m=DB.users.find(function(u){return u.id===userId;});if(!m)return;
@@ -2405,197 +2343,130 @@ function renderDP(userId){
     var rows='';
     b.tasks.forEach(function(t){
       if(t.todayOnly&&t.addedDate&&t.addedDate!==teamD)return;
-      var chk=!!data.checked[t.id];
-      var ts=(data.taskStatus&&data.taskStatus[t.id])||'';
-      var cmts=(data.comments[t.id]||[]).length;
+      var chk=!!data.checked[t.id],ts=(data.taskStatus&&data.taskStatus[t.id])||'',cmts=(data.comments[t.id]||[]).length;
       var ctx=JSON.stringify({uid:userId,bid:b.id,tid:t.id,date:teamD});
       var sb='',tc='';
-      if(chk||ts==='done'){sb='<span style="background:rgba(91,189,138,.15);color:#5BBD8A;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;flex-shrink:0">DONE</span>';}
-      else if(ts==='na'){sb='<span style="background:rgba(232,147,74,.15);color:#E8934A;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;flex-shrink:0">NA</span>';tc='color:#E8934A';}
-      else if(ts==='no'){sb='<span style="background:rgba(232,80,80,.15);color:#E85555;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;flex-shrink:0">NO</span>';tc='color:#E85555;text-decoration:line-through';}
-      else if(ts==='pp'){sb='<span style="background:rgba(91,149,213,.15);color:#5B9BD5;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;flex-shrink:0">PP</span>';tc='color:#5B9BD5;font-style:italic';}
-      else{sb='<span style="background:rgba(255,255,255,.06);color:var(--mu);border-radius:4px;padding:1px 6px;font-size:10px;flex-shrink:0">PENDING</span>';}
-      rows+='<div class="drow"><div class="dt-cb'+(chk?' chk':'')+'"></div>';
-      rows+='<span class="dt-txt'+(chk?' done':'')+'"'+(tc?' style="'+tc+'"':'')+'>'+t.name+(t.timeSlot?' <small style="color:var(--mu)">('+t.timeSlot+')</small>':'')+'</span>';
-      rows+=sb;
+      if(chk||ts==='done')sb='<span style="background:rgba(91,189,138,.15);color:#5BBD8A;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">DONE</span>';
+      else if(ts==='na'){sb='<span style="background:rgba(232,147,74,.15);color:#E8934A;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">NA</span>';tc='color:#E8934A';}
+      else if(ts==='no'){sb='<span style="background:rgba(232,80,80,.15);color:#E85555;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">NO</span>';tc='color:#E85555;text-decoration:line-through';}
+      else if(ts==='pp'){sb='<span style="background:rgba(91,149,213,.15);color:#5B9BD5;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">PP</span>';tc='color:#5B9BD5;font-style:italic';}
+      else sb='<span style="background:rgba(255,255,255,.06);color:var(--mu);border-radius:4px;padding:1px 6px;font-size:10px">PENDING</span>';
+      rows+='<div class="drow"><div class="dt-cb'+(chk?' chk':'')+'"></div><span class="dt-txt'+(chk?' done':'')+'"'+(tc?' style="'+tc+'"':'')+'>'+t.name+(t.timeSlot?' <small style="color:var(--mu)">('+t.timeSlot+')</small>':'')+'</span>'+sb;
       if(cmts)rows+='<span class="ncnt tcmt" data-ctx="'+encodeURIComponent(ctx)+'">'+cmts+'</span>';
       if(canC)rows+='<button class="cmtbtn tcmt" data-ctx="'+encodeURIComponent(ctx)+'">Comment</button>';
       rows+='</div>';
     });
-    html+='<div class="dp-sec"><span class="dp-sec-hdr" style="background:'+b.color+'20;color:'+b.color+'">'+b.name+(b.timeSlot?' \u2014 '+b.timeSlot:'')+'</span>'+(rows||'<div style="font-size:11px;color:var(--mu);padding:6px 0">No tasks yet</div>')+'</div>';
+    html+='<div class="dp-sec"><span class="dp-sec-hdr" style="background:'+b.color+'20;color:'+b.color+'">'+b.name+(b.timeSlot?' \u2014 '+b.timeSlot:'')+'</span>'+(rows||'<div style="font-size:11px;color:var(--mu);padding:6px 0">No tasks</div>')+'</div>';
   });
   document.getElementById('dp-body').innerHTML=html;
   document.getElementById('dp').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-// TEAM VIEW - with NOT YET UPDATED report
-function renderTeam(){
-  var dlbl=document.getElementById('team-dlbl');var tnxt=document.getElementById('team-next');var grid=document.getElementById('tgrid');
-  if(dlbl)dlbl.textContent=fs(teamD)+(teamD===td()?' \u2014 Today':'');
-  if(tnxt)tnxt.classList.toggle('off',teamD===td());
-  if(!grid)return;
-  var canAccess=CU.sysRole==='admin'||CU.canSee||CU.canReview||(CU.subordinates&&CU.subordinates.length>0);
-  if(!canAccess){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">\uD83D\uDD12</div>No team view access.<br>Contact admin.</div>';return;}
-  var nd=function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);};
-  var active;
-  if(CU.sysRole==='admin'||CU.canSee)active=DB.users.filter(nd);
-  else active=DB.users.filter(function(u){return nd(u)&&(CU.subordinates||[]).includes(u.id);});
-  if(active.length===0){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">\uD83D\uDC65</div>No team members found.</div>';return;}
-  // Pull fresh data if needed
-  if(SERVER_URL){var empty=active.filter(function(u){return!DB.blocks[u.id]||DB.blocks[u.id].length===0;});if(empty.length>0)pullOtherUsersData();}
-  // Separate: updated and NOT YET UPDATED
-  var updated=[],notUpdated=[];
-  active.forEach(function(m){
-    var st=getStats(m.id,teamD);
-    var hasAnyUpdate=(st.done+st.na+st.no+st.pp)>0;
-    if(st.total>0&&hasAnyUpdate){
-      updated.push({m:m,st:st}); // Has tasks AND has updates
-    } else {
-      notUpdated.push({m:m,st:st}); // No tasks OR has tasks but no updates
-    }
-  });
-  var html='';
-  // Not yet updated section
-  if(notUpdated.length>0){
-    html+='<div style="grid-column:1/-1;background:rgba(232,197,71,.08);border:1px solid rgba(232,197,71,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px">';
-    html+='<div style="font-size:13px;font-weight:700;color:var(--ac);margin-bottom:10px">⏰ Not yet updated — '+notUpdated.length+' member'+(notUpdated.length>1?'s':'')+' ('+teamD+')</div>';
-    html+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
-    notUpdated.forEach(function(item){
-      var m=item.m;html+='<div class="tdp" data-uid="'+m.id+'" style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><div class="av" style="width:24px;height:24px;font-size:9px;'+avs(m.color)+'">'+ini(m.name)+'</div><span style="font-size:12px">'+m.name+'</span></div>';
-    });
-    html+='</div></div>';
-  }
-  // Main team grid
-  updated.forEach(function(item){
-    var m=item.m,st=item.st;
-    var pct=st.total?Math.round(st.done/st.total*100):0;
-    var pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';
-    var av=m.photo?'<img src="'+m.photo+'" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>':ini(m.name);
-    var barHtml='';Object.values(st.blocks).slice(0,3).forEach(function(bs){var bp=bs.total?Math.round(bs.done/bs.total*100):0;barHtml+='<div class="mr"><div class="mr-dot" style="background:'+bs.color+'"></div><span class="mr-lbl">'+(bs.name||'')+'</span><div class="mr-wrap"><div class="mr-bar" style="width:'+bp+'%;background:'+bs.color+'"></div></div><span class="mr-cnt">'+bs.done+'/'+bs.total+'</span></div>';});
-    var tags=(st.na>0?' <span style="font-size:10px;color:#E8934A">'+st.na+'NA</span>':'')+(st.no>0?' <span style="font-size:10px;color:#E85555">'+st.no+'NO</span>':'')+(st.pp>0?' <span style="font-size:10px;color:#5B9BD5">'+st.pp+'PP</span>':'');
-    html+='<div class="mcard'+(openM===m.id?' sel':'')+' tdp" data-uid="'+m.id+'">';
-    html+='<div class="mcard-top"><div class="av av-xs" style="'+avs(m.color)+'">'+av+'</div>';
-    html+='<div class="mcard-info"><div class="mcard-name">'+m.name+'</div><div class="mcard-role"><span class="rtag" style="background:'+rcolor(m)+'20;color:'+rcolor(m)+'">'+rlbl(m)+'</span></div></div>';
-    html+='<div class="mcard-pct" style="color:'+pc+'">'+pct+'%'+tags+'</div></div>';
-    if(barHtml)html+='<div class="mcard-body">'+barHtml+'</div>';
-    html+='</div>';
-  });
-  grid.innerHTML=html||'<div class="empty" style="grid-column:1/-1">No members.</div>';
-  if(openM)openDP(openM);
+// ── FORGOT PASSWORD ──
+function showForgotPw(){var m=document.createElement('div');m.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';m.innerHTML='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:24px;width:320px;max-width:90vw"><h3 style="margin-bottom:8px;font-size:16px">Reset Password</h3><input class="fi" id="fp-email" placeholder="Your email" style="margin-bottom:10px"/><input class="fi" type="password" id="fp-newpw" placeholder="New password (min 6 chars)" style="margin-bottom:14px"/><div style="display:flex;gap:8px"><button class="btn-pri" onclick="doResetPw()" style="flex:1">Reset</button><button class="btn-sec" onclick="this.closest(\'[style*=fixed]\').remove()" style="flex:1">Cancel</button></div><div id="fp-msg" style="font-size:12px;margin-top:8px"></div></div>';document.body.appendChild(m);m.onclick=function(e){if(e.target===m)m.remove();};}
+function doResetPw(){var em=document.getElementById('fp-email').value.trim().toLowerCase(),np=document.getElementById('fp-newpw').value,msg=document.getElementById('fp-msg');if(!em||!np){msg.textContent='Fill all fields.';msg.style.color='var(--err)';return;}if(np.length<6){msg.textContent='Min 6 chars.';msg.style.color='var(--err)';return;}var u=DB.users.find(function(x){return x.email.toLowerCase()===em;});if(!u){msg.textContent='Email not found.';msg.style.color='var(--err)';return;}u.ph=sh(np);saveDB();msg.textContent='Reset! Login with new password.';msg.style.color='var(--ok)';setTimeout(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();},1500);}
+
+// ── REMOVE USER ──
+function removeUser(id){if(!confirm('Remove permanently?'))return;var u=DB.users.find(function(x){return x.id===id;});if(u){u._deleted=true;u.status='rejected';}if(!DB.deletedUsers)DB.deletedUsers=[];if(!DB.deletedUsers.includes(id))DB.deletedUsers.push(id);if(DB.blocks&&DB.blocks[id])delete DB.blocks[id];if(DB.tracker&&DB.tracker[id])delete DB.tracker[id];try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}var p={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)}).then(function(){renderAdmin();}).catch(function(){renderAdmin();});}
+
+// ── RESTORE REJECTED ──
+function showRejected(){var rej=DB.users.filter(function(u){return u.status==='rejected'&&!(DB.deletedUsers||[]).includes(u.id);});if(!rej.length){alert('No rejected users.');return;}var modal=document.createElement('div');modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';var html='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:20px;width:420px;max-width:90vw;max-height:80vh;overflow-y:auto"><h3 style="margin-bottom:14px">Rejected Users ('+rej.length+')</h3>';rej.forEach(function(u){html+='<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;margin-bottom:8px"><div style="width:36px;height:36px;border-radius:50%;background:'+u.color+';display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;flex-shrink:0">'+u.name.charAt(0).toUpperCase()+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600">'+u.name+'</div><div style="font-size:11px;color:var(--mu)">'+u.email+'</div></div><button data-uid="'+u.id+'" onclick="restoreUser(this.dataset.uid)" style="background:rgba(91,189,138,.15);border:1px solid rgba(91,189,138,.4);color:#5BBD8A;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-weight:600">Restore</button></div>';});html+='<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;margin-top:10px;padding:8px;background:none;border:1px solid var(--b2);border-radius:8px;color:var(--mu);cursor:pointer">Close</button></div>';modal.innerHTML=html;document.body.appendChild(modal);modal.onclick=function(e){if(e.target===modal)modal.remove();};}
+function restoreUser(id){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u.status='active';delete u._deleted;if(DB.deletedUsers)DB.deletedUsers=DB.deletedUsers.filter(function(x){return x!==id;});try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}var p={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)}).then(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();renderAdmin();showToast(u.name+' restored!','#5BBD8A');}).catch(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();renderAdmin();});}
+
+// ── DESIGNATIONS ──
+function changeDesig(id,current){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;var modal=document.createElement('div');modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';var html='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:20px;min-width:260px;max-width:320px"><div style="font-size:14px;font-weight:600;margin-bottom:14px">Change: '+u.name+'</div><div style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto">';opts.forEach(function(r){html+='<button data-role="'+r+'" data-uid="'+id+'" onclick="applyDesig(this.dataset.uid,this.dataset.role)" style="background:'+(r===current?'var(--ac)':'var(--s2)')+';border:1px solid var(--b2);border-radius:7px;padding:9px 14px;color:'+(r===current?'#000':'var(--tx)')+';font-size:13px;cursor:pointer;text-align:left">'+r+'</button>';});html+='</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="margin-top:12px;width:100%;padding:8px;background:none;border:1px solid var(--b2);border-radius:7px;color:var(--mu);cursor:pointer">Cancel</button></div>';modal.innerHTML=html;document.body.appendChild(modal);modal.onclick=function(e){if(e.target===modal)modal.remove();};}
+function applyDesig(id,role){
+  var u=DB.users.find(function(x){return x.id===id;});if(!u)return;
+  u.orgRole=role;u._localEdit=Date.now();
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  // Immediately push to server
+  var p={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+  fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)}).then(function(){showToast(u.name+' \u2192 '+role+' \u2713','#5BBD8A');}).catch(function(){showToast('Saved locally','#E8C547');});
+  var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();
+  renderAdmin();
 }
+function showToast(msg,bg){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:'+(bg||'#5BBD8A')+';color:#000;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3)';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove();},3000);}
 
-// FORGOT PASSWORD
-function showForgotPw(){var m=document.createElement('div');m.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';m.innerHTML='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:24px;width:320px;max-width:90vw"><h3 style="margin-bottom:8px;font-size:16px">Reset Password</h3><p style="font-size:12px;color:var(--mu);margin-bottom:16px;line-height:1.6">Enter your email and set a new password.</p><input class="fi" id="fp-email" placeholder="Your email" style="margin-bottom:10px"/><input class="fi" type="password" id="fp-newpw" placeholder="New password (min 6 chars)" style="margin-bottom:14px"/><div style="display:flex;gap:8px"><button class="btn-pri" onclick="doResetPw()" style="flex:1">Reset</button><button class="btn-sec" onclick="this.closest(\'[style*=fixed]\').remove()" style="flex:1">Cancel</button></div><div id="fp-msg" style="font-size:12px;margin-top:8px;min-height:16px"></div></div>';document.body.appendChild(m);m.onclick=function(e){if(e.target===m)m.remove();};}
-function doResetPw(){var email=document.getElementById('fp-email').value.trim().toLowerCase();var npw=document.getElementById('fp-newpw').value;var msg=document.getElementById('fp-msg');if(!email||!npw){msg.textContent='Fill all fields.';msg.style.color='var(--err)';return;}if(npw.length<6){msg.textContent='Min 6 characters.';msg.style.color='var(--err)';return;}var u=DB.users.find(function(x){return x.email.toLowerCase()===email;});if(!u){msg.textContent='Email not found.';msg.style.color='var(--err)';return;}u.ph=sh(npw);saveDB();msg.textContent='Password reset!';msg.style.color='var(--ok)';setTimeout(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();},1500);}
+// ── CLEAN DUPLICATES ──
+function cleanDuplicates(){var seen={},clean=[];DB.users.filter(function(u){return!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);}).sort(function(a,b){return a.status==='active'&&b.status!=='active'?-1:1;}).forEach(function(u){var key=u.email.toLowerCase();if(!seen[key]){seen[key]=u;clean.push(u);}});var removed=DB.users.length-clean.length;if(removed>0){DB.users=clean;var p={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)}).then(function(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}renderAdmin();showToast('Removed '+removed+' duplicate(s)','#5BBD8A');}).catch(function(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}renderAdmin();});}else{alert('No duplicates found.');}}
 
-// REMOVE USER
-function removeUser(id){if(!confirm('Remove permanently?'))return;var u=DB.users.find(function(x){return x.id===id;});if(u){u._deleted=true;u.status='rejected';}if(!DB.deletedUsers)DB.deletedUsers=[];if(!DB.deletedUsers.includes(id))DB.deletedUsers.push(id);if(DB.blocks&&DB.blocks[id])delete DB.blocks[id];if(DB.tracker&&DB.tracker[id])delete DB.tracker[id];try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}var payload={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(){renderAdmin();alert('Removed!');}).catch(function(){renderAdmin();alert('Removed locally.');});}
-
-// RESTORE REJECTED
-function showRejected(){var rejected=DB.users.filter(function(u){return u.status==='rejected'&&!(DB.deletedUsers||[]).includes(u.id);});if(!rejected.length){alert('No rejected users found.');return;}var modal=document.createElement('div');modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';var html='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:20px;width:420px;max-width:90vw;max-height:80vh;overflow-y:auto"><h3 style="margin-bottom:14px">Rejected Users ('+rejected.length+')</h3>';rejected.forEach(function(u){html+='<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;margin-bottom:8px"><div style="width:36px;height:36px;border-radius:50%;background:'+u.color+';display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;flex-shrink:0">'+u.name.charAt(0).toUpperCase()+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600">'+u.name+'</div><div style="font-size:11px;color:var(--mu)">'+u.email+'</div></div><button data-uid="'+u.id+'" onclick="restoreUser(this.dataset.uid)" style="background:rgba(91,189,138,.15);border:1px solid rgba(91,189,138,.4);color:#5BBD8A;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-weight:600">Restore</button></div>';});html+='<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:100%;margin-top:10px;padding:8px;background:none;border:1px solid var(--b2);border-radius:8px;color:var(--mu);cursor:pointer">Close</button></div>';modal.innerHTML=html;document.body.appendChild(modal);modal.onclick=function(e){if(e.target===modal)modal.remove();};}
-function restoreUser(id){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u.status='active';delete u._deleted;if(DB.deletedUsers)DB.deletedUsers=DB.deletedUsers.filter(function(x){return x!==id;});try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}var payload={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();renderAdmin();alert(u.name+' restored!');}).catch(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();renderAdmin();alert('Restored locally.');});}
-
-// CLEAN DUPLICATES
-function cleanDuplicates(){var seen={},clean=[];DB.users.filter(function(u){return!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);}).sort(function(a,b){return a.status==='active'&&b.status!=='active'?-1:1;}).forEach(function(u){var key=u.email.toLowerCase();if(!seen[key]){seen[key]=u;clean.push(u);}});var removed=DB.users.length-clean.length;if(removed>0){DB.users=clean;var payload={users:DB.users,deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}renderAdmin();alert('Removed '+removed+' duplicate(s)!');}).catch(function(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}renderAdmin();alert('Removed '+removed+' duplicate(s) locally.');});}else{renderAdmin();alert('No duplicates found.');}}
-
-// CHANGE DESIGNATION POPUP
-function changeDesig(id,current){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;var modal=document.createElement('div');modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';var html='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:20px;min-width:260px;max-width:320px"><div style="font-size:14px;font-weight:600;margin-bottom:14px">Change designation for '+u.name+'</div><div style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto">';opts.forEach(function(r){html+='<button data-role="'+r+'" data-uid="'+id+'" onclick="applyDesig(this.dataset.uid,this.dataset.role)" style="background:'+(r===current?'var(--ac)':'var(--s2)')+';border:1px solid var(--b2);border-radius:7px;padding:9px 14px;color:'+(r===current?'#000':'var(--tx)')+';font-size:13px;cursor:pointer;text-align:left">'+r+'</button>';});html+='</div><button onclick="this.closest(\'[style*=fixed]\').remove()" style="margin-top:12px;width:100%;padding:8px;background:none;border:1px solid var(--b2);border-radius:7px;color:var(--mu);cursor:pointer;font-size:13px">Cancel</button></div>';modal.innerHTML=html;document.body.appendChild(modal);modal.onclick=function(e){if(e.target===modal)modal.remove();};}
-function applyDesig(id,role){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u.orgRole=role;u._adminSet=true;u._localEdit=Date.now();try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}setTimeout(pushMyData,500);var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();renderAdmin();}
-
-// ADMIN PANELS
-function renderAllAccountsPanel(){var el=document.getElementById('all-users-list');if(!el)return;var all=DB.users.filter(function(u){return u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);});el.innerHTML=all.length?all.map(function(u){var stC={active:'var(--ok)',pending:'var(--warn)',rejected:'var(--err)'};return'<div class="arow"><div class="av av-xs" style="'+avs(u.color)+'">'+ini(u.name)+'</div><div class="ainfo"><div class="aname">'+u.name+(u.id===CU.id?' <span style="font-size:10px;color:var(--ac)">(you)</span>':'')+'</div><div class="aemail">'+u.email+'</div></div><div class="aacts"><span style="font-size:11px;font-weight:600;color:'+(stC[u.status]||'var(--mu)')+'">'+u.status.toUpperCase()+'</span>'+(u.status==='pending'?'<button class="abtn ab-ok" onclick="openApproveModal(\''+u.id+'\')">Approve</button>':'')+(u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-info" style="font-size:10px" onclick="openApproveModal(\''+u.id+'\')">Edit</button>':'')+(u.id!==CU.id?'<button class="abtn ab-err" style="font-size:10px" onclick="removeUser(\''+u.id+'\')">Remove</button>':'')+'</div></div>'}).join(''):'<div style="padding:14px 18px;font-size:13px;color:var(--mu)">No users yet</div>';}
-function renderHierarchyPanel(){var el=document.getElementById('hierarchy-display');if(!el)return;var active=DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted;});var grouped={};HIERARCHY.forEach(function(h){grouped[h]=[];});active.forEach(function(u){var r=u.orgRole||'Other';if(grouped[r])grouped[r].push(u);else{if(!grouped.Other)grouped.Other=[];grouped.Other.push(u);}});var colors=['#E8C547','#5B9BD5','#5B9BD5','#5BBD8A','#5BBD8A','#E8934A','#E8934A','#E85555'];var html='';HIERARCHY.forEach(function(level,i){var users=grouped[level]||[];var col=colors[i]||'var(--mu)';html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="width:20px;height:20px;border-radius:50%;background:'+col+'22;color:'+col+';font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+(i+1)+'</div><div><div style="font-size:12px;font-weight:600;color:'+col+'">'+level+'</div>'+(users.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'+users.map(function(u){return'<span style="font-size:10px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:1px 8px">'+u.name+'</span>';}).join('')+'</div>':'<div style="font-size:10px;color:var(--mu);font-style:italic">No members</div>')+'</div></div>';});el.innerHTML=html;}
+// ── ADMIN PANELS ──
+function renderAllAccountsPanel(){var el=document.getElementById('all-users-list');if(!el)return;var all=DB.users.filter(function(u){return u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);});el.innerHTML=all.length?all.map(function(u){var stC={active:'var(--ok)',pending:'var(--warn)',rejected:'var(--err)'};return'<div class="arow"><div class="av av-xs" style="'+avs(u.color)+'">'+ini(u.name)+'</div><div class="ainfo"><div class="aname">'+u.name+(u.id===CU.id?' <span style="font-size:10px;color:var(--ac)">(you)</span>':'')+'</div><div class="aemail">'+u.email+'</div></div><div class="aacts"><span style="font-size:11px;font-weight:600;color:'+(stC[u.status]||'var(--mu)')+'">'+u.status.toUpperCase()+'</span>'+(u.status==='pending'?'<button class="abtn ab-ok" onclick="openApproveModal(\''+u.id+'\')">Approve</button>':'')+(u.status==='active'&&u.id!==CU.id?'<button class="abtn ab-info" onclick="openApproveModal(\''+u.id+'\')">Edit</button>':'')+(u.id!==CU.id?'<button class="abtn ab-err" onclick="removeUser(\''+u.id+'\')">Remove</button>':'')+'</div></div>';}).join(''):'<div style="padding:14px 18px;font-size:13px;color:var(--mu)">No users.</div>';}
+function renderHierarchyPanel(){var el=document.getElementById('hierarchy-display');if(!el)return;var active=DB.users.filter(function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted;});var grouped={};HIERARCHY.forEach(function(h){grouped[h]=[];});active.forEach(function(u){var r=u.orgRole||'Other';if(grouped[r])grouped[r].push(u);else{if(!grouped.Other)grouped.Other=[];grouped.Other.push(u);}});var cols=['#E8C547','#5B9BD5','#5B9BD5','#5BBD8A','#5BBD8A','#E8934A','#E8934A','#E85555'];var html='';HIERARCHY.forEach(function(level,i){var users=grouped[level]||[];var col=cols[i]||'var(--mu)';html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="width:20px;height:20px;border-radius:50%;background:'+col+'22;color:'+col+';font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+(i+1)+'</div><div><div style="font-size:12px;font-weight:600;color:'+col+'">'+level+'</div>'+(users.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'+users.map(function(u){return'<span style="font-size:10px;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:1px 8px">'+u.name+'</span>';}).join('')+'</div>':'<div style="font-size:10px;color:var(--mu);font-style:italic">No members</div>')+'</div></div>';});el.innerHTML=html;}
 var _appId=null;
 function openApproveModal(id){_appId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;document.getElementById('approve-info').textContent=u.name+' \u2014 '+u.email;var sel=document.getElementById('approve-desig');var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option value="'+r+'"'+(u.orgRole===r?' selected':'')+'>'+r+'</option>';}).join('');document.getElementById('ap-canSee').checked=!!(u.canSee||u.sysRole==='admin');document.getElementById('ap-canCmt').checked=!!(u.canCmt||u.sysRole==='admin');document.getElementById('ap-canReview').checked=!!(u.canReview||u.sysRole==='admin');document.getElementById('ap-canTicket').checked=!!(u.canTicket||u.sysRole==='admin');var mEl=document.getElementById('ap-canMaster');if(mEl)mEl.checked=!!(u.canMasterCreate||u.sysRole==='admin');document.getElementById('approve-modal').classList.add('on');}
-function doApprove(){var u=DB.users.find(function(x){return x.id===_appId;});if(!u)return;u.orgRole=document.getElementById('approve-desig').value;u._adminSet=true;u._localEdit=Date.now();u.canSee=document.getElementById('ap-canSee').checked;u.canCmt=document.getElementById('ap-canCmt').checked;u.canReview=document.getElementById('ap-canReview').checked;u.canTicket=document.getElementById('ap-canTicket').checked;var mEl=document.getElementById('ap-canMaster');u.canMasterCreate=!!(mEl&&mEl.checked);u.subordinates=u.subordinates||[];u.status='active';DB.notifications.unshift({id:genId('n'),type:'approved',from:CU.name,fromColor:CU.color,to:_appId,text:'Account approved as '+u.orgRole+'.',time:tnow(),date:td(),read:false});saveDB();setTimeout(pushMyData,500);document.getElementById('approve-modal').classList.remove('on');renderAdmin();renderNotifBadge();}
+function doApprove(){var u=DB.users.find(function(x){return x.id===_appId;});if(!u)return;u.orgRole=document.getElementById('approve-desig').value;u.canSee=document.getElementById('ap-canSee').checked;u.canCmt=document.getElementById('ap-canCmt').checked;u.canReview=document.getElementById('ap-canReview').checked;u.canTicket=document.getElementById('ap-canTicket').checked;var mEl=document.getElementById('ap-canMaster');u.canMasterCreate=!!(mEl&&mEl.checked);u.subordinates=u.subordinates||[];u.status='active';u._localEdit=Date.now();DB.notifications.unshift({id:genId('n'),type:'approved',from:CU.name,fromColor:CU.color,to:_appId,text:'Approved as '+u.orgRole,time:tnow(),date:td(),read:false});saveDB();setTimeout(pushMyData,300);document.getElementById('approve-modal').classList.remove('on');renderAdmin();showToast(u.name+' approved as '+u.orgRole,'#5BBD8A');}
 var _subId=null;
-function openSubModal(id){_subId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;document.getElementById('sub-info').textContent='Who can '+u.name+' review?';var subs=u.subordinates||[];var others=DB.users.filter(function(x){return x.status==='active'&&x.id!==id&&x.id!=='admin-001'&&!x._deleted;}).sort(function(a,b){return hierarchyLvl(a.orgRole)-hierarchyLvl(b.orgRole);});var html='';others.forEach(function(m){var rc=rcolor(m),isBelow=(hierarchyLvl(m.orgRole)>hierarchyLvl(u.orgRole));html+='<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:'+(isBelow?'var(--s2)':'rgba(255,255,255,.02)')+';border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" value="'+m.id+'" '+(subs.includes(m.id)?'checked':'')+' style="accent-color:var(--ac);flex-shrink:0"/><div class="av av-xs" style="'+avs(m.color)+'">'+ini(m.name)+'</div><div><div style="font-size:13px;font-weight:500">'+m.name+'</div><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></label>';});document.getElementById('sub-list').innerHTML=html||'<div style="font-size:13px;color:var(--mu);padding:8px 0">No other members</div>';document.getElementById('sub-modal').classList.add('on');}
-function saveSubs(){var u=DB.users.find(function(x){return x.id===_subId;});if(!u)return;var cbs=document.querySelectorAll('#sub-list input[type=checkbox]:checked');u.subordinates=Array.from(cbs).map(function(cb){return cb.value;});if(u.subordinates.length>0)u.canReview=true;u._adminSet=true;u._localEdit=Date.now();saveDB();setTimeout(pushMyData,500);document.getElementById('sub-modal').classList.remove('on');renderAdmin();alert('Saved! Syncing to server...');}
-function showAddMemberForm(){var f=document.getElementById('add-member-form');f.style.display=(f.style.display==='none'?'block':'none');var sel=document.getElementById('am-desig');if(sel){var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option value="'+r+'">'+r+'</option>';}).join('');}}
-function addMemberManually(){var name=document.getElementById('am-name').value.trim(),email=document.getElementById('am-email').value.trim().toLowerCase(),pass=document.getElementById('am-pass').value,desig=document.getElementById('am-desig').value,msg=document.getElementById('am-msg');if(!name||!email||!pass){msg.textContent='All fields required.';msg.style.color='var(--err)';return;}if(DB.users.find(function(u){return u.email.toLowerCase()===email;})){msg.textContent='Email already registered.';msg.style.color='var(--err)';return;}var COLS=['#5B9BD5','#E8934A','#5BBD8A','#D4537E','#AFA9EC','#FAC775'];DB.users.push({id:genId('u'),name:name,email:email,ph:sh(pass),orgRole:desig,sysRole:'member',color:COLS[DB.users.length%COLS.length],status:'active',canSee:false,canCmt:false,canReview:false,canTicket:false,canMasterCreate:false,subordinates:[],photo:'',phone:'',dept:'',bio:'',joinDate:td()});saveDB();setTimeout(pushMyData,500);msg.textContent='Added! Syncing...';msg.style.color='var(--ok)';document.getElementById('am-name').value='';document.getElementById('am-email').value='';document.getElementById('am-pass').value='';renderAdmin();}
-function diagUsers(){var out='Users ('+DB.users.length+'):\n';DB.users.forEach(function(u,i){out+=(i+1)+'. '+u.name+' | '+u.email+' | '+u.status+' | '+(u.orgRole||'no role')+(u._deleted?' [DEL]':'')+'\n';});document.getElementById('diag-out').textContent=out;}
-function setOrgRole(id,r){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u.orgRole=r;try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}setTimeout(pushMyData,500);}
+function openSubModal(id){_subId=id;var u=DB.users.find(function(x){return x.id===id;});if(!u)return;document.getElementById('sub-info').textContent='Who can '+u.name+' review?';var subs=u.subordinates||[];var others=DB.users.filter(function(x){return x.status==='active'&&x.id!==id&&x.id!=='admin-001'&&!x._deleted;}).sort(function(a,b){return hierarchyLvl(a.orgRole)-hierarchyLvl(b.orgRole);});document.getElementById('sub-list').innerHTML=others.map(function(m){var rc=rcolor(m);return'<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer"><input type="checkbox" value="'+m.id+'" '+(subs.includes(m.id)?'checked':'')+' style="accent-color:var(--ac);flex-shrink:0"/><div class="av av-xs" style="'+avs(m.color)+'">'+ini(m.name)+'</div><div><div style="font-size:13px;font-weight:500">'+m.name+'</div><span class="rtag" style="background:'+rc+'20;color:'+rc+'">'+rlbl(m)+'</span></div></label>';}).join('')||'<div style="font-size:13px;color:var(--mu)">No other members</div>';document.getElementById('sub-modal').classList.add('on');}
+function saveSubs(){var u=DB.users.find(function(x){return x.id===_subId;});if(!u)return;var cbs=document.querySelectorAll('#sub-list input[type=checkbox]:checked');u.subordinates=Array.from(cbs).map(function(cb){return cb.value;});if(u.subordinates.length>0)u.canReview=true;u._localEdit=Date.now();saveDB();setTimeout(pushMyData,300);document.getElementById('sub-modal').classList.remove('on');showToast('Subordinates saved!','#5BBD8A');}
+function showAddMemberForm(){var f=document.getElementById('add-member-form');f.style.display=(f.style.display==='none'?'block':'none');var sel=document.getElementById('am-desig');if(sel){var opts=DB.designations.length?DB.designations.map(function(d){return d.name;}):ROLES_FALLBACK;sel.innerHTML=opts.map(function(r){return'<option>'+r+'</option>';}).join('');}}
+function addMemberManually(){var name=document.getElementById('am-name').value.trim(),email=document.getElementById('am-email').value.trim().toLowerCase(),pass=document.getElementById('am-pass').value,desig=document.getElementById('am-desig').value,msg=document.getElementById('am-msg');if(!name||!email||!pass){msg.textContent='All fields required.';msg.style.color='var(--err)';return;}if(DB.users.find(function(u){return u.email.toLowerCase()===email;})){msg.textContent='Email already exists.';msg.style.color='var(--err)';return;}var COLS=['#5B9BD5','#E8934A','#5BBD8A','#D4537E','#AFA9EC','#FAC775'];DB.users.push({id:genId('u'),name,email,ph:sh(pass),orgRole:desig,sysRole:'member',color:COLS[DB.users.length%COLS.length],status:'active',canSee:false,canCmt:false,canReview:false,canTicket:false,canMasterCreate:false,subordinates:[],photo:'',phone:'',dept:'',bio:'',joinDate:td(),_localEdit:Date.now()});saveDB();setTimeout(pushMyData,300);msg.textContent='Added!';msg.style.color='var(--ok)';document.getElementById('am-name').value='';document.getElementById('am-email').value='';document.getElementById('am-pass').value='';renderAdmin();}
+function diagUsers(){var out='Users ('+DB.users.length+'):\n';DB.users.forEach(function(u,i){out+=(i+1)+'. '+u.name+' | '+u.email+' | '+u.status+' | '+(u.orgRole||'-')+(u._deleted?' [DEL]':'')+'\n';});document.getElementById('diag-out').textContent=out;}
 
-// STORAGE
-function showStorageInfo(){var raw=localStorage.getItem(SK)||'';var kb=Math.round(raw.length/1024*10)/10;var pct=Math.round(kb/5120*100);var au=DB.users.filter(function(u){return u.status==='active';}).length;var tt=Object.values(DB.blocks).reduce(function(a,bl){return a+bl.reduce(function(x,b){return x+b.tasks.length;},0);},0);var bc=pct>80?'var(--err)':pct>50?'var(--warn)':'var(--ok)';document.getElementById('storage-info').innerHTML='<div>Users: <strong style="color:var(--tx)">'+DB.users.length+'</strong> ('+au+' active)</div><div>Total tasks: <strong style="color:var(--tx)">'+tt+'</strong></div><div>Tracker days: <strong style="color:var(--tx)">'+Object.keys(DB.tracker).length+'</strong></div><div>Edit log: <strong style="color:var(--tx)">'+DB.editlog.length+'</strong> entries</div><div>Storage: <strong style="color:var(--tx)">'+kb+' KB</strong> / 5120 KB ('+pct+'%)</div><div style="margin-top:6px;height:8px;background:var(--bd);border-radius:4px;overflow:hidden"><div style="width:'+Math.min(pct,100)+'%;height:100%;background:'+bc+';border-radius:4px"></div></div>'+(pct>=60?'<div style="margin-top:8px"><button class="exp-btn" onclick="clearOldHistory()" style="background:rgba(232,80,80,.1);border-color:rgba(232,80,80,.3);color:var(--err)">Clear old history (30+ days)</button></div>':'');}
-function clearOldHistory(){if(!confirm('Delete tracker data older than 30 days?'))return;var cutoff=sd(td(),-30);var freed=0;Object.keys(DB.tracker).forEach(function(uid){if(!DB.tracker[uid])return;Object.keys(DB.tracker[uid]).forEach(function(date){if(date<cutoff){delete DB.tracker[uid][date];freed++;}});});if(DB.editlog.length>200)DB.editlog=DB.editlog.slice(0,200);saveDB();showStorageInfo();alert('Cleared '+freed+' old entries!');}
-function checkStorageOnBoot(){var raw=localStorage.getItem(SK)||'';var pct=Math.round((raw.length/1024)/5120*100);if(pct>=80){setTimeout(function(){var m=document.createElement('div');m.style.cssText='position:fixed;top:0;left:0;width:100%;z-index:9999;background:'+(pct>=90?'var(--err)':'#E8934A')+';color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600';m.innerHTML=(pct>=90?'🚨':'⚠️')+' Storage '+pct+'% full! Settings → Storage info → Clear old history. <button onclick="this.parentNode.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px">×</button>';document.body.appendChild(m);},2000);}}
+// ── STORAGE ──
+function showStorageInfo(){var raw=localStorage.getItem(SK)||'';var kb=Math.round(raw.length/1024*10)/10,pct=Math.round(kb/5120*100);var au=DB.users.filter(function(u){return u.status==='active';}).length;var tt=Object.values(DB.blocks).reduce(function(a,bl){return a+bl.reduce(function(x,b){return x+b.tasks.length;},0);},0);var bc=pct>80?'var(--err)':pct>50?'var(--warn)':'var(--ok)';document.getElementById('storage-info').innerHTML='<div>Users: <strong>'+DB.users.length+'</strong> ('+au+' active)</div><div>Tasks: <strong>'+tt+'</strong></div><div>Storage: <strong style="color:'+(pct>60?'var(--warn)':'var(--tx)')+'">'+kb+' KB</strong> / 5120 KB ('+pct+'%)</div><div style="margin-top:6px;height:8px;background:var(--bd);border-radius:4px;overflow:hidden"><div style="width:'+Math.min(pct,100)+'%;height:100%;background:'+bc+';border-radius:4px"></div></div>'+(pct>=60?'<div style="margin-top:8px"><button class="exp-btn" onclick="clearOldHistory()" style="background:rgba(232,80,80,.1);border-color:rgba(232,80,80,.3);color:var(--err)">Clear old history</button></div>':'');}
+function clearOldHistory(){if(!confirm('Delete data older than 30 days?'))return;var cutoff=sd(td(),-30),freed=0;Object.keys(DB.tracker).forEach(function(uid){if(!DB.tracker[uid])return;Object.keys(DB.tracker[uid]).forEach(function(date){if(date<cutoff){delete DB.tracker[uid][date];freed++;}});});if(DB.editlog.length>200)DB.editlog=DB.editlog.slice(0,200);saveDB();showStorageInfo();showToast('Cleared '+freed+' old entries','#5BBD8A');}
+function checkStorageOnBoot(){var raw=localStorage.getItem(SK)||'',pct=Math.round((raw.length/1024)/5120*100);if(pct>=80){setTimeout(function(){var m=document.createElement('div');m.style.cssText='position:fixed;top:0;left:0;width:100%;z-index:9999;background:'+(pct>=90?'var(--err)':'#E8934A')+';color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600';m.innerHTML='Storage '+pct+'% full! Settings → Storage info <button onclick="this.parentNode.remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;margin-left:12px">×</button>';document.body.appendChild(m);},2000);}}
 
-// initAdminPanels
+// ── initAdminPanels override ──
 var _origRA=null;
 function initAdminPanels(){if(_origRA)return;_origRA=renderAdmin;renderAdmin=function(){_origRA();renderAllAccountsPanel();renderHierarchyPanel();};}
 
-// STARTUP - safe and clean
+// ── STARTUP ──
 function startApp(){
   loadDB();applyBranding();initAdminPanels();
+  // Show connecting state
+  var authScreen=document.getElementById('auth-screen');
+  if(authScreen){
+    var connecting=document.createElement('div');
+    connecting.id='connecting-msg';
+    connecting.style.cssText='text-align:center;padding:12px;font-size:12px;color:var(--mu)';
+    connecting.textContent='Connecting to server...';
+    authScreen.appendChild(connecting);
+  }
   if(SERVER_URL){
-    fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
+    fetch(SERVER_URL+'/data').then(function(r){
+      if(!r.ok)throw new Error('Server error');
+      return r.json();
+    }).then(function(j){
+      var cm=document.getElementById('connecting-msg');if(cm)cm.remove();
       if(j.ok&&j.data){
         var d=j.data;
-        // Deletions
         if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
-        // Add new users only
         if(d.users&&Array.isArray(d.users)){
-          if(!DB.users)DB.users=[];
           d.users.forEach(function(su){
             if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;
-            var ex=DB.users.find(function(u){return u.id===su.id;})||
-                   DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
+            var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});
             if(!ex)DB.users.push(su);
-            // NEVER overwrite existing user data from server
+            // LOCAL ALWAYS WINS - never update existing users from server
           });
         }
-        // Blocks - ONLY load if local is empty for that user
-        if(d.blocks){
-          if(!DB.blocks)DB.blocks={};
-          Object.keys(d.blocks).forEach(function(uid){
-            var sb=d.blocks[uid]||[];
-            var lb=DB.blocks[uid]||[];
-            // Only take server data if we have nothing locally
-            if(sb.length>0&&lb.length===0)DB.blocks[uid]=sb;
-          });
-        }
-        // Tracker - merge only missing dates
-        if(d.tracker){
-          if(!DB.tracker)DB.tracker={};
-          Object.keys(d.tracker).forEach(function(uid){
-            var st=d.tracker[uid]||{};
-            if(!DB.tracker[uid])DB.tracker[uid]={};
-            Object.keys(st).forEach(function(date){
-              if(!DB.tracker[uid][date])DB.tracker[uid][date]=st[date];
-            });
-          });
-        }
-        // Shared data
-        ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){
-          if(d[k]!==undefined)DB[k]=d[k];
-        });
+        // Blocks - only fill empty slots
+        if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){if(!DB.blocks[uid]||DB.blocks[uid].length===0)DB.blocks[uid]=d.blocks[uid]||[];});}
+        // Tracker - merge dates only
+        if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});if(!DB.tracker[uid])DB.tracker[uid]=lt;});}
+        ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
         applyBranding();
       }
-    }).catch(function(){}).finally(function(){
-      // Login from session
+    }).catch(function(err){
+      var cm=document.getElementById('connecting-msg');
+      if(cm){cm.textContent='Server waking up... please wait 30 seconds and refresh.';cm.style.color='var(--warn)';}
+    }).finally(function(){
       var sid=loadSession();
-      if(sid){
-        var su=DB.users.find(function(x){return x.id===sid;});
-        if(su){
-          su.status='active'; // Always active on login
-          bootApp(su);
-          return;
-        }
-      }
-      // Start polling
+      if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
       if(window._pollInterval)clearInterval(window._pollInterval);
       window._pollInterval=setInterval(pullOtherUsersData,60000);
+      // Keepalive
+      if(window._ka)clearInterval(window._ka);
+      window._ka=setInterval(function(){fetch(SERVER_URL+'/health').catch(function(){});},14*60*1000);
     });
   } else {
+    var cm=document.getElementById('connecting-msg');if(cm)cm.remove();
     var sid=loadSession();
-    if(sid){
-      var su=DB.users.find(function(x){return x.id===sid;});
-      if(su){su.status='active';bootApp(su);}
-    }
+    if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
   }
 }
 </script>
-
-
+</body>
+</html>
