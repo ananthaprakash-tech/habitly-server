@@ -1006,7 +1006,8 @@ function renderMyTracker(){
       const ctx=JSON.stringify({uid:CU.id,bid:b.id,tid:t.id,date:myD});
       return buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx);
     }).filter(Boolean).join('');;
-    const addRow=isToday?`<div class="add-task-row"><input class="ati" id="ati-${b.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask(${bi})"/><input class="ati-sm" id="atit-${b.id}" placeholder="Time slot"/><label style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--mu);cursor:pointer;white-space:nowrap"><input type="checkbox" id="ati-tod-${b.id}" style="accent-color:var(--ac)"/>Today only</label><button class="atb" onclick="addTask(${bi})">+ Add</button></div>`:'';
+    const isEditable2=isToday||(myD===sd(td(),-1));
+    const addRow=isEditable2?`<div class="add-task-row"><input class="ati" id="ati-${b.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask(${bi})"/><input class="ati-sm" id="atit-${b.id}" placeholder="Time slot"/><label style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--mu);cursor:pointer;white-space:nowrap"><input type="checkbox" id="ati-tod-${b.id}" style="accent-color:var(--ac)"/>Today only</label><button class="atb" onclick="addTask(${bi})">+ Add</button></div>`:'';
     const dbtn=isToday?`<button class="ta-btn del" onclick="delBlock(${bi})" style="opacity:.6;font-size:10px;padding:2px 7px;margin-left:4px">Del</button>`:'';
     return `<div class="bcard"><div class="bhdr" onclick="togBlock('tl-${b.id}','ch-${b.id}')">
       <span class="btag" style="background:${b.color}20;color:${b.color}">${b.name}</span>
@@ -1032,8 +1033,12 @@ function renderMyTracker(){
   </div>`:'';
 }
 function togBlock(l,c){document.getElementById(l)?.classList.toggle('col');document.getElementById(c)?.classList.toggle('op');}
-function chkTask(bid,tid){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};var cur=data.taskStatus[tid]||'';if(cur==='done'||data.checked[tid]){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
-function setTaskStatus(bid,tid,status){if(myD!==td())return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};if(data.taskStatus[tid]===status){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]=status;data.checked[tid]=(status==='done');}saveDB();renderMyTracker();}
+function chkTask(bid,tid){
+  var today=td(),yesterday=sd(today,-1);
+  if(myD!==today&&myD!==yesterday)return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};var cur=data.taskStatus[tid]||'';if(cur==='done'||data.checked[tid]){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]='done';data.checked[tid]=true;}saveDB();renderMyTracker();}
+function setTaskStatus(bid,tid,status){
+  var today=td(),yesterday=sd(today,-1);
+  if(myD!==today&&myD!==yesterday)return;const data=getTD(CU.id,myD);if(!data.taskStatus)data.taskStatus={};if(!data.checked)data.checked={};if(data.taskStatus[tid]===status){data.taskStatus[tid]='';data.checked[tid]=false;}else{data.taskStatus[tid]=status;data.checked[tid]=(status==='done');}saveDB();renderMyTracker();}
 function addBlock(){
   const name=document.getElementById('nb-name').value.trim();if(!name)return;
   const time=document.getElementById('nb-time').value.trim();
@@ -1048,7 +1053,9 @@ function addTask(bi){
   const time=document.getElementById('atit-'+b.id)?.value.trim();
   const todEl=document.getElementById('ati-tod-'+b.id);
   const todayOnly=todEl?todEl.checked:false;
-  const t={id:genId('t'),name,timeSlot:time||'',todayOnly,addedDate:todayOnly?td():null};
+  var today=td(),yesterday=sd(today,-1);
+  if(myD!==today&&myD!==yesterday)return;
+  const t={id:genId('t'),name,timeSlot:time||'',todayOnly,addedDate:todayOnly?myD:null};
   b.tasks.push(t);logEdit('ADD',b.name,t.id,t.name,'');saveDB();renderMyTracker();
 }
 function delTask(bi,ti){
