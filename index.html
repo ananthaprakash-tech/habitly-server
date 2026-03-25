@@ -653,6 +653,10 @@ input,select,textarea,button{font-family:inherit}
     <div class="set-sec"><h3>Team Sync</h3><div style="background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:14px;margin-bottom:12px"><div style="font-size:12px;color:var(--mu);margin-bottom:8px">Server: <span style="font-family:monospace;color:var(--ac)">habitly-server.onrender.com</span></div><button class="abtn ab-info" onclick="pushMyData();showToast('Syncing...','#E8C547')">Sync now</button></div></div>
     <div class="set-sec">
       <h3>Backup &amp; Restore</h3>
+      <div style="margin-bottom:12px">
+        <button class="exp-btn" onclick="recoverFromBackup()" style="background:rgba(232,197,71,.1);border-color:rgba(232,197,71,.3);color:var(--ac)">🔄 Recover lost data</button>
+        <div style="font-size:11px;color:var(--mu);margin-top:4px">Use this if tasks disappeared</div>
+      </div>
       <p style="font-size:13px;color:var(--mu);margin-bottom:16px;line-height:1.7">Export all your data as a backup file and restore on any device.</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
         <div style="background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:14px">
@@ -816,7 +820,19 @@ let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTk
 
 function saveDB(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){console.warn('Storage warning:',e.message);}cloudSync();}
 function loadDB(){
+  // Try current key first
   try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt'].forEach(k=>{if(d[k]!==undefined)DB[k]=d[k];});}}catch(e){}
+  // Recovery: check old key variants if current has no data
+  if(!DB.users||DB.users.length===0){
+    var oldKeys=['tt-v7','tt-v6','tt-v5','habitly-data','tracker-data'];
+    oldKeys.forEach(function(k){
+      if(k===SK)return;
+      try{var r=localStorage.getItem(k);if(r){var d=JSON.parse(r);if(d.users&&d.users.length>0){
+        ['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt'].forEach(function(key){if(d[key]!==undefined)DB[key]=d[key];});
+        console.log('Recovered data from key:',k);
+      }}}catch(e){}
+    });
+  }
   if(!DB.designations)DB.designations=[];if(!DB.chat)DB.chat={rooms:{}};if(!DB.taskAtt)DB.taskAtt={};DB.users.forEach(function(u){if(u.canTicket===undefined)u.canTicket=(u.sysRole==='admin');if(u.canReview===undefined)u.canReview=(u.sysRole==='admin'||!!u.canSee);if(!u.subordinates)u.subordinates=[];if(u.canMasterCreate===undefined)u.canMasterCreate=(u.sysRole==='admin');});
   if(!DB.settings)DB.settings={companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'};
   if(!DB.settings.logoFont)DB.settings.logoFont='Syne';
@@ -944,6 +960,9 @@ function bootApp(u){
   if(!DB.taskAtt)DB.taskAtt={};
   initChat();
   switchTab('my');renderNotifBadge();updateCTBadge();
+  // Push own data to server immediately on login to ensure it's saved
+  setTimeout(pushMyData, 1000);
+  setTimeout(pushMyData, 5000); // Second push as backup
 }
 function setAvEl(el,u){if(u.photo){el.innerHTML=`<img src="${u.photo}" alt=""/>`;el.style.background='none';}else{el.textContent=ini(u.name);el.style.cssText=avs(u.color);}}
 
@@ -2104,6 +2123,21 @@ document.addEventListener('click',function(e){var el=e.target;if(el.classList.co
 function renderTeam(){var dlbl=document.getElementById('team-dlbl'),tnxt=document.getElementById('team-next'),grid=document.getElementById('tgrid');if(dlbl)dlbl.textContent=fs(teamD)+(teamD===td()?' \u2014 Today':'');if(tnxt)tnxt.classList.toggle('off',teamD===td());if(!grid)return;var canAccess=CU.sysRole==='admin'||CU.canSee||CU.canReview||(CU.subordinates&&CU.subordinates.length>0);if(!canAccess){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No team access.</div>';return;}var nd=function(u){return u.status==='active'&&u.id!=='admin-001'&&!u._deleted&&!(DB.deletedUsers||[]).includes(u.id);};var active=(CU.sysRole==='admin'||CU.canSee)?DB.users.filter(nd):DB.users.filter(function(u){return nd(u)&&(CU.subordinates||[]).includes(u.id);});if(SERVER_URL&&active.filter(function(u){return!DB.blocks[u.id]||DB.blocks[u.id].length===0;}).length>0)setTimeout(pullOtherUsersData,100);var updated=[],notUpdated=[];active.forEach(function(m){var st=getStats(m.id,teamD);if((st.done+st.na+st.no+st.pp)>0)updated.push({m:m,st:st});else notUpdated.push({m:m,st:st});});var html='';if(notUpdated.length>0){html+='<div class="nyu-bar"><div class="nyu-title">\u23F0 Not yet updated \u2014 '+notUpdated.length+' member'+(notUpdated.length>1?'s':'')+'</div><div class="nyu-chips">';notUpdated.forEach(function(item){var m=item.m;html+='<div class="nyu-chip tdp" data-uid="'+m.id+'"><div class="av" style="width:24px;height:24px;font-size:9px;flex-shrink:0;'+avs(m.color)+'">'+ini(m.name)+'</div><div><div style="font-size:12px;font-weight:600">'+m.name+'</div><div style="font-size:10px;color:var(--mu)">'+rlbl(m)+'</div></div></div>';});html+='</div></div>';}updated.forEach(function(item){var m=item.m,st=item.st,pct=st.total?Math.round(st.done/st.total*100):0,pc=pct>=80?'#5BBD8A':pct>=40?'#E8C547':'#E85555';var av=m.photo?'<img src="'+m.photo+'" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>':ini(m.name);var barHtml='';Object.values(st.blocks).slice(0,3).forEach(function(bs){var bp=bs.total?Math.round(bs.done/bs.total*100):0;barHtml+='<div class="mr"><div class="mr-dot" style="background:'+bs.color+'"></div><span class="mr-lbl">'+bs.name+'</span><div class="mr-wrap"><div class="mr-bar" style="width:'+bp+'%;background:'+bs.color+'"></div></div><span class="mr-cnt">'+bs.done+'/'+bs.total+'</span></div>';});var tags=(st.na>0?' <span style="font-size:10px;color:#E8934A">'+st.na+'NA</span>':'')+(st.no>0?' <span style="font-size:10px;color:#E85555">'+st.no+'NO</span>':'')+(st.pp>0?' <span style="font-size:10px;color:#5B9BD5">'+st.pp+'PP</span>':'');html+='<div class="mcard'+(openM===m.id?' sel':'')+' tdp" data-uid="'+m.id+'"><div class="mcard-top"><div class="av av-xs" style="'+avs(m.color)+'">'+av+'</div><div class="mcard-info"><div class="mcard-name">'+m.name+'</div><div class="mcard-role"><span class="rtag" style="background:'+rcolor(m)+'20;color:'+rcolor(m)+'">'+rlbl(m)+'</span></div></div><div class="mcard-pct" style="color:'+pc+'">'+pct+'%'+tags+'</div></div>'+(barHtml?'<div class="mcard-body">'+barHtml+'</div>':'')+'</div>';});grid.innerHTML=html||'<div class="empty" style="grid-column:1/-1">No members.</div>';if(openM)renderDP(openM);}
 function openDP(userId){openM=userId;var m=DB.users.find(function(u){return u.id===userId;});if(!m)return;renderDP(userId);if(SERVER_URL&&(!DB.blocks[userId]||DB.blocks[userId].length===0)){fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){if(j.ok&&j.data){if(j.data.blocks&&j.data.blocks[userId])DB.blocks[userId]=j.data.blocks[userId];if(j.data.tracker&&j.data.tracker[userId])DB.tracker[userId]=j.data.tracker[userId];try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}if(openM===userId)renderDP(userId);}}).catch(function(){});}}
 function renderDP(userId){var m=DB.users.find(function(u){return u.id===userId;});if(!m)return;var data=getTD(userId,teamD);setAvEl(document.getElementById('dp-av'),m);document.getElementById('dp-name').textContent=m.name+' ('+rlbl(m)+') \u2014 '+fs(teamD);document.getElementById('dp').classList.add('on');var blocks=getBlocks(userId);var canC=userId!==CU.id&&(CU.sysRole==='admin'||CU.canCmt||CU.canReview||(CU.subordinates&&CU.subordinates.includes(userId)));if(!blocks.length){document.getElementById('dp-body').innerHTML='<div style="font-size:13px;color:var(--mu);padding:8px 0">No tasks set up yet.</div>';document.getElementById('dp').scrollIntoView({behavior:'smooth',block:'nearest'});return;}var html='';blocks.forEach(function(b){var rows='';b.tasks.forEach(function(t){if(t.todayOnly&&t.addedDate&&t.addedDate!==teamD)return;var chk=!!data.checked[t.id],ts=(data.taskStatus&&data.taskStatus[t.id])||'',cmts=(data.comments[t.id]||[]).length,ctx=JSON.stringify({uid:userId,bid:b.id,tid:t.id,date:teamD});var sb='',tc='';if(chk||ts==='done')sb='<span style="background:rgba(91,189,138,.15);color:#5BBD8A;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">DONE</span>';else if(ts==='na'){sb='<span style="background:rgba(232,147,74,.15);color:#E8934A;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">NA</span>';tc='color:#E8934A';}else if(ts==='no'){sb='<span style="background:rgba(232,80,80,.15);color:#E85555;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">NO</span>';tc='color:#E85555;text-decoration:line-through';}else if(ts==='pp'){sb='<span style="background:rgba(91,149,213,.15);color:#5B9BD5;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600">PP</span>';tc='color:#5B9BD5;font-style:italic';}else sb='<span style="background:rgba(255,255,255,.06);color:var(--mu);border-radius:4px;padding:1px 6px;font-size:10px">PENDING</span>';rows+='<div class="drow"><div class="dt-cb'+(chk?' chk':'')+'"></div><span class="dt-txt'+(chk?' done':'')+'"'+(tc?' style="'+tc+'"':'')+'>'+t.name+(t.timeSlot?' <small style="color:var(--mu)">('+t.timeSlot+')</small>':'')+'</span>'+sb+(cmts?'<span class="ncnt tcmt" data-ctx="'+encodeURIComponent(ctx)+'">'+cmts+'</span>':'')+(canC?'<button class="cmtbtn tcmt" data-ctx="'+encodeURIComponent(ctx)+'">Comment</button>':'')+'</div>';});html+='<div class="dp-sec"><span class="dp-sec-hdr" style="background:'+b.color+'20;color:'+b.color+'">'+b.name+(b.timeSlot?' \u2014 '+b.timeSlot:'')+'</span>'+(rows||'<div style="font-size:11px;color:var(--mu);padding:6px 0">No tasks</div>')+'</div>';});document.getElementById('dp-body').innerHTML=html;document.getElementById('dp').scrollIntoView({behavior:'smooth',block:'nearest'});}
+
+function recoverFromBackup(){
+  try{
+    var bkp=localStorage.getItem(SK+'_backup');
+    if(!bkp){alert('No backup found.');return;}
+    var d=JSON.parse(bkp);
+    var taskCount=Object.values(d.blocks||{}).reduce(function(a,bl){return a+(bl||[]).reduce(function(x,b){return x+b.tasks.length;},0);},0);
+    if(!confirm('Recover backup? Found '+taskCount+' tasks. This will restore your previous data.'))return;
+    ['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
+    try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+    alert('Recovered! Reloading...');
+    location.reload();
+  }catch(e){alert('Recovery failed: '+e.message);}
+}
+
 function showForgotPw(){var m=document.createElement('div');m.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';m.innerHTML='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:24px;width:320px;max-width:90vw"><h3 style="margin-bottom:12px">Reset Password</h3><input class="fi" id="fp-email" placeholder="Your email" style="margin-bottom:10px"/><input class="fi" type="password" id="fp-newpw" placeholder="New password (min 6 chars)" style="margin-bottom:14px"/><div style="display:flex;gap:8px"><button class="btn-pri" onclick="doResetPw()" style="flex:1">Reset</button><button class="btn-sec" onclick="this.closest(\'[style*=fixed]\').remove()" style="flex:1">Cancel</button></div><div id="fp-msg" style="font-size:12px;margin-top:8px"></div></div>';document.body.appendChild(m);m.onclick=function(e){if(e.target===m)m.remove();};}
 function doResetPw(){var em=document.getElementById('fp-email').value.trim().toLowerCase(),np=document.getElementById('fp-newpw').value,msg=document.getElementById('fp-msg');if(!em||!np){msg.textContent='Fill all fields.';msg.style.color='var(--err)';return;}if(np.length<6){msg.textContent='Min 6 chars.';msg.style.color='var(--err)';return;}var u=DB.users.find(function(x){return x.email.toLowerCase()===em;});if(!u){msg.textContent='Email not found.';msg.style.color='var(--err)';return;}u.ph=sh(np);saveDB();setTimeout(pushMyData,300);msg.textContent='Password reset!';msg.style.color='var(--ok)';setTimeout(function(){var m=document.querySelector('[style*="position:fixed"]');if(m)m.remove();},1500);}
 function removeUser(id){if(!confirm('Remove permanently?'))return;var u=DB.users.find(function(x){return x.id===id;});if(u){u._deleted=true;u.status='rejected';}if(!DB.deletedUsers)DB.deletedUsers=[];if(!DB.deletedUsers.includes(id))DB.deletedUsers.push(id);delete DB.blocks[id];delete DB.tracker[id];try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}var p={users:DB.users,deletedUsers:DB.deletedUsers,settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)}).then(function(){renderAdmin();showToast('Removed','#E85555');}).catch(function(){renderAdmin();});}
@@ -2127,13 +2161,25 @@ function checkStorageOnBoot(){var raw=localStorage.getItem(SK)||'',pct=Math.roun
 function initAdminPanels(){if(_origRA)return;_origRA=renderAdmin;renderAdmin=function(){_origRA();renderAllAccountsPanel();renderHierarchyPanel();};}
 function startApp(){
   loadDB();applyBranding();initAdminPanels();
+  // Backup local data before any server operation
+  try{
+    var bkp=JSON.stringify(DB);
+    localStorage.setItem(SK+'_backup',bkp);
+  }catch(e){}
   if(SERVER_URL){
     fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
       if(j.ok&&j.data){
         var d=j.data;
         if(d.deletedUsers)DB.deletedUsers=d.deletedUsers;
         if(d.users&&Array.isArray(d.users)){d.users.forEach(function(su){if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});if(!ex)DB.users.push(su);});}
-        if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){if(!DB.blocks[uid]||DB.blocks[uid].length===0)DB.blocks[uid]=d.blocks[uid]||[];});}
+        if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){
+          // For other users: use server data if local is empty
+          // For current user: NEVER overwrite local blocks with server
+          if(!DB.blocks[uid]||DB.blocks[uid].length===0){
+            DB.blocks[uid]=d.blocks[uid]||[];
+          }
+          // Local blocks always win - server only fills gaps
+        });}
         if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});if(!DB.tracker[uid])DB.tracker[uid]=lt;});}
         ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
