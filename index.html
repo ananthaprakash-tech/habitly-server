@@ -946,7 +946,7 @@ function bootApp(u){
   var isAdmin=u.sysRole==='admin';
   var isMaster=u.canMasterCreate;
   document.getElementById('admin-tab').classList.toggle('hidden',!isAdmin&&!isMaster);
-  document.getElementById('settings-tab').classList.toggle('hidden',!isAdmin&&!isMaster);
+  document.getElementById('settings-tab').classList.remove('hidden'); // All users can access settings
   // Edit log - admin or canMasterCreate
   document.getElementById('editlog-tab').classList.toggle('hidden',!isAdmin&&!isMaster);
   // Tickets - admin, canTicket, or canMasterCreate
@@ -1831,7 +1831,7 @@ function cloudLoad(cb){
 
 // INIT
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-startApp();</script>
+// startApp called after all scripts</script>
 <script>
 // ══ CHAT ══
 var curRoom=null,pendAtt=[];
@@ -2190,7 +2190,7 @@ function startApp(){
           }
           // Local blocks always win - server only fills gaps
         });}
-        if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});if(!DB.tracker[uid])DB.tracker[uid]=lt;});}
+        if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});DB.tracker[uid]=lt;});}
         ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
         applyBranding();
