@@ -820,18 +820,32 @@ let CU=null,myD=td(),teamD=td(),sumD=td(),openM=null,cmtCtx=null,etCtx=null,rpTk
 
 function saveDB(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){console.warn('Storage warning:',e.message);}cloudSync();}
 function loadDB(){
-  // Try current key first
-  try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt'].forEach(k=>{if(d[k]!==undefined)DB[k]=d[k];});}}catch(e){}
-  // Recovery: check old key variants if current has no data
+  // Load from localStorage - this is the primary data store
+  try{
+    const r=localStorage.getItem(SK);
+    if(r){
+      const d=JSON.parse(r);
+      ['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt','deletedUsers'].forEach(k=>{if(d[k]!==undefined)DB[k]=d[k];});
+    }
+  }catch(e){console.warn('loadDB error:',e);}
+  // Auto-recovery: check backup and old keys if no data found
   if(!DB.users||DB.users.length===0){
-    var oldKeys=['tt-v7','tt-v6','tt-v5','habitly-data','tracker-data'];
-    oldKeys.forEach(function(k){
-      if(k===SK)return;
-      try{var r=localStorage.getItem(k);if(r){var d=JSON.parse(r);if(d.users&&d.users.length>0){
-        ['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt'].forEach(function(key){if(d[key]!==undefined)DB[key]=d[key];});
-        console.log('Recovered data from key:',k);
-      }}}catch(e){}
-    });
+    var fallbacks=[SK+'_backup','tt-v7','tt-v6','tt-v5'];
+    for(var ki=0;ki<fallbacks.length;ki++){
+      var k=fallbacks[ki];
+      if(k===SK)continue;
+      try{
+        var r2=localStorage.getItem(k);
+        if(r2){
+          var d2=JSON.parse(r2);
+          if(d2.users&&d2.users.length>0){
+            ['users','blocks','tracker','editlog','notifications','tickets','settings','designations','chat','taskAtt','deletedUsers'].forEach(function(key){if(d2[key]!==undefined)DB[key]=d2[key];});
+            console.log('Auto-recovered from:',k);
+            break;
+          }
+        }
+      }catch(e2){}
+    }
   }
   if(!DB.designations)DB.designations=[];if(!DB.chat)DB.chat={rooms:{}};if(!DB.taskAtt)DB.taskAtt={};DB.users.forEach(function(u){if(u.canTicket===undefined)u.canTicket=(u.sysRole==='admin');if(u.canReview===undefined)u.canReview=(u.sysRole==='admin'||!!u.canSee);if(!u.subordinates)u.subordinates=[];if(u.canMasterCreate===undefined)u.canMasterCreate=(u.sysRole==='admin');});
   if(!DB.settings)DB.settings={companyName:'Habitly',logo:'',logoFont:'Syne',logoSize:16,logoColor:'#E8C547'};
@@ -946,7 +960,7 @@ function bootApp(u){
   var isAdmin=u.sysRole==='admin';
   var isMaster=u.canMasterCreate;
   document.getElementById('admin-tab').classList.toggle('hidden',!isAdmin&&!isMaster);
-  document.getElementById('settings-tab').classList.remove('hidden'); // All users can access settings
+  document.getElementById('settings-tab').classList.remove('hidden');
   // Edit log - admin or canMasterCreate
   document.getElementById('editlog-tab').classList.toggle('hidden',!isAdmin&&!isMaster);
   // Tickets - admin, canTicket, or canMasterCreate
@@ -1514,7 +1528,16 @@ function setSysRole(id,r){
   DB.notifications.unshift({id:genId('n'),type:'role',from:CU.name,fromColor:CU.color,to:id,newRole:r,time:tnow(),date:td(),read:false});
   saveDB();renderAdmin();renderNotifBadge();
 }
-function setAccess(id,f,v){var u=DB.users.find(function(x){return x.id===id;});if(!u)return;u[f]=v;var L={canSee:'view team',canCmt:'comment',canReview:'review',canTicket:'tickets',canMasterCreate:'master'};DB.notifications.unshift({id:genId('n'),type:'access',from:CU.name,fromColor:CU.color,to:id,text:'Admin '+(v?'granted':'revoked')+' permission: '+(L[f]||f)+'.',time:tnow(),date:td(),read:false});saveDB();renderNotifBadge();}
+function setAccess(id,f,v){
+  var u=DB.users.find(function(x){return x.id===id;});if(!u)return;
+  u[f]=v;
+  u._localEdit=Date.now(); // Stamp so server never reverts
+  var L={canSee:'view team',canCmt:'comment',canReview:'review',canTicket:'tickets',canMasterCreate:'master'};
+  DB.notifications.unshift({id:genId('n'),type:'access',from:CU.name,fromColor:CU.color,to:id,text:'Admin '+(v?'granted':'revoked')+': '+(L[f]||f)+'.',time:tnow(),date:td(),read:false});
+  saveDB();
+  setTimeout(pushMyData,300); // Push rights to server immediately
+  renderNotifBadge();
+}
 
 // ══════════════════════ SETTINGS ══════════════════════
 function renderSettings(){
@@ -1831,7 +1854,7 @@ function cloudLoad(cb){
 
 // INIT
 document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-// startApp called after all scripts</script>
+</script>
 <script>
 // ══ CHAT ══
 var curRoom=null,pendAtt=[];
@@ -2126,7 +2149,26 @@ function exportAllXLSX(){
 <script>
 var _appId=null,_subId=null,_origRA=null;
 function showToast(msg,bg){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:'+(bg||'#5BBD8A')+';color:#000;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3)';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove();},3000);}
-function pushMyData(){if(!SERVER_URL||!CU)return;var up={userId:CU.id,blocks:(DB.blocks&&DB.blocks[CU.id])||[],tracker:(DB.tracker&&DB.tracker[CU.id])||{}};fetch(SERVER_URL+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(up)}).catch(function(){});var sp={users:DB.users||[],deletedUsers:DB.deletedUsers||[],settings:DB.settings||{},designations:DB.designations||[],tickets:DB.tickets||[],editlog:DB.editlog||[],notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sp)}).then(function(r){return r.json();}).then(function(j){if(j.ok)_lastSync=Date.now();}).catch(function(){});}
+function pushMyData(){
+  if(!CU)return;
+  // Always save to localStorage first - this is the primary store
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){console.warn('Storage full:',e);}
+  // Then push to server for team sharing (server is secondary)
+  if(!SERVER_URL)return;
+  var up={userId:CU.id,
+    blocks:(DB.blocks&&DB.blocks[CU.id])||[],
+    tracker:(DB.tracker&&DB.tracker[CU.id])||{}};
+  fetch(SERVER_URL+'/sync/user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(up)})
+  .catch(function(){}); // Silently ignore server errors
+  var sp={users:DB.users||[],deletedUsers:DB.deletedUsers||[],
+    settings:DB.settings||{},designations:DB.designations||[],
+    tickets:DB.tickets||[],editlog:DB.editlog||[],
+    notifications:DB.notifications||[],chat:DB.chat||{rooms:{}}};
+  fetch(SERVER_URL+'/sync/shared',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sp)})
+  .then(function(r){return r.json();})
+  .then(function(j){if(j.ok)_lastSync=Date.now();})
+  .catch(function(){}); // Silently ignore - data is safe in localStorage
+}
 function pullOtherUsersData(){if(!SERVER_URL||!CU)return;fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){if(!j.ok||!j.data)return;var d=j.data,changed=false;if(d.deletedUsers){if(!DB.deletedUsers)DB.deletedUsers=[];d.deletedUsers.forEach(function(id){if(!DB.deletedUsers.includes(id)){DB.deletedUsers.push(id);DB.users=DB.users.filter(function(u){return u.id!==id;});changed=true;}});}if(d.users){d.users.forEach(function(su){if((DB.deletedUsers||[]).includes(su.id)||su._deleted)return;var ex=DB.users.find(function(u){return u.id===su.id;})||DB.users.find(function(u){return u.email&&su.email&&u.email.toLowerCase()===su.email.toLowerCase();});if(!ex){DB.users.push(su);changed=true;}});}if(d.blocks){if(!DB.blocks)DB.blocks={};Object.keys(d.blocks).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){var sb=d.blocks[uid]||[];if(sb.length>0){DB.blocks[uid]=sb;changed=true;}}});}if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){if(uid!==CU.id&&!(DB.deletedUsers||[]).includes(uid)){var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});if(Object.keys(st).length>0){DB.tracker[uid]=lt;changed=true;}}});}if(d.notifications){DB.notifications=d.notifications;changed=true;}if(d.tickets){DB.tickets=d.tickets;changed=true;}if(changed){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}var at=document.querySelector('.tb.on');if(at&&at.dataset.tab==='team')renderTeam();renderNotifBadge();updateCTBadge();}}).catch(function(){});}
 function buildTaskRow(b,t,ti,bi,chk,data,isToday,cmts,ctx){if(t.todayOnly&&t.addedDate&&t.addedDate!==myD)return '';var ts=(data.taskStatus&&data.taskStatus[t.id])||'';var isDone=(ts==='done'||chk),isNA=(ts==='na'),isNO=(ts==='no'),isPP=(ts==='pp');var cls='trow'+(isDone?' done':isNA?' trow-na':isNO?' trow-no':isPP?' trow-pp':'');var h='<div class="'+cls+'"><span class="tnum">'+(ti+1)+'</span>';if(isToday){h+='<div class="cb'+(isDone?' chk':'')+' tcb" data-bid="'+b.id+'" data-tid="'+t.id+'"></div><span class="ttxt tcb" data-bid="'+b.id+'" data-tid="'+t.id+'">'+t.name+'</span>';}else if(!isDone&&!isNA&&!isNO&&!isPP){h+='<div class="cb'+(isDone?' chk':'')+' ro"></div><span class="ttxt">'+t.name+'</span>';}else{h+='<div class="cb'+(isDone?' chk':'')+' ro"></div><span class="ttxt'+(isDone?' done':'')+'">'+t.name+'</span>';if(isNA)h+='<span class="ttime-badge" style="background:rgba(232,147,74,.2);color:#E8934A">NA</span>';if(isNO)h+='<span class="ttime-badge" style="background:rgba(232,80,80,.2);color:#E85555">NO</span>';if(isPP)h+='<span class="ttime-badge" style="background:rgba(91,149,213,.2);color:#5B9BD5">PP</span>';if(isDone)h+='<span class="ttime-badge" style="background:rgba(91,189,138,.2);color:#5BBD8A">DONE</span>';}if(t.timeSlot)h+='<span class="ttime-badge">'+t.timeSlot+'</span>';if(isToday&&!isDone){h+='<div class="task-status-btns"><button class="tsb tsb-na'+(isNA?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNA?'':'na')+'">NA</button><button class="tsb tsb-no'+(isNO?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isNO?'':'no')+'">NO</button><button class="tsb tsb-pp'+(isPP?' tsb-active':'')+' tsbtn" data-bid="'+b.id+'" data-tid="'+t.id+'" data-st="'+(isPP?'':'pp')+'">PP</button></div>';}if(cmts)h+='<span class="ncnt tcmt" data-ctx="'+encodeURIComponent(ctx)+'">'+cmts+'</span>';if(isToday)h+='<button class="note-btn tcmt" data-ctx="'+encodeURIComponent(ctx)+'">Note</button>';if(isToday)h+='<div class="task-acts"><button class="ta-btn tedit" data-bi="'+bi+'" data-ti="'+ti+'">Edit</button><button class="ta-btn del tdel" data-bi="'+bi+'" data-ti="'+ti+'">&#215;</button></div>';h+='</div>'+getTAttHTML(bi,ti,t.id,isToday);return h;}
 document.addEventListener('click',function(e){var el=e.target;if(el.classList.contains('tcb')){chkTask(el.dataset.bid,el.dataset.tid);}if(el.classList.contains('tsbtn')){setTaskStatus(el.dataset.bid,el.dataset.tid,el.dataset.st||'');}if(el.classList.contains('tcmt')){try{var ctx=el.dataset.ctx;if(ctx&&ctx.indexOf('%')!==-1)ctx=decodeURIComponent(ctx);openCmt(ctx);}catch(x){}}if(el.classList.contains('tedit')){openET(parseInt(el.dataset.bi),parseInt(el.dataset.ti));}if(el.classList.contains('tdel')){delTask(parseInt(el.dataset.bi),parseInt(el.dataset.ti));}var tdp=el.closest&&el.closest('.tdp');if(tdp&&tdp.dataset.uid)openDP(tdp.dataset.uid);});
@@ -2190,7 +2232,7 @@ function startApp(){
           }
           // Local blocks always win - server only fills gaps
         });}
-        if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});DB.tracker[uid]=lt;});}
+        if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});if(!DB.tracker[uid])DB.tracker[uid]=lt;});}
         ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
         applyBranding();
@@ -2198,7 +2240,13 @@ function startApp(){
     }).catch(function(){}).finally(function(){
       var sid=loadSession();if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}
       if(window._pollInterval)clearInterval(window._pollInterval);window._pollInterval=setInterval(pullOtherUsersData,60000);
-      if(window._ka)clearInterval(window._ka);window._ka=setInterval(function(){fetch(SERVER_URL+'/health').catch(function(){});},14*60*1000);
+      if(window._ka)clearInterval(window._ka);window._ka=setInterval(function(){
+    if(!SERVER_URL)return;
+    fetch(SERVER_URL+'/health').then(function(r){
+      // Server is awake - push our data as backup
+      if(r.ok&&CU)pushMyData();
+    }).catch(function(){});
+  },10*60*1000); // Every 10 min (not 14) to prevent sleep
     });
   }else{var sid=loadSession();if(sid){var su=DB.users.find(function(x){return x.id===sid&&x.status==='active';});if(su)bootApp(su);}}
 }
