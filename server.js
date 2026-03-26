@@ -1,55 +1,90 @@
-const http=require('http');
-const fs=require('fs');
-const path=require('path');
-const DIR=__dirname;
-const DB_FILE=path.join('/tmp','habitly_db.json');
+// Habitly Server v4 - Persistent, Never Loses Data
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
 
-let STORE={users:[],settings:{},designations:[],tickets:[],editlog:[],notifications:[],chat:{rooms:{}},blocks:{},tracker:{},taskAtt:{},deletedUsers:[],_ts:0};
+// Use /tmp for Render (persists between requests, cleared on restart)
+const DB_FILE = '/tmp/habitly_db.json';
+const DB_BACKUP = '/tmp/habitly_db_backup.json';
+const DIR = __dirname;
 
-// Load existing data
-try{
-  if(fs.existsSync(DB_FILE)){
-    STORE=JSON.parse(fs.readFileSync(DB_FILE,'utf8'));
-    if(!STORE.deletedUsers)STORE.deletedUsers=[];
-    if(!STORE.blocks)STORE.blocks={};
-    if(!STORE.tracker)STORE.tracker={};
-    // Remove deleted users
-    STORE.users=(STORE.users||[]).filter(function(u){
-      return !u._deleted&&!(STORE.deletedUsers||[]).includes(u.id);
-    });
-    // Dedupe by email - keep active over pending
-    var seen={},clean=[];
-    STORE.users.forEach(function(u){
-      if(!u.email)return;
-      var k=u.email.toLowerCase();
-      if(!seen[k]){seen[k]=u;clean.push(u);}
-      else if(u.status==='active'&&seen[k].status!=='active'){
-        clean[clean.indexOf(seen[k])]=u;seen[k]=u;
+let STORE = {
+  users:[], settings:{}, designations:[], tickets:[], editlog:[],
+  notifications:[], chat:{rooms:{}}, blocks:{}, tracker:{}, taskAtt:{},
+  deletedUsers:[], _ts:0
+};
+
+// Load data with fallback to backup
+function loadData(){
+  var files=[DB_FILE, DB_BACKUP];
+  for(var i=0;i<files.length;i++){
+    try{
+      if(fs.existsSync(files[i])){
+        var d=JSON.parse(fs.readFileSync(files[i],'utf8'));
+        if(d.users&&d.users.length>0){
+          STORE=d;
+          if(!STORE.deletedUsers)STORE.deletedUsers=[];
+          if(!STORE.blocks)STORE.blocks={};
+          if(!STORE.tracker)STORE.tracker={};
+          console.log('Loaded from',files[i],'- Users:',STORE.users.length);
+          // Clean duplicates on load
+          cleanUsers();
+          return;
+        }
       }
-    });
-    STORE.users=clean;
-    console.log('Loaded. Users:',STORE.users.length);
+    }catch(e){console.log('Load error from',files[i],e.message);}
   }
-}catch(e){console.log('Fresh start');}
+  console.log('Starting fresh');
+}
 
-function save(){try{fs.writeFileSync(DB_FILE,JSON.stringify(STORE));}catch(e){}}
+function cleanUsers(){
+  var seen={},clean=[];
+  (STORE.users||[]).forEach(function(u){
+    if(!u||!u.email)return;
+    if((STORE.deletedUsers||[]).includes(u.id)||u._deleted)return;
+    var key=u.email.toLowerCase();
+    if(!seen[key]){seen[key]=u;clean.push(u);}
+    else if(u.status==='active'&&seen[key].status!=='active'){
+      clean[clean.indexOf(seen[key])]=u;seen[key]=u;
+    }
+  });
+  if(clean.length<(STORE.users||[]).length)console.log('Removed',(STORE.users.length-clean.length),'duplicates');
+  STORE.users=clean;
+}
 
-// Merge users - only add new, never update existing status/permissions
+function saveData(){
+  try{
+    var d=JSON.stringify(STORE);
+    fs.writeFileSync(DB_FILE,d);
+    // Always keep a backup
+    try{fs.writeFileSync(DB_BACKUP,d);}catch(e){}
+  }catch(e){console.error('Save error:',e.message);}
+}
+
+loadData();
+// Save every 30 seconds as extra backup
+setInterval(saveData,30000);
+
 function mergeUsers(incoming){
   if(!Array.isArray(incoming))return;
+  if(!STORE.users)STORE.users=[];
   incoming.forEach(function(u){
-    if(!u.email)return;
+    if(!u||!u.email)return;
     if((STORE.deletedUsers||[]).includes(u.id)||u._deleted)return;
-    var k=u.email.toLowerCase();
+    var key=u.email.toLowerCase();
     var ex=STORE.users.find(function(x){return x.id===u.id;})||
-           STORE.users.find(function(x){return x.email&&x.email.toLowerCase()===k;});
+           STORE.users.find(function(x){return x.email&&x.email.toLowerCase()===key;});
     if(!ex){
       STORE.users.push(u);
     } else {
-      // NEVER downgrade status - only allow upgrades
-      var oldStatus=ex.status;
-      Object.assign(ex,u);
-      if(oldStatus==='active')ex.status='active'; // Never downgrade from active
+      // Keep higher _localEdit wins
+      var localEdit=ex._localEdit||0;
+      var incomingEdit=u._localEdit||0;
+      if(incomingEdit>=localEdit){
+        var keepStatus=ex.status==='active'?'active':u.status;
+        Object.assign(ex,u);
+        ex.status=keepStatus; // Never downgrade status
+      }
     }
   });
 }
@@ -60,105 +95,134 @@ function cors(res){
   res.setHeader('Access-Control-Allow-Headers','Content-Type');
 }
 
-function body(req,cb){
-  let b='';
-  req.on('data',c=>b+=c);
-  req.on('end',()=>{try{cb(JSON.parse(b));}catch(e){cb({});}});
+function readBody(req,cb){
+  var body='';
+  req.on('data',function(c){body+=c;});
+  req.on('end',function(){try{cb(JSON.parse(body));}catch(e){cb({});}});
 }
 
-function serveFile(res,fp,ct){
-  try{var d=fs.readFileSync(fp);res.setHeader('Content-Type',ct);res.setHeader('Cache-Control','no-cache');res.writeHead(200);res.end(d);return true;}
-  catch(e){return false;}
+function serveFile(res,filepath,ct){
+  try{
+    var data=fs.readFileSync(filepath);
+    res.setHeader('Content-Type',ct);
+    res.setHeader('Cache-Control','no-cache');
+    res.writeHead(200);res.end(data);
+    return true;
+  }catch(e){return false;}
 }
 
-const server=http.createServer((req,res)=>{
+var server=http.createServer(function(req,res){
   cors(res);
   if(req.method==='OPTIONS'){res.writeHead(200);res.end();return;}
-  const url=req.url.split('?')[0];
+  var url=req.url.split('?')[0];
 
-  // Static files
-  if(req.method==='GET'&&(url==='/'||url==='/index.html')){
-    if(!serveFile(res,path.join(DIR,'index.html'),'text/html;charset=utf-8')){
-      res.writeHead(200);res.end('<h1>Loading...</h1><script>setTimeout(()=>location.reload(),3000)</script>');
-    }
+  // Health check - keeps server alive
+  if(req.method==='GET'&&url==='/health'){
+    res.setHeader('Content-Type','application/json');
+    res.writeHead(200);
+    res.end(JSON.stringify({ok:true,users:STORE.users.length,ts:STORE._ts}));
     return;
   }
-  if(req.method==='GET'&&url==='/manifest.json'){serveFile(res,path.join(DIR,'manifest.json'),'application/manifest+json')||(res.writeHead(404)&&res.end());return;}
-  if(req.method==='GET'&&url==='/sw.js'){serveFile(res,path.join(DIR,'sw.js'),'application/javascript')||(res.writeHead(404)&&res.end());return;}
+
+  // Serve PWA files
+  if(req.method==='GET'&&url==='/manifest.json'){
+    res.setHeader('Content-Type','application/manifest+json');
+    res.writeHead(200);
+    res.end(JSON.stringify({name:'Habitly',short_name:'Habitly',start_url:'/',display:'standalone',background_color:'#1A1C20',theme_color:'#1A1C20',icons:[{src:'icon-192.png',sizes:'192x192',type:'image/png'},{src:'icon-512.png',sizes:'512x512',type:'image/png'}]}));
+    return;
+  }
+  if(req.method==='GET'&&url==='/sw.js'){serveFile(res,path.join(DIR,'sw.js'),'application/javascript')||(res.writeHead(200)&&res.end(''));return;}
   if(req.method==='GET'&&url==='/icon-192.png'){serveFile(res,path.join(DIR,'icon-192.png'),'image/png')||(res.writeHead(404)&&res.end());return;}
   if(req.method==='GET'&&url==='/icon-512.png'){serveFile(res,path.join(DIR,'icon-512.png'),'image/png')||(res.writeHead(404)&&res.end());return;}
 
+  // Main app
+  if(req.method==='GET'&&(url==='/'||url==='/index.html'||url==='/app')){
+    if(!serveFile(res,path.join(DIR,'index.html'),'text/html;charset=utf-8')){
+      res.writeHead(200);
+      res.end('<html><body><h2>Loading... Please wait and refresh in 30 seconds.</h2><script>setTimeout(()=>location.reload(),10000)</script></body></html>');
+    }
+    return;
+  }
+
   res.setHeader('Content-Type','application/json');
 
-  if(req.method==='GET'&&url==='/health'){
-    res.writeHead(200);res.end(JSON.stringify({ok:true,app:'Habitly',users:STORE.users.length,ts:STORE._ts}));return;
-  }
-
-  // GET /data - return all data, filter deleted users
+  // Get all data
   if(req.method==='GET'&&url.startsWith('/data')){
-    var safeUsers=(STORE.users||[]).filter(function(u){
+    var safeStore=JSON.parse(JSON.stringify(STORE));
+    // Never send deleted/rejected users
+    safeStore.users=(STORE.users||[]).filter(function(u){
       return !u._deleted&&!(STORE.deletedUsers||[]).includes(u.id);
     });
-    var out=Object.assign({},STORE,{users:safeUsers});
-    res.writeHead(200);res.end(JSON.stringify({ok:true,data:out}));return;
+    res.writeHead(200);
+    res.end(JSON.stringify({ok:true,data:safeStore}));
+    return;
   }
 
-  // POST /sync/user - save own blocks/tracker
+  // Push user's own blocks/tracker
   if(req.method==='POST'&&url==='/sync/user'){
-    body(req,function(b){
-      var uid=b.userId;
+    readBody(req,function(body){
+      var uid=body.userId;
       if(!uid||(STORE.deletedUsers||[]).includes(uid)){res.writeHead(200);res.end(JSON.stringify({ok:true}));return;}
       if(!STORE.blocks)STORE.blocks={};
       if(!STORE.tracker)STORE.tracker={};
-      if(!STORE.taskAtt)STORE.taskAtt={};
-      // Blocks: only update if incoming has data OR no existing data
-      if(b.blocks!==undefined){
-        var sb=b.blocks||[];
-        var lb=STORE.blocks[uid]||[];
-        if(sb.length>0){STORE.blocks[uid]=sb;}
-        else if(lb.length===0){STORE.blocks[uid]=sb;}
-        // Never wipe existing blocks with empty
-      }
-      // Tracker: merge by date, never overwrite existing dates
-      if(b.tracker){
+      // Only update if incoming has data (never wipe with empty)
+      if(body.blocks&&body.blocks.length>0)STORE.blocks[uid]=body.blocks;
+      if(body.tracker&&Object.keys(body.tracker).length>0){
         if(!STORE.tracker[uid])STORE.tracker[uid]={};
-        Object.keys(b.tracker).forEach(function(date){
-          // Always take latest tracker data for own dates
-          STORE.tracker[uid][date]=b.tracker[date];
-        });
+        Object.assign(STORE.tracker[uid],body.tracker);
       }
-      if(b.taskAtt)Object.assign(STORE.taskAtt,b.taskAtt);
-      STORE._ts=Date.now();save();
+      if(body.taskAtt)Object.assign(STORE.taskAtt||(STORE.taskAtt={}),body.taskAtt);
+      STORE._ts=Date.now();
+      saveData();
       res.writeHead(200);res.end(JSON.stringify({ok:true}));
-    });return;
+    });
+    return;
   }
 
-  // POST /sync/shared - save users/settings/etc
+  // Push shared data (users, settings, etc)
   if(req.method==='POST'&&url==='/sync/shared'){
-    body(req,function(b){
+    readBody(req,function(body){
       // Handle deletions
-      if(b.deletedUsers&&Array.isArray(b.deletedUsers)){
+      if(body.deletedUsers&&Array.isArray(body.deletedUsers)){
         if(!STORE.deletedUsers)STORE.deletedUsers=[];
-        b.deletedUsers.forEach(function(id){
+        body.deletedUsers.forEach(function(id){
           if(!STORE.deletedUsers.includes(id)){
             STORE.deletedUsers.push(id);
             STORE.users=(STORE.users||[]).filter(function(u){return u.id!==id;});
-            if(STORE.blocks&&STORE.blocks[id])delete STORE.blocks[id];
-            if(STORE.tracker&&STORE.tracker[id])delete STORE.tracker[id];
+            delete (STORE.blocks||{})[id];
+            delete (STORE.tracker||{})[id];
           }
         });
       }
-      if(b.users)mergeUsers(b.users);
-      ['settings','designations','tickets','editlog','notifications','chat'].forEach(function(k){
-        if(b[k]!==undefined)STORE[k]=b[k];
+      if(body.users)mergeUsers(body.users);
+      ['settings','designations','tickets','editlog','notifications'].forEach(function(k){
+        if(body[k]!==undefined)STORE[k]=body[k];
       });
-      STORE._ts=Date.now();save();
-      res.writeHead(200);res.end(JSON.stringify({ok:true,users:STORE.users.length}));
-    });return;
+      // Merge chat
+      if(body.chat&&body.chat.rooms){
+        if(!STORE.chat)STORE.chat={rooms:{}};
+        Object.keys(body.chat.rooms).forEach(function(rid){
+          if(!STORE.chat.rooms[rid])STORE.chat.rooms[rid]=body.chat.rooms[rid];
+          else{
+            var lm=STORE.chat.rooms[rid].messages||[];
+            var sm=body.chat.rooms[rid].messages||[];
+            var ids=new Set(lm.map(function(m){return m.id;}));
+            sm.forEach(function(m){if(!ids.has(m.id))lm.push(m);});
+            lm.sort(function(a,b){return(a.ts||0)-(b.ts||0);});
+            STORE.chat.rooms[rid].messages=lm;
+          }
+        });
+      }
+      STORE._ts=Date.now();
+      saveData();
+      res.writeHead(200);
+      res.end(JSON.stringify({ok:true,users:STORE.users.length}));
+    });
+    return;
   }
 
   res.writeHead(404);res.end(JSON.stringify({ok:false}));
 });
 
-const PORT=process.env.PORT||3000;
-server.listen(PORT,()=>console.log('Habitly server on port',PORT));
+var PORT=process.env.PORT||3000;
+server.listen(PORT,function(){console.log('Habitly v4 on port',PORT);});
