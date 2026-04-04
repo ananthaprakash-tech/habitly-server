@@ -842,9 +842,9 @@ function loadDB(){
 }
 
 // Session persistence — survives refresh
-function saveSession(userId){try{sessionStorage.setItem(SESSION_KEY,userId);}catch(e){}}
-function loadSession(){try{return sessionStorage.getItem(SESSION_KEY);}catch(e){return null;}}
-function clearSession(){try{sessionStorage.removeItem(SESSION_KEY);}catch(e){}}
+function saveSession(userId){try{localStorage.setItem(SESSION_KEY,userId);}catch(e){}}
+function loadSession(){try{return localStorage.getItem(SESSION_KEY);}catch(e){return null;}}
+function clearSession(){try{localStorage.removeItem(SESSION_KEY);}catch(e){}}
 
 // ══════════════════════ UTILS ══════════════════════
 function td(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
@@ -858,7 +858,7 @@ function hc(p){if(!p)return'var(--s2)';if(p<30)return'rgba(232,85,85,.22)';if(p<
 function tnow(){return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}
 function genId(p){return p+Date.now()+Math.random().toString(36).slice(2,5);}
 function sh(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return String(h);}
-function rlbl(u){return u.orgRole||u.sysRole||'Member';}
+function rlbl(u){return (u.orgRole&&u.orgRole.trim())||u.sysRole||'Member';}
 function rcolor(u){
   const d=DB.designations.find(x=>x.name===u.orgRole);
   return d?d.color:(u.sysRole==='admin'?'#E8C547':u.sysRole==='manager'?'#5B9BD5':'#7A7870');
@@ -2182,10 +2182,12 @@ function checkStorageOnBoot(){var raw=localStorage.getItem(SK)||'',pct=Math.roun
 function initAdminPanels(){if(_origRA)return;_origRA=renderAdmin;renderAdmin=function(){_origRA();renderAllAccountsPanel();renderHierarchyPanel();};}
 function startApp(){
   loadDB();applyBranding();initAdminPanels();
-  // Backup local data before any server operation
+  // Save current local data immediately before any server operation
+  // This protects any unsaved status changes
   try{
-    var bkp=JSON.stringify(DB);
-    localStorage.setItem(SK+'_backup',bkp);
+    var _current=JSON.stringify(DB);
+    localStorage.setItem(SK,_current);
+    localStorage.setItem(SK+'_backup',_current);
   }catch(e){}
   if(SERVER_URL){
     fetch(SERVER_URL+'/data').then(function(r){return r.json();}).then(function(j){
@@ -2201,7 +2203,9 @@ function startApp(){
           }
           // Local blocks always win - server only fills gaps
         });}
-        if(d.tracker){if(!DB.tracker)DB.tracker={};Object.keys(d.tracker).forEach(function(uid){var st=d.tracker[uid]||{},lt=DB.tracker[uid]||{};Object.keys(st).forEach(function(date){if(!lt[date])lt[date]=st[date];});if(!DB.tracker[uid])DB.tracker[uid]=lt;});}
+        // TRACKER: Never overwrite from server - local tracker is always master
+        // Server tracker has different structure (uid->date vs date->uid)
+        // Only use server tracker for OTHER users in team view
         ['settings','designations','tickets','editlog','notifications','chat','taskAtt'].forEach(function(k){if(d[k]!==undefined)DB[k]=d[k];});
         try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
         applyBranding();
